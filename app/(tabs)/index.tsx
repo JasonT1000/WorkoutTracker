@@ -1,7 +1,30 @@
+import * as schema from '@/db/schema';
+import { convertUTCtoNZDateTime } from '@/functions/helperFunctions';
+import { drizzle } from "drizzle-orm/expo-sqlite";
+import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
+import { useSQLiteContext } from "expo-sqlite";
+import { useEffect } from 'react';
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
+  const db = useSQLiteContext();
+  const drizzleDb = drizzle(db, { schema });
+
+  useDrizzleStudio(db);
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await drizzleDb.query.workout.findMany();
+      if (data) {
+        convertUTCtoNZDateTime(data[0].datetime)
+      }
+    }
+
+    load()
+
+  }, []);
+
   return (
     <SafeAreaView style={styles.main}>
       <View style={styles.topSectionContainer}>
