@@ -1,5 +1,5 @@
-import { relations, sql } from "drizzle-orm";
-import { check, int, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { eq, relations, sql } from "drizzle-orm";
+import { check, int, primaryKey, real, sqliteTable, sqliteView, text } from "drizzle-orm/sqlite-core";
 
 export const profile = sqliteTable("profile", {
     id: int().primaryKey({ autoIncrement: true }),
@@ -45,6 +45,11 @@ export const exercise = sqliteTable("exercise", {
         .notNull()
 });
 
+export const cardioProgram = sqliteTable("cardio_program", {
+    id: int().primaryKey({ autoIncrement: true }),
+    name: text().notNull().unique(),
+});
+
 export const routineExerciseSet = sqliteTable("routine_exercise_set", {
     id: int().primaryKey({ autoIncrement: true }),
     routineExerciseId: int('routine_exercise_id')
@@ -65,7 +70,10 @@ export const workoutExerciseSet = sqliteTable("workout_exercise_set", {
     weight: real(),
     distance: real(),
     time: int(),
-    heartRate: int('heart_rate')
+    averageHeartRate: int('average_heart_rate'),
+    maxHeartRate: int('max_heart_rate'),
+    cardioProgramId: int('cardio_program_id')
+        .references(() => cardioProgram.id)
 });
 
 export const routineExercise = sqliteTable("routine_exercise", {
@@ -115,6 +123,37 @@ export const exerciseBodyArea = sqliteTable("exercise_bodyarea", {
     ]
 );
 
+
+// ----------------------------------------- TYPES -----------------------------------------
+
+export type Routine = typeof routine.$inferSelect;
+export type Exercise = typeof exercise.$inferSelect;
+export type RoutineExercise = typeof routineExercise.$inferSelect;
+
+
+// ----------------------------------------- VIEWS -----------------------------------------
+
+export const workoutExerciseSetSummaryView = sqliteView("workout_exercise_set_summary").as((qb) =>
+    qb.select({
+        id: workoutExerciseSet.id,
+        workoutId: workoutExercise.id,
+        exerciseName: exercise.name,
+        exerciseType: exerciseType.type,
+        reps: workoutExerciseSet.reps,
+        weight: workoutExerciseSet.weight,
+        distance: workoutExerciseSet.distance,
+        time: workoutExerciseSet.time,
+        averageHeartRate: workoutExerciseSet.averageHeartRate,
+        maxHeartRate: workoutExerciseSet.maxHeartRate,
+        cardioProgramName: cardioProgram.name
+    })
+        .from(workoutExerciseSet)
+        .innerJoin(workoutExercise, eq(workoutExerciseSet.id, workoutExercise.id))
+        .innerJoin(exercise, eq(workoutExercise.id, exercise.id))
+        .innerJoin(exerciseType, eq(exercise.exerciseTypeId, exerciseType.id))
+        .leftJoin(cardioProgram, eq(workoutExerciseSet.cardioProgramId, cardioProgram.id))
+);
+
 // --------------------------------------- RELATIONS ---------------------------------------
 
 export const routineRelations = relations(routine, ({ many }) => ({
@@ -149,6 +188,10 @@ export const routineExerciseSetRelations = relations(routineExerciseSet, ({ one 
     })
 }));
 
+export const cardioProgramRelations = relations(cardioProgram, ({ many }) => ({
+    workoutExerciseSet: many(workoutExerciseSet)
+}))
+
 export const workoutExerciseRelations = relations(workoutExercise, ({ one, many }) => ({
     workout: one(workout, {
         fields: [workoutExercise.workoutId],
@@ -165,6 +208,10 @@ export const workoutExerciseSetRelations = relations(workoutExerciseSet, ({ one 
     workoutExercise: one(workoutExercise, {
         fields: [workoutExerciseSet.workoutExerciseId],
         references: [workoutExercise.id],
+    }),
+    cardioProgram: one(cardioProgram, {
+        fields: [workoutExerciseSet.cardioProgramId],
+        references: [cardioProgram.id],
     })
 }));
 

@@ -4,6 +4,12 @@ CREATE TABLE `bodyarea` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `bodyarea_name_unique` ON `bodyarea` (`name`);--> statement-breakpoint
+CREATE TABLE `cardio_program` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `cardio_program_name_unique` ON `cardio_program` (`name`);--> statement-breakpoint
 CREATE TABLE `exercise` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
@@ -102,6 +108,11 @@ CREATE TABLE `workout_exercise_set` (
 	`weight` real,
 	`distance` real,
 	`time` integer,
-	`heart_rate` integer,
-	FOREIGN KEY (`workout_exercise_id`) REFERENCES `workout_exercise`(`id`) ON UPDATE no action ON DELETE cascade
+	`average_heart_rate` integer,
+	`max_heart_rate` integer,
+	`cardio_program_id` integer,
+	FOREIGN KEY (`workout_exercise_id`) REFERENCES `workout_exercise`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`cardio_program_id`) REFERENCES `cardio_program`(`id`) ON UPDATE no action ON DELETE no action
 );
+--> statement-breakpoint
+CREATE VIEW `workout_exercise_set_summary` AS select "workout_exercise_set"."id", "workout_exercise"."id", "exercise"."name", "exercise_type"."type", "workout_exercise_set"."reps", "workout_exercise_set"."weight", "workout_exercise_set"."distance", "workout_exercise_set"."time", "workout_exercise_set"."average_heart_rate", "workout_exercise_set"."max_heart_rate", "cardio_program"."name" from "workout_exercise_set" inner join "workout_exercise" on "workout_exercise_set"."id" = "workout_exercise"."id" inner join "exercise" on "workout_exercise"."id" = "exercise"."id" inner join "exercise_type" on "exercise"."exercise_type_id" = "exercise_type"."id" left join "cardio_program" on "workout_exercise_set"."cardio_program_id" = "cardio_program"."id";

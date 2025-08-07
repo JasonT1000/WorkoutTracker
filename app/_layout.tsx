@@ -38,7 +38,7 @@ export default function RootLayout() {
       convertNZDateTimetoUTC("16/05/18");
     }
 
-    load()
+    // load()
 
   }, [success]);
 

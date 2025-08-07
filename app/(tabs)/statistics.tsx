@@ -2,7 +2,7 @@ import SvgComponent from '@/components/SvgImage';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Octicons from '@expo/vector-icons/Octicons';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { Alert, Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Statistics() {
@@ -75,7 +75,9 @@ export default function Statistics() {
             <AntDesign name="arrowright" size={20} color="white" />
           </View>
         </TouchableNativeFeedback>
-        <TouchableNativeFeedback>
+        <TouchableNativeFeedback
+          onPress={() => { Alert.alert('Touchable pressed') }}
+          background={TouchableNativeFeedback.Ripple('#5c5b5bff', false)}>
           <View style={styles.statisticItemContainer}>
             <Octicons style={{ flex: .2 }} name="graph" size={24} color="white" />
             <View style={{ flex: 1 }}>
