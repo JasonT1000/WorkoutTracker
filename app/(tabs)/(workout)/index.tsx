@@ -3,6 +3,7 @@ import * as schema from '@/db/schema';
 import { convertUTCtoNZDateTime } from '@/functions/helperFunctions';
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
+import { router } from 'expo-router';
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect } from 'react';
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
@@ -42,7 +43,7 @@ export default function Index() {
         <Button
           title="New Routine"
           color={'#0fb800ff'}
-          onPress={() => Alert.alert('Simple Button pressed')}
+          onPress={() => { router.navigate({ pathname: '/routine' }) }}
         />
       </View>
 

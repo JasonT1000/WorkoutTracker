@@ -37,7 +37,7 @@ export const convertNZDateTimetoUTC = (nzDateTime: string): string => {
 
 export const toTitleCase = (str: string): string => {
     return str
-        .toLowerCase()
+        // .toLowerCase()
         .split(' ')
         .map(word =>
             word.length > 0

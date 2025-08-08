@@ -13,7 +13,7 @@ import { Suspense, useEffect } from 'react';
 export const DATABASE_NAME = 'db';
 
 export default function RootLayout() {
-  const expoDb = openDatabaseSync(DATABASE_NAME);
+  const expoDb = openDatabaseSync(DATABASE_NAME, { enableChangeListener: true });
   const db = drizzle(expoDb);
   const { success, error } = useMigrations(db, migrations);
 

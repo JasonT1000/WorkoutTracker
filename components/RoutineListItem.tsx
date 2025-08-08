@@ -1,6 +1,7 @@
 import * as schema from '@/db/schema';
 import { toTitleCase } from '@/functions/helperFunctions';
 import Entypo from '@expo/vector-icons/Entypo';
+import { router } from 'expo-router';
 import React from 'react';
 import { Alert, Button, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 
@@ -10,6 +11,16 @@ type RoutineListItemProps = {
 }
 
 export default function RoutineListItem({ routine, exercises }: RoutineListItemProps) {
+
+    /**
+     * Generates a comma-separated string of exercise names with each name in title case.
+     *
+     * Iterates over the `exercises` array, capitalizes each exercise name using `toTitleCase`,
+     * and concatenates them into a single string separated by commas.
+     * The trailing comma and space are removed from the final string.
+     *
+     * @returns {string} A comma-separated list of exercise names in title case.
+     */
     const createExercisesString = (): string => {
 
         let exercisesString = ''
@@ -25,9 +36,9 @@ export default function RoutineListItem({ routine, exercises }: RoutineListItemP
     return (
         <View style={styles.routineContainer}>
             <View style={styles.routineHeadingContainer}>
-                <Text style={styles.routineTextHeading}>{routine.name}</Text>
+                <Text style={styles.routineTextHeading}>{toTitleCase(routine.name)}</Text>
                 <TouchableNativeFeedback
-                    // onPress={() => { Alert.alert('Touchable pressed') }}
+                    onPress={() => { Alert.alert('Touchable pressed') }}
                     background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                     <View>
                         <Entypo name="dots-three-horizontal" size={24} color="white" />
@@ -37,7 +48,12 @@ export default function RoutineListItem({ routine, exercises }: RoutineListItemP
             <Text style={styles.routineText}>{createExercisesString()}</Text>
             <Button
                 title="Start Routine"
-                onPress={() => Alert.alert('Simple Button pressed')}
+                onPress={() => {
+                    router.navigate({
+                        pathname: '/routine',
+                        params: {}
+                    })
+                }}
             />
         </View>
     )
