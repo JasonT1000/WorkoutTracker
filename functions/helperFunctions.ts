@@ -1,3 +1,15 @@
+/**
+ * Converts a UTC datetime string to a formatted New Zealand (NZ) local datetime string.
+ *
+ * @param utcDateTime - The UTC datetime string to convert (ISO 8601 format recommended).
+ * @returns The formatted NZ local datetime string in 'dd/MM/yyyy, HH:mm' format.
+ *
+ * @example
+ * ```typescript
+ * const nzDateTime = convertUTCtoNZDateTime('2024-06-01T12:00:00Z');
+ * // nzDateTime might be '02/06/2024, 00:00' depending on daylight saving
+ * ```
+ */
 export const convertUTCtoNZDateTime = (utcDateTime: string): string => {
     console.log('UTC datetime BEFORE conversion to NZ datetime: ', utcDateTime);
     const date = new Date(utcDateTime);
@@ -18,6 +30,23 @@ export const convertUTCtoNZDateTime = (utcDateTime: string): string => {
     return formatted
 }
 
+/**
+ * Converts a New Zealand date string in the format "DD/MM/YY" to a UTC ISO string.
+ *
+ * @param nzDateTime - The date string in "DD/MM/YY" format, representing a date in New Zealand local time.
+ * @returns The corresponding UTC date-time as an ISO string.
+ *
+ * @remarks
+ * - Assumes the input year is in the 2000s (e.g., "18" becomes 2018).
+ * - Assumes the time is midnight (00:00) in NZ local time.
+ * - Adjusts for New Zealand Standard Time (UTC+12).
+ * - Does not account for daylight saving time.
+ *
+ * @example
+ * ```typescript
+ * convertNZDateTimetoUTC("16/05/18"); // returns "2018-05-15T12:00:00.000Z"
+ * ```
+ */
 export const convertNZDateTimetoUTC = (nzDateTime: string): string => {
     // nzDateTime = "16/05/18"
     console.log('NZ datetime BEFORE conversion to UTC datetime: ', nzDateTime);
@@ -35,9 +64,14 @@ export const convertNZDateTimetoUTC = (nzDateTime: string): string => {
     return utcDate.toISOString();
 }
 
+/**
+ * Converts a given string to title case, capitalizing the first letter of each word.
+ *
+ * @param str - The input string to be converted.
+ * @returns The input string with the first letter of each word capitalized.
+ */
 export const toTitleCase = (str: string): string => {
     return str
-        // .toLowerCase()
         .split(' ')
         .map(word =>
             word.length > 0
@@ -46,3 +80,20 @@ export const toTitleCase = (str: string): string => {
         )
         .join(' ');
 }
+
+/**
+ * Creates a comma-separated string from an array of items, converting each item's value to title case.
+ *
+ * @typeParam T - The type of the items in the array.
+ * @param items - The array of items to process.
+ * @param getValue - A function that extracts a string value from each item.
+ * @returns A single string with each item's value in title case, separated by commas.
+ */
+export const createTitleCaseString = <T>(
+    items: T[],
+    getValue: (item: T) => string
+): string => {
+    return items
+        .map(item => toTitleCase(getValue(item)))
+        .join(', ');
+};

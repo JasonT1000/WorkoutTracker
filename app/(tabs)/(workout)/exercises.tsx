@@ -1,7 +1,8 @@
+import ExerciseList from '@/components/ExerciseList';
 import OptionsHeader from '@/components/OptionsHeader';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import React from 'react';
-import { Alert, Button, Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Exercises() {
@@ -22,7 +23,9 @@ export default function Exercises() {
                 <View>
                     <Text style={styles.containerHeadingtext}>Search buttons</Text>
                 </View>
-                <View>
+
+                <ExerciseList />
+                {/* <View>
                     <Text style={styles.containerHeadingtext}>Exercise list</Text>
                     <View style={styles.exerciseContainer}>
                         <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
@@ -40,7 +43,7 @@ export default function Exercises() {
                         </View>
                         <Text style={styles.exerciseInfoButton}>Info</Text>
                     </View>
-                </View>
+                </View> */}
                 <Button
                     title="Add # exercise"
                     color={'#0fb800ff'}

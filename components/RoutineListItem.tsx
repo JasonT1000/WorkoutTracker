@@ -1,5 +1,5 @@
 import * as schema from '@/db/schema';
-import { toTitleCase } from '@/functions/helperFunctions';
+import { createTitleCaseString, toTitleCase } from '@/functions/helperFunctions';
 import Entypo from '@expo/vector-icons/Entypo';
 import { router } from 'expo-router';
 import React from 'react';
@@ -23,14 +23,7 @@ export default function RoutineListItem({ routine, exercises }: RoutineListItemP
      */
     const createExercisesString = (): string => {
 
-        let exercisesString = ''
-
-        exercises.forEach(exercise => {
-            let capitalizedWord = toTitleCase(exercise.exerciseName)
-            exercisesString += capitalizedWord + ', '
-        });
-
-        return exercisesString.slice(0, -2)
+        return createTitleCaseString(exercises, e => e.exerciseName)
     }
 
     return (

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "37653779-f613-4c92-9fd4-5847dc01c83e",
+  "id": "dae42179-b22f-4a42-84a9-ec8f4e67d393",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "bodyarea": {
@@ -772,6 +772,48 @@
     }
   },
   "views": {
+    "exerciseWithMainBodyArea": {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "exercise_type_id": {
+          "name": "exercise_type_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "name": "exerciseWithMainBodyArea",
+      "isExisting": false,
+      "definition": "select \"exercise\".\"id\", \"exercise\".\"name\", \"exercise\".\"image_url\", \"exercise\".\"exercise_type_id\", \"exercise_type\".\"type\", \"bodyarea\".\"name\" from \"exercise\" inner join \"exercise_type\" on \"exercise\".\"exercise_type_id\" = \"exercise_type\".\"id\" left join \"exercise_bodyarea\" on \"exercise\".\"id\" = \"exercise_bodyarea\".\"exercise_id\" inner join \"bodyarea\" on \"exercise_bodyarea\".\"bodyarea_id\" = \"bodyarea\".\"id\" where \"exercise_bodyarea\".\"ismajorbodyarea\" = '1'"
+    },
     "workout_exercise_set_summary": {
       "columns": {
         "id": {

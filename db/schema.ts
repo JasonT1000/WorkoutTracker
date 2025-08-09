@@ -154,6 +154,30 @@ export const workoutExerciseSetSummaryView = sqliteView("workout_exercise_set_su
         .leftJoin(cardioProgram, eq(workoutExerciseSet.cardioProgramId, cardioProgram.id))
 );
 
+// export const exerciseWithMainBodyAreaView = sqliteView("exerciseWithMainBodyArea", {
+//     id: int(),
+//     name: text(),
+//     imageUrl: text('image_url'),
+//     exerciseTypeId: int('exercise_type_id'),
+//     exerciseType: text(),
+//     bodyArea: text(),
+// }).existing()
+
+// export const exerciseWithMainBodyAreaView = sqliteView("exerciseWithMainBodyArea").as((qb) =>
+//     qb.select({
+//         ...getTableColumns(exercise),
+//         exerciseType: exerciseType.type,
+//         bodyArea: bodyArea.name,
+//     })
+//         .from(exercise)
+//         .innerJoin(exerciseType, eq(exercise.exerciseTypeId, exerciseType.id))
+//         .leftJoin(exerciseBodyArea, eq(exercise.id, exerciseBodyArea.exerciseId))
+//         .where(sql`${exerciseBodyArea.ismajorbodyarea} = '1'`)
+//         .innerJoin(bodyArea, eq(exerciseBodyArea.bodyareaId, bodyArea.id))
+// );
+
+
+
 // --------------------------------------- RELATIONS ---------------------------------------
 
 export const routineRelations = relations(routine, ({ many }) => ({
