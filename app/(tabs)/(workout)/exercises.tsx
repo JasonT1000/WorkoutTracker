@@ -1,56 +1,58 @@
 import ExerciseList from '@/components/ExerciseList';
 import OptionsHeader from '@/components/OptionsHeader';
+import { ExerciseWithBodyAreas } from '@/functions/helperTypes';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import React from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Exercises() {
-    return (
-        <SafeAreaView style={styles.main}>
-            <OptionsHeader title="Exercises" />
+    const [exercises, setExercises] = useState<ExerciseWithBodyAreas[]>([])
 
-            <View style={styles.body}>
-                <View style={styles.searchContainer}>
-                    <AntDesign name="search1" size={24} color='#858585ff' />
-                    <TextInput
-                        style={styles.searchBoxText}
-                        placeholder='Search exercises'
-                        placeholderTextColor={'#858585ff'}
-                        maxLength={33}
+    const addExercise = (exerciseInfo: ExerciseWithBodyAreas) => {
+        console.log("exercise clicked on")
+        console.log(exerciseInfo)
+        console.log([...exercises, exerciseInfo])
+        setExercises([...exercises, exerciseInfo])
+    }
+
+    const returnExercises = () => {
+        router.navigate({
+            pathname: '/routine',
+            params: { selectedExercises: JSON.stringify(exercises) }
+        })
+    }
+
+    return (
+        <SafeAreaProvider>
+            <SafeAreaView style={styles.main}>
+                <OptionsHeader title="Exercises" />
+
+                <View style={styles.body}>
+                    <View style={styles.searchContainer}>
+                        <AntDesign name="search1" size={24} color='#858585ff' />
+                        <TextInput
+                            style={styles.searchBoxText}
+                            placeholder='Search exercises'
+                            placeholderTextColor={'#858585ff'}
+                            maxLength={33}
+                        />
+                    </View>
+                    <View>
+                        <Text style={styles.containerHeadingtext}>Search buttons</Text>
+                    </View>
+
+                    <ExerciseList addExercise={addExercise} />
+
+                    <Button
+                        title="Add # exercise"
+                        color={'#0fb800ff'}
+                        onPress={() => returnExercises()}
                     />
                 </View>
-                <View>
-                    <Text style={styles.containerHeadingtext}>Search buttons</Text>
-                </View>
-
-                <ExerciseList />
-                {/* <View>
-                    <Text style={styles.containerHeadingtext}>Exercise list</Text>
-                    <View style={styles.exerciseContainer}>
-                        <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
-                        <View style={styles.exerciseTextContainer}>
-                            <Text style={styles.exerciseNameText}>Exercise Name</Text>
-                            <Text style={styles.exerciseTypeText}>Exercise area</Text>
-                        </View>
-                        <Text style={styles.exerciseInfoButton}>Info</Text>
-                    </View>
-                    <View style={styles.exerciseContainer}>
-                        <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
-                        <View style={styles.exerciseTextContainer}>
-                            <Text style={styles.exerciseNameText}>Exercise Name</Text>
-                            <Text style={styles.exerciseTypeText}>Exercise area</Text>
-                        </View>
-                        <Text style={styles.exerciseInfoButton}>Info</Text>
-                    </View>
-                </View> */}
-                <Button
-                    title="Add # exercise"
-                    color={'#0fb800ff'}
-                    onPress={() => Alert.alert('Added exercise/s')}
-                />
-            </View>
-        </SafeAreaView>
+            </SafeAreaView>
+        </SafeAreaProvider>
     )
 }
 
@@ -62,6 +64,9 @@ const styles = StyleSheet.create({
     },
     body: {
         margin: 15,
+        flex: 1,
+        borderWidth: 1,
+        borderColor: 'green'
     },
     searchContainer: {
         flexDirection: 'row',

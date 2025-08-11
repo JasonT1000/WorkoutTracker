@@ -1,12 +1,23 @@
 import OptionsHeader from '@/components/OptionsHeader';
+import { ExerciseWithBodyAreas } from '@/functions/helperTypes';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
-  const { exercises } = useLocalSearchParams()
+  const { selectedExercises } = useLocalSearchParams()
   const [title, onChangeTitle] = useState('')
+
+  useEffect(() => {
+    console.log("------------- selectedExercises passed to the routine page")
+    const parsedExercises = typeof selectedExercises === 'string'
+      ? JSON.parse(selectedExercises) as ExerciseWithBodyAreas[]
+      : []
+
+    console.log(parsedExercises)
+
+  }, [selectedExercises])
 
   return (
     <SafeAreaView style={styles.main}>
@@ -90,63 +101,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#585858ff',
   },
-  // containerSubHeadingtext: {
-  //   color: '#b6b6b6ff',
-  //   fontSize: 20,
-  //   paddingBottom: 7,
-  // },
-  // text: {
-  //   color: 'white',
-  //   fontSize: 24,
-  // },
-  // routineTextHeading: {
-  //   color: 'white',
-  //   fontSize: 24,
-  // },
-  // routineText: {
-  //   color: '#b6b6b6ff',
-  //   fontSize: 18,
-  // },
 
   topSectionContainer: {
     borderWidth: 1,
     borderColor: 'yellow',
     paddingBottom: 10,
   },
-  // days: {
-  //   // flex: 1,
-  // },
-  // imagesContainer: {
-  //   height: 250,
-  //   borderWidth: 1,
-  //   borderColor: 'red'
-  // },
-  // imageSvg: {
-  //   alignSelf: 'center',
-  // },
-  // image: {
-  //   position: 'absolute',
-  //   alignSelf: 'center',
-  //   resizeMode: 'contain',
-  // },
-
-  // bottomSectionContainer: {
-  //   flex: 1,
-  //   flexDirection: 'column',
-  //   borderWidth: 1,
-  //   borderColor: 'green'
-  // },
-  // routineContainer: {
-  //   flexDirection: 'column',
-  //   borderRadius: 12,
-  //   padding: 18,
-  //   backgroundColor: '#5c5b5bff',
-  //   marginBottom: 10,
-  // },
-  // routineHeadingContainer: {
-  //   // flex: 1,
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   alignItems: 'flex-end',
-  // }
 });

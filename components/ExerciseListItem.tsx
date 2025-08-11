@@ -1,14 +1,22 @@
 import { createTitleCaseString, toTitleCase } from '@/functions/helperFunctions';
 import { ExerciseWithBodyAreas } from '@/functions/helperTypes';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import React from 'react';
+import React, { useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 
 type ExerciseListItemProps = {
-    exerciseInfo: ExerciseWithBodyAreas
+    exerciseInfo: ExerciseWithBodyAreas,
+    addExercise: (exerciseInfo: ExerciseWithBodyAreas) => void
 }
 
-export default function ExerciseListItem({ exerciseInfo }: ExerciseListItemProps) {
+export default function ExerciseListItem({ exerciseInfo, addExercise }: ExerciseListItemProps) {
+
+    const [isSelected, setIsSelected] = useState(false)
+
+    const onExerciseButtonPressed = () => {
+        setIsSelected(!isSelected)
+        addExercise(exerciseInfo)
+    }
 
     /**
      * Generates a comma-separated string of bodeareas with each name in title case.
@@ -25,21 +33,28 @@ export default function ExerciseListItem({ exerciseInfo }: ExerciseListItemProps
     }
 
     return (
-        <View style={styles.exerciseContainer}>
-            <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
-            <View style={styles.exerciseTextContainer}>
-                <Text style={styles.exerciseNameText}>{toTitleCase(exerciseInfo.name)}</Text>
-                <Text style={styles.exerciseTypeText}>{createBodyAreaString()}</Text>
+        <TouchableNativeFeedback
+            onPress={() => { onExerciseButtonPressed() }}
+            background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+
+            <View style={styles.exerciseContainer}>
+                <View style={isSelected ? styles.verticalLine : null}></View>
+                <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
+                <View style={styles.exerciseTextContainer}>
+                    <Text style={styles.exerciseNameText}>{toTitleCase(exerciseInfo.name)}</Text>
+                    <Text style={styles.exerciseTypeText}>{createBodyAreaString()}</Text>
+                </View>
+
+                <TouchableNativeFeedback
+                    onPress={() => { Alert.alert('Touchable pressed') }}
+                    background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                    <View style={styles.exerciseInfoButtonContainer}>
+                        <AntDesign style={styles.exerciseInfoButton} name="infocirlceo" />
+                    </View>
+                </TouchableNativeFeedback>
             </View>
 
-            <TouchableNativeFeedback
-                onPress={() => { Alert.alert('Touchable pressed') }}
-                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                <View style={styles.exerciseInfoButtonContainer}>
-                    <AntDesign style={styles.exerciseInfoButton} name="infocirlceo" />
-                </View>
-            </TouchableNativeFeedback>
-        </View>
+        </TouchableNativeFeedback>
     )
 }
 
@@ -47,8 +62,13 @@ const styles = StyleSheet.create({
     exerciseContainer: {
         flexDirection: 'row',
         borderBottomWidth: 1,
-        borderColor: '#585858ff',
+        borderBottomColor: '#585858ff',
         paddingVertical: 10,
+    },
+    verticalLine: {
+        borderLeftWidth: 5,
+        borderLeftColor: '#038dceff',
+        marginLeft: 10,
     },
     exerciseImage: {
         width: 70,

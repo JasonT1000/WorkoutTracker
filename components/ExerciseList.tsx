@@ -7,8 +7,11 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import ExerciseListItem from './ExerciseListItem';
 
+type ExerciseListProps = {
+    addExercise: (exerciseInfo: ExerciseWithBodyAreas) => void
+}
 
-export default function ExerciseList() {
+export default function ExerciseList({ addExercise }: ExerciseListProps) {
     const db = useSQLiteContext();
     const drizzleDb = drizzle(db, { schema });
 
@@ -32,9 +35,6 @@ export default function ExerciseList() {
                     .where(sql`${schema.exerciseBodyArea.ismajorbodyarea} = '1'`)
                     .innerJoin(schema.bodyArea, eq(schema.exerciseBodyArea.bodyareaId, schema.bodyArea.id))
 
-                console.log("---------------------- exerciseBodyAreas ------------------------------")
-                console.log(exerciseBodyAreas)
-
                 if (exerciseBodyAreas) {
                     const exerciseBodyAreasGrouped = exercises.reduce((acc, exercise) => {
                         const bodyAreas = exerciseBodyAreas.filter(eba => eba.exerciseId === exercise.id)
@@ -42,10 +42,6 @@ export default function ExerciseList() {
 
                         return acc;
                     }, [] as ExerciseWithBodyAreas[])
-                    // }, {} as Record<number, { exerciseId: number, exerciseType: string, bodyArea: string }[]>);
-
-                    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                    console.log(exerciseBodyAreasGrouped)
 
                     setExercisesWithBodyAreas(exerciseBodyAreasGrouped)
                     setIsLoading(false)
@@ -119,42 +115,36 @@ export default function ExerciseList() {
     if (isLoading) return <ActivityIndicator />
 
     return (
-        <View>
+        <View style={{ flex: 1 }}>
             <Text style={styles.containerHeadingtext}>Exercise list</Text>
             <FlatList
                 data={exercisesWithBodyAreas}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <ExerciseListItem exerciseInfo={item} />}
+                renderItem={({ item }) => <ExerciseListItem exerciseInfo={item} addExercise={addExercise} />}
+                automaticallyAdjustContentInsets
             />
+            {/* <TouchableNativeFeedback
+                onPress={() => { Alert.alert('Exercises added') }}
+                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                <View style={styles.addExercisesButton}>
+                    <Text style={styles.addExercisesButtonText}>Add exercises</Text>
+                </View>
+            </TouchableNativeFeedback> */}
+            {/* <Button
+                title="Add exercise"
+                color={'#0fb800ff'}
+                onPress={() => { router.navigate({ pathname: '/routine' }) }}
+            /> */}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    // main: {
-    //     flexDirection: 'column',
-    //     flex: 1,
-    //     // margin: 15,
-    // },
-    // body: {
-    //     margin: 15,
-    // },
-    // searchContainer: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    //     backgroundColor: '#353535ff',
-    //     borderRadius: 10,
-    //     paddingHorizontal: 8,
-    // },
     containerHeadingtext: {
         color: '#b6b6b6ff',
         fontSize: 20,
         paddingBottom: 7,
     },
-    // searchBoxText: {
-    //     color: '#858585ff',
-    //     fontSize: 18,
-    // },
 
     exerciseContainer: {
         flexDirection: 'row',
@@ -186,27 +176,17 @@ const styles = StyleSheet.create({
         color: '#858585ff',
         verticalAlign: 'middle'
     },
-    // // containerSubHeadingtext: {
-    // //   color: '#b6b6b6ff',
-    // //   fontSize: 20,
-    // //   paddingBottom: 7,
-    // // },
-    // // text: {
-    // //   color: 'white',
-    // //   fontSize: 24,
-    // // },
-    // // routineTextHeading: {
-    // //   color: 'white',
-    // //   fontSize: 24,
-    // // },
-    // // routineText: {
-    // //   color: '#b6b6b6ff',
-    // //   fontSize: 18,
-    // // },
 
-    // topSectionContainer: {
-    //     borderWidth: 1,
-    //     borderColor: 'yellow',
-    //     paddingBottom: 10,
-    // },
+    addExercisesButton: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        backgroundColor: '#0fb800ff',
+        padding: 8,
+    },
+    addExercisesButtonText: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: '#ffffffff'
+    },
 });
