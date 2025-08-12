@@ -4,7 +4,7 @@ import { ExerciseWithBodyAreas } from '@/functions/helperTypes';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Exercises() {
@@ -45,11 +45,19 @@ export default function Exercises() {
 
                     <ExerciseList addExercise={addExercise} />
 
-                    <Button
+                    <TouchableNativeFeedback
+                        onPress={() => returnExercises()}
+                        background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                        <View style={styles.addExercisesButton}>
+                            <Text style={styles.addExercisesButtonText}>Add exercises</Text>
+                        </View>
+                    </TouchableNativeFeedback>
+
+                    {/* <Button
                         title="Add # exercise"
                         color={'#0fb800ff'}
                         onPress={() => returnExercises()}
-                    />
+                    /> */}
                 </View>
             </SafeAreaView>
         </SafeAreaProvider>
@@ -114,6 +122,20 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#858585ff',
         verticalAlign: 'middle'
+    },
+
+    addExercisesButton: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        backgroundColor: '#0fb800ff',
+        padding: 8,
+        borderRadius: 10,
+    },
+    addExercisesButtonText: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: '#ffffffff'
     },
     // containerSubHeadingtext: {
     //   color: '#b6b6b6ff',

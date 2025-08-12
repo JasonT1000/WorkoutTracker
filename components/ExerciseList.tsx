@@ -123,13 +123,7 @@ export default function ExerciseList({ addExercise }: ExerciseListProps) {
                 renderItem={({ item }) => <ExerciseListItem exerciseInfo={item} addExercise={addExercise} />}
                 automaticallyAdjustContentInsets
             />
-            {/* <TouchableNativeFeedback
-                onPress={() => { Alert.alert('Exercises added') }}
-                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                <View style={styles.addExercisesButton}>
-                    <Text style={styles.addExercisesButtonText}>Add exercises</Text>
-                </View>
-            </TouchableNativeFeedback> */}
+
             {/* <Button
                 title="Add exercise"
                 color={'#0fb800ff'}
