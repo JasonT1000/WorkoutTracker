@@ -15,5 +15,20 @@ export type ExerciseWithBodyAreas = {
     name: string,
     imageUrl: string | null,
     exerciseTypeId: number
-    bodyAreas: { exerciseType: string, bodyArea: string }[]
+    bodyAreas: { exerciseId: number, bodyArea: string }[]
 }
+
+export const ExerciseTypes: Record<number, string> = {
+    1: 'bodyweight',
+    2: 'weight',
+    3: 'cardio',
+    4: 'stretch'
+}
+export enum EXERCISETYPE {
+    BODYWEIGHT = 'bodyweight',
+    WEIGHT = 'weight',
+    CARDIO = 'cardio',
+    STRETCH = 'stretch'
+}
+
+// Object.freeze(exerciseTypes)

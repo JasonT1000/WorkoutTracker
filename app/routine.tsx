@@ -1,27 +1,27 @@
 import OptionsHeader from '@/components/OptionsHeader';
-import { toTitleCase } from '@/functions/helperFunctions';
+import RoutineExercise from '@/components/Routines/RoutineExercise';
 import { ExerciseWithBodyAreas } from '@/functions/helperTypes';
-import Entypo from '@expo/vector-icons/Entypo';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Routine() {
   const { selectedExercises } = useLocalSearchParams()
   const [title, onChangeTitle] = useState('')
-  const [exerciseName, setExerciseName] = useState('Exercise Name')
+  const [routineExercises, setRoutineExercises] = useState<ExerciseWithBodyAreas[]>([])
 
   useEffect(() => {
     if (selectedExercises) {
       console.log("------------- selectedExercises passed to the routine page")
+      console.log(selectedExercises)
       const parsedExercises = typeof selectedExercises === 'string'
         ? JSON.parse(selectedExercises) as ExerciseWithBodyAreas[]
         : []
 
+      console.log("------------- parsedExercises passed to the routine page")
       console.log(parsedExercises)
-      setExerciseName(parsedExercises[0].name)
+      setRoutineExercises(parsedExercises)
     }
 
   }, [selectedExercises])
@@ -32,6 +32,7 @@ export default function Routine() {
       <OptionsHeader title='Create Routine' />
 
       <View style={styles.body}>
+
         <View>
           <TextInput
             style={styles.routineTitleText}
@@ -41,82 +42,13 @@ export default function Routine() {
             placeholderTextColor={'#858585ff'}
           />
         </View>
+
         <View>
-          <View style={styles.routineExerciseContainer}>
-            <View style={styles.routineExerciseTitleContainer}>
-              <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
-              <Text style={styles.routineExerciseTitle}>{toTitleCase(exerciseName)}</Text>
-
-              <TouchableNativeFeedback
-                onPress={() => { Alert.alert('Edit exercise dots pressed') }}
-                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                <View style={styles.exerciseEditButtonContainer}>
-                  <Entypo name="dots-three-horizontal" size={24} color="white" />
-                </View>
-              </TouchableNativeFeedback>
-            </View>
-
-            <TextInput
-              style={styles.routineExerciseNotesText}
-              placeholder='Add routine exercise notes here'
-              placeholderTextColor={'#858585ff'}
-            />
-            <TouchableNativeFeedback
-              onPress={() => { Alert.alert('Edit exercise dots pressed') }}
-              background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-              <View style={styles.routineExerciseTimerContainer}>
-                <MaterialCommunityIcons name="timer-outline" size={24} color="white" />
-                <Text style={styles.routineExerciseTimerText}>Rest Timer: OFF</Text>
-              </View>
-            </TouchableNativeFeedback>
-
-            <View style={styles.routineExerciseSetContainer}>
-              <View style={styles.routineExerciseSetTitleContainer}>
-                <Text style={styles.routineExerciseSetTitleText}>SET</Text>
-                <Text style={styles.routineExerciseSetTitleText}>KG</Text>
-                <Text style={styles.routineExerciseSetTitleText}>REPS</Text>
-                {/* <Text style={styles.routineExerciseSetTitleText}>KM</Text>
-                <Text style={styles.routineExerciseSetTitleText}>TIME</Text> */}
-              </View>
-              <View style={styles.routineExerciseSetRowContainer}>
-                <Text style={styles.routineExerciseSetDataText}>1</Text>
-                <TextInput
-                  style={styles.routineExerciseSetDataText}
-                  placeholder='-'
-                  placeholderTextColor={'#858585ff'}
-                  keyboardType='number-pad'
-                />
-                <TextInput
-                  style={styles.routineExerciseSetDataText}
-                  placeholder='-'
-                  placeholderTextColor={'#858585ff'}
-                  keyboardType='number-pad'
-                />
-              </View>
-              <View style={styles.routineExerciseSetTitleContainer}>
-                <Text style={styles.routineExerciseSetDataText}>1</Text>
-                <TextInput
-                  style={styles.routineExerciseSetDataText}
-                  placeholder='-'
-                  placeholderTextColor={'#858585ff'}
-                  keyboardType='number-pad'
-                />
-                <TextInput
-                  style={styles.routineExerciseSetDataText}
-                  placeholder='-'
-                  placeholderTextColor={'#858585ff'}
-                  keyboardType='number-pad'
-                />
-              </View>
-              <TouchableNativeFeedback
-                onPress={() => Alert.alert("Added set")}
-                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                <View style={styles.addExerciseSetButton}>
-                  <Text style={styles.addExercisesButtonText}>Add Set</Text>
-                </View>
-              </TouchableNativeFeedback>
-            </View>
-          </View>
+          <FlatList
+            data={routineExercises}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => <RoutineExercise routineExercise={item} />}
+          />
         </View>
 
         <TouchableNativeFeedback

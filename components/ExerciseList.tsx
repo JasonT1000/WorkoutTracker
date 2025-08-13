@@ -26,11 +26,9 @@ export default function ExerciseList({ addExercise }: ExerciseListProps) {
             if (exercises) {
                 const exerciseBodyAreas = await drizzleDb.select({
                     exerciseId: schema.exercise.id,
-                    exerciseType: schema.exerciseType.type,
                     bodyArea: schema.bodyArea.name
                 })
                     .from(schema.exercise)
-                    .innerJoin(schema.exerciseType, eq(schema.exercise.exerciseTypeId, schema.exerciseType.id))
                     .leftJoin(schema.exerciseBodyArea, eq(schema.exercise.id, schema.exerciseBodyArea.exerciseId))
                     .where(sql`${schema.exerciseBodyArea.ismajorbodyarea} = '1'`)
                     .innerJoin(schema.bodyArea, eq(schema.exerciseBodyArea.bodyareaId, schema.bodyArea.id))
@@ -47,65 +45,6 @@ export default function ExerciseList({ addExercise }: ExerciseListProps) {
                     setIsLoading(false)
                 }
             }
-
-            // const exercises = await drizzleDb.select({
-            //     ...getTableColumns(schema.exercise),
-            //     exerciseType: schema.exerciseType.type,
-            //     bodyArea: schema.bodyArea.name,
-            // })
-            //     .from(schema.exercise)
-            //     .innerJoin(schema.exerciseType, eq(schema.exercise.exerciseTypeId, schema.exerciseType.id))
-            //     .leftJoin(schema.exerciseBodyArea, eq(schema.exercise.id, schema.exerciseBodyArea.exerciseId))
-            //     .where(sql`${schema.exerciseBodyArea.ismajorbodyarea} = '1'`)
-            //     .innerJoin(schema.bodyArea, eq(schema.exerciseBodyArea.bodyareaId, schema.bodyArea.id))
-
-            // if (exercises) {
-            //     console.log(exercises)
-
-            //     // const exercisesWithBodyAreasFiltered = exercises.reduce((acc, exercise) => {
-            //     //     acc[exercise.id] = exercises.filter(e => e.id === exercise.id);
-            //     //     return acc;
-            //     // }, {} as Record<number, { id: number, name: string, imageUrl: string | null, exerciseTypeId: number, exerciseType: string, bodyArea: string }[]>);
-
-            //     // const flatListData = Object.entries(exercisesWithBodyAreasFiltered).map(([id, exercises]) => ({
-            //     //     id: Number(id),
-            //     //     exercises
-            //     // }));
-
-
-            //     const groupedArray = exercises.reduce((acc, exercise) => {
-            //         const existingExercise = acc.find(e => e.id === exercise.id);
-
-            //         if (existingExercise) {
-            //             existingExercise.bodyAreas.push({bodyArea: exercise.bodyArea, exerciseType: exercise.exerciseType});
-            //         } else {
-            //             acc.push({
-            //                 id: exercise.id,
-            //                 // need to add fields. Can i just add the exercise instead?
-            //                 exercises: [exercise]
-            //             });
-            //         }
-
-            //         return acc;
-            //     }, [] as ExerciseWithBodyAreas[]);
-
-
-            //     // const uniqueExercises = Array.from(
-            //     //     new Map(Object.values(exercisesWithBodyAreas).map((obj: any) => [JSON.stringify(obj), obj])).values()
-            //     // )
-
-            //     console.log("----------------------------------------------------")
-            //     // const keys = Object.keys(exercisesWithBodyAreasFiltered)
-            //     // console.log(exercises)
-            //     // Object.values(exercisesWithBodyAreasFiltered).forEach(element => {
-            //     //     console.log(element)
-            //     // });
-
-            // console.log(exercisesWithBodyAreas)
-            // setExercises(exercises)
-            // setExercisesWithBodyAreas(groupedArray)
-            // setIsLoading(false)
-            // }
         }
 
         load()
