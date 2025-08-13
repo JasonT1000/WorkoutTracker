@@ -57,6 +57,6 @@ const styles = StyleSheet.create({
     },
     cancelButtonText: {
         fontSize: 18,
-        color: '#006ec9ff',
+        color: '#0160adff',
     },
 });

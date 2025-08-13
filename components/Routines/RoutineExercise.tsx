@@ -75,7 +75,7 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
                     onPress={() => addSet()}
                     background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                     <View style={styles.addExerciseSetButton}>
-                        <Text style={styles.addExercisesButtonText}>Add Set</Text>
+                        <Text style={styles.addExerciseSetButtonText}>Add Set</Text>
                     </View>
                 </TouchableNativeFeedback>
             </View>
@@ -84,70 +84,72 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
 }
 
 const styles = StyleSheet.create({
-    main: {
-        flexDirection: 'column',
-        flex: 1,
-        // margin: 15,
-    },
-    body: {
-        // flex: 1,
-        margin: 15,
-    },
-    routineExercisesContainer: {
-        color: 'white',
-        fontSize: 24,
-        alignContent: 'center',
-        verticalAlign: 'middle',
-        textAlign: 'center'
-    },
-    optionsHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        backgroundColor: '#353535ff',
-        alignItems: 'center',
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-    },
+    // main: {
+    //     flexDirection: 'column',
+    //     flex: 1,
+    //     // margin: 15,
+    // },
+    // body: {
+    //     // flex: 1,
+    //     margin: 15,
+    // },
+    // routineExercisesContainer: {
+    //     color: 'white',
+    //     fontSize: 24,
+    //     alignContent: 'center',
+    //     verticalAlign: 'middle',
+    //     textAlign: 'center'
+    // },
+    // optionsHeader: {
+    //     flexDirection: 'row',
+    //     justifyContent: 'space-between',
+    //     backgroundColor: '#353535ff',
+    //     alignItems: 'center',
+    //     paddingHorizontal: 15,
+    //     paddingVertical: 8,
+    // },
 
-    saveButton: {
-        backgroundColor: '#afafafff',
-        paddingVertical: 7,
-        paddingHorizontal: 13,
-        borderRadius: 10,
-    },
-    cancelButton: {
-        paddingVertical: 7,
-        paddingRight: 13,
-        borderRadius: 10,
-    },
-    optionsText: {
-        fontSize: 18,
-        color: '#ffffffff',
-    },
-    cancelButtonText: {
-        fontSize: 18,
-        color: '#006ec9ff',
-    },
-    routineTitleText: {
-        color: '#858585ff',
-        fontSize: 24,
-        paddingBottom: 15,
-        marginBottom: 35,
-        borderBottomWidth: 1,
-        borderBottomColor: '#585858ff',
-    },
+    // saveButton: {
+    //     backgroundColor: '#afafafff',
+    //     paddingVertical: 7,
+    //     paddingHorizontal: 13,
+    //     borderRadius: 10,
+    // },
+    // cancelButton: {
+    //     paddingVertical: 7,
+    //     paddingRight: 13,
+    //     borderRadius: 10,
+    // },
+    // optionsText: {
+    //     fontSize: 18,
+    //     color: '#ffffffff',
+    // },
+    // cancelButtonText: {
+    //     fontSize: 18,
+    //     color: '#006ec9ff',
+    // },
+    // routineTitleText: {
+    //     color: '#858585ff',
+    //     fontSize: 24,
+    //     paddingBottom: 15,
+    //     marginBottom: 35,
+    //     borderBottomWidth: 1,
+    //     borderBottomColor: '#585858ff',
+    // },
 
-    topSectionContainer: {
-        borderWidth: 1,
-        borderColor: 'yellow',
-        paddingBottom: 10,
-    },
+    // topSectionContainer: {
+    //     borderWidth: 1,
+    //     borderColor: 'yellow',
+    //     paddingBottom: 10,
+    // },
 
     routineExerciseContainer: {
+        // flex: 1,
         flexDirection: 'column',
         gap: 5,
+        marginBottom: 15,
         borderWidth: 1,
-        // borderColor: '#f50000ff',
+        borderColor: '#f50000ff',
         // paddingVertical: 10,
     },
     routineExerciseTitleContainer: {
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
         // borderColor: '#001affff',
     },
     routineExerciseTitle: {
-        color: '#ffffffff',
+        color: '#0160adff',
         fontSize: 20,
         verticalAlign: 'middle',
         flex: 1,
@@ -193,33 +195,33 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         gap: 5,
         paddingBottom: 10,
-        borderBottomColor: '#353535ff',
-        borderBottomWidth: 1,
+        // borderBottomColor: '#353535ff',
+        // borderBottomWidth: 1,
     },
-    routineExerciseSetTitleContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-    },
-    routineExerciseSetTitleText: {
-        fontSize: 18,
-        color: '#858585ff',
-        width: 100,
-        textAlign: 'center',
-    },
-    routineExerciseSetRowContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-    },
-    routineExerciseSetDataContainer: {
-        flexDirection: 'row',
-    },
-    routineExerciseSetDataText: {
-        fontSize: 18,
-        color: '#ffffffff',
-        width: 100,
-        textAlign: 'center',
-        verticalAlign: 'middle',
-    },
+    // routineExerciseSetTitleContainer: {
+    //     flexDirection: 'row',
+    //     justifyContent: 'space-evenly',
+    // },
+    // routineExerciseSetTitleText: {
+    //     fontSize: 18,
+    //     color: '#858585ff',
+    //     width: 100,
+    //     textAlign: 'center',
+    // },
+    // routineExerciseSetRowContainer: {
+    //     flexDirection: 'row',
+    //     justifyContent: 'space-evenly',
+    // },
+    // routineExerciseSetDataContainer: {
+    //     flexDirection: 'row',
+    // },
+    // routineExerciseSetDataText: {
+    //     fontSize: 18,
+    //     color: '#ffffffff',
+    //     width: 100,
+    //     textAlign: 'center',
+    //     verticalAlign: 'middle',
+    // },
     addExerciseSetButton: {
         width: '100%',
         backgroundColor: '#353535ff',
@@ -228,13 +230,13 @@ const styles = StyleSheet.create({
     },
 
 
-    addExercisesButton: {
-        width: '100%',
-        backgroundColor: '#0fb800ff',
-        padding: 8,
-        borderRadius: 10,
-    },
-    addExercisesButtonText: {
+    // addExercisesButton: {
+    //     width: '100%',
+    //     backgroundColor: '#0fb800ff',
+    //     padding: 8,
+    //     borderRadius: 10,
+    // },
+    addExerciseSetButtonText: {
         fontSize: 18,
         textAlign: 'center',
         color: '#ffffffff'
