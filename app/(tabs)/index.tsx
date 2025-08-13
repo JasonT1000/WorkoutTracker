@@ -63,7 +63,8 @@ export default function Index() {
 const styles = StyleSheet.create({
   main: {
     flexDirection: 'column',
-    flex: 1,
+    // flex: 1,
+    height: '100%',
     margin: 15,
   },
   topSectionContainer: {
