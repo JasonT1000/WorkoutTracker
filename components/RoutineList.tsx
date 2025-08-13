@@ -63,73 +63,15 @@ export default function RoutineList() {
 }
 
 const styles = StyleSheet.create({
-    // main: {
-    //     flexDirection: 'column',
-    //     flex: 1,
-    //     margin: 15,
-    // },
-    // containerHeadingtext: {
-    //     color: 'white',
-    //     fontSize: 24,
-    //     paddingBottom: 7,
-    // },
+    bottomSectionContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        // borderWidth: 1,
+        // borderColor: 'green'
+    },
     containerSubHeadingtext: {
         color: '#b6b6b6ff',
         fontSize: 20,
         paddingBottom: 7,
     },
-    // text: {
-    //     color: 'white',
-    //     fontSize: 24,
-    // },
-    // routineTextHeading: {
-    //     color: 'white',
-    //     fontSize: 24,
-    // },
-    // routineText: {
-    //     color: '#b6b6b6ff',
-    //     fontSize: 18,
-    // },
-
-    // topSectionContainer: {
-    //     borderWidth: 1,
-    //     borderColor: 'yellow',
-    //     paddingBottom: 10,
-    // },
-    // days: {
-    //     // flex: 1,
-    // },
-    // imagesContainer: {
-    //     height: 250,
-    //     borderWidth: 1,
-    //     borderColor: 'red'
-    // },
-    // imageSvg: {
-    //     alignSelf: 'center',
-    // },
-    // image: {
-    //     position: 'absolute',
-    //     alignSelf: 'center',
-    //     resizeMode: 'contain',
-    // },
-
-    bottomSectionContainer: {
-        flex: 1,
-        flexDirection: 'column',
-        borderWidth: 1,
-        borderColor: 'green'
-    },
-    // routineContainer: {
-    //     flexDirection: 'column',
-    //     borderRadius: 12,
-    //     padding: 18,
-    //     backgroundColor: '#5c5b5bff',
-    //     marginBottom: 10,
-    // },
-    // routineHeadingContainer: {
-    //     // flex: 1,
-    //     flexDirection: 'row',
-    //     justifyContent: 'space-between',
-    //     alignItems: 'flex-end',
-    // }
 });

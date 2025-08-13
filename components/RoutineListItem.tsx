@@ -1,9 +1,8 @@
 import * as schema from '@/db/schema';
 import { createTitleCaseString, toTitleCase } from '@/functions/helperFunctions';
 import Entypo from '@expo/vector-icons/Entypo';
-import { router } from 'expo-router';
 import React from 'react';
-import { Alert, Button, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 
 type RoutineListItemProps = {
     routine: schema.Routine,
@@ -39,39 +38,18 @@ export default function RoutineListItem({ routine, exercises }: RoutineListItemP
                 </TouchableNativeFeedback>
             </View>
             <Text style={styles.routineText}>{createExercisesString()}</Text>
-            <Button
-                title="Start Routine"
-                onPress={() => {
-                    router.navigate({
-                        pathname: '/routine',
-                        params: {}
-                    })
-                }}
-            />
+            <TouchableNativeFeedback
+                onPress={() => { Alert.alert('Touchable pressed') }}
+                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                <View style={styles.addExercisesButton}>
+                    <Text style={styles.addExercisesButtonText}>Start Routine</Text>
+                </View>
+            </TouchableNativeFeedback>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    // main: {
-    //     flexDirection: 'column',
-    //     flex: 1,
-    //     margin: 15,
-    // },
-    // containerHeadingtext: {
-    //     color: 'white',
-    //     fontSize: 24,
-    //     paddingBottom: 7,
-    // },
-    // containerSubHeadingtext: {
-    //     color: '#b6b6b6ff',
-    //     fontSize: 20,
-    //     paddingBottom: 7,
-    // },
-    // text: {
-    //     color: 'white',
-    //     fontSize: 24,
-    // },
     routineTextHeading: {
         color: 'white',
         fontSize: 24,
@@ -81,35 +59,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginBottom: 12,
     },
-
-    // topSectionContainer: {
-    //     borderWidth: 1,
-    //     borderColor: 'yellow',
-    //     paddingBottom: 10,
-    // },
-    // days: {
-    //     // flex: 1,
-    // },
-    // imagesContainer: {
-    //     height: 250,
-    //     borderWidth: 1,
-    //     borderColor: 'red'
-    // },
-    // imageSvg: {
-    //     alignSelf: 'center',
-    // },
-    // image: {
-    //     position: 'absolute',
-    //     alignSelf: 'center',
-    //     resizeMode: 'contain',
-    // },
-
-    // bottomSectionContainer: {
-    //     flex: 1,
-    //     flexDirection: 'column',
-    //     borderWidth: 1,
-    //     borderColor: 'green'
-    // },
     routineContainer: {
         flexDirection: 'column',
         borderRadius: 12,
@@ -122,5 +71,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
-    }
+    },
+
+    addExercisesButton: {
+        width: '100%',
+        backgroundColor: '#18a0fcff',
+        padding: 8,
+        borderRadius: 10,
+    },
+    addExercisesButtonText: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: '#ffffffff'
+    },
 });

@@ -6,7 +6,7 @@ import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { router } from 'expo-router';
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect } from 'react';
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -30,21 +30,27 @@ export default function Index() {
 
   return (
     <SafeAreaView style={styles.main}>
+
       <View style={styles.topSectionContainer}>
         <Text style={styles.containerHeadingtext}>Workout</Text>
-        <Button
-          title="New Workout"
-          color={'#0fb800ff'}
+        <TouchableNativeFeedback
           onPress={() => Alert.alert('Simple Button pressed')}
-        />
+          background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+          <View style={styles.addExercisesButton}>
+            <Text style={styles.addExercisesButtonText}>New Workout</Text>
+          </View>
+        </TouchableNativeFeedback>
       </View>
+
       <View style={styles.topSectionContainer}>
         <Text style={styles.containerHeadingtext}>Routines</Text>
-        <Button
-          title="New Routine"
-          color={'#0fb800ff'}
-          onPress={() => { router.navigate({ pathname: '/routine' }) }}
-        />
+        <TouchableNativeFeedback
+          onPress={() => router.navigate({ pathname: '/routine' })}
+          background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+          <View style={styles.addExercisesButton}>
+            <Text style={styles.addExercisesButtonText}>New Routine</Text>
+          </View>
+        </TouchableNativeFeedback>
       </View>
 
       <RoutineList />
@@ -60,68 +66,26 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 15,
   },
+  topSectionContainer: {
+    // borderWidth: 1,
+    // borderColor: 'yellow',
+    paddingBottom: 10,
+  },
   containerHeadingtext: {
     color: 'white',
     fontSize: 24,
     paddingBottom: 7,
   },
-  // containerSubHeadingtext: {
-  //   color: '#b6b6b6ff',
-  //   fontSize: 20,
-  //   paddingBottom: 7,
-  // },
-  // text: {
-  //   color: 'white',
-  //   fontSize: 24,
-  // },
-  // routineTextHeading: {
-  //   color: 'white',
-  //   fontSize: 24,
-  // },
-  // routineText: {
-  //   color: '#b6b6b6ff',
-  //   fontSize: 18,
-  // },
 
-  topSectionContainer: {
-    borderWidth: 1,
-    borderColor: 'yellow',
-    paddingBottom: 10,
+  addExercisesButton: {
+    width: '100%',
+    backgroundColor: '#0fb800ff',
+    padding: 8,
+    borderRadius: 10,
   },
-  // days: {
-  //   // flex: 1,
-  // },
-  // imagesContainer: {
-  //   height: 250,
-  //   borderWidth: 1,
-  //   borderColor: 'red'
-  // },
-  // imageSvg: {
-  //   alignSelf: 'center',
-  // },
-  // image: {
-  //   position: 'absolute',
-  //   alignSelf: 'center',
-  //   resizeMode: 'contain',
-  // },
-
-  // bottomSectionContainer: {
-  //   flex: 1,
-  //   flexDirection: 'column',
-  //   borderWidth: 1,
-  //   borderColor: 'green'
-  // },
-  // routineContainer: {
-  //   flexDirection: 'column',
-  //   borderRadius: 12,
-  //   padding: 18,
-  //   backgroundColor: '#5c5b5bff',
-  //   marginBottom: 10,
-  // },
-  // routineHeadingContainer: {
-  //   // flex: 1,
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   alignItems: 'flex-end',
-  // }
+  addExercisesButtonText: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#ffffffff'
+  },
 });

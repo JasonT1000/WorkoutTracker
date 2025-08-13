@@ -278,8 +278,6 @@ const styles = StyleSheet.create({
 
 
   addExercisesButton: {
-    // position: 'absolute',
-    // bottom: 0,
     width: '100%',
     backgroundColor: '#0fb800ff',
     padding: 8,
