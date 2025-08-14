@@ -1,38 +1,56 @@
 import OptionsHeader from '@/components/OptionsHeader';
 import RoutineExercise from '@/components/Routines/RoutineExercise';
-import { ExerciseWithBodyAreas } from '@/functions/helperTypes';
+import { Exercise, ExerciseWithBodyAreas, NewRoutineExercise, ROUTES } from '@/functions/helperTypes';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { DispatchContext, StateContext } from '../state/routine/routineExerciseContext';
 
 export default function Routine() {
-  const { selectedExercises } = useLocalSearchParams()
+  const { existingExercisesWithBodyAreas, newExercises } = useLocalSearchParams()
+  const state = useContext(StateContext)
+  const dispatch = useContext(DispatchContext)
   const [title, onChangeTitle] = useState('')
-  const [routineExercises, setRoutineExercises] = useState<ExerciseWithBodyAreas[]>([])
+  const [exercisesWithBodyAreas, setExercisesWithBodyAreas] = useState<ExerciseWithBodyAreas[]>([])
 
   useEffect(() => {
-    if (selectedExercises) {
-      console.log("------------- selectedExercises passed to the routine page")
-      console.log(selectedExercises)
-      const parsedExercises = typeof selectedExercises === 'string'
-        ? JSON.parse(selectedExercises) as ExerciseWithBodyAreas[]
-        : []
+    if (newExercises) {
+      const parsedExercises = typeof newExercises === 'string'
+        ? JSON.parse(newExercises) as Exercise[]
+        : [];
 
-      console.log("------------- parsedExercises passed to the routine page")
-      console.log(parsedExercises)
-      setRoutineExercises(parsedExercises)
+      let exerciseStartingIndex = state.routineExercises.length
+
+      const formattedRoutineExercises: NewRoutineExercise[] = parsedExercises.map((exercise, index) => {
+        const newRoutineExercise = {
+          positionIndex: exerciseStartingIndex,
+          routineId: -1,
+          exerciseId: exercise.id,
+          restTimer: 0,
+          notes: "",
+          routineExerciseSets: [],
+          exerciseInfo: {
+            name: exercise.name,
+            imageUrl: exercise.imageUrl,
+            exerciseTypeId: exercise.exerciseTypeId
+          }
+        }
+        exerciseStartingIndex++
+
+        return newRoutineExercise
+      })
+
+      dispatch({ type: 'ADD_NEWROUTINEEXERCISE', payload: formattedRoutineExercises })
     }
 
-  }, [selectedExercises])
+  }, [newExercises])
 
   return (
     <SafeAreaProvider>
-
-
       <SafeAreaView style={styles.main}>
 
-        <OptionsHeader title='Create Routine' />
+        <OptionsHeader title='Create Routine' routeString={ROUTES.HOME} />
 
         <View style={styles.body}>
 
@@ -46,18 +64,18 @@ export default function Routine() {
             />
           </View>
 
-          <View style={{ flex: 1, borderWidth: 1, borderColor: 'yellow' }}>
+          <View style={{ flex: 1 }}>
 
             <View style={{ flexShrink: 1 }}>
               <FlatList
-                data={routineExercises}
-                keyExtractor={(item) => item.id.toString()}
+                data={state.routineExercises}
+                keyExtractor={(item) => item.positionIndex.toString()}
                 renderItem={({ item }) => <RoutineExercise routineExercise={item} />}
               />
             </View>
 
             <TouchableNativeFeedback
-              onPress={() => router.navigate({ pathname: '/exercises' })}
+              onPress={() => router.navigate({ pathname: '/exercises', params: { existingExercisesWithBodyAreas: JSON.stringify(exercisesWithBodyAreas) } })}
               background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
               <View style={styles.addExercisesButton}>
                 <Text style={styles.addExercisesButtonText}>Add exercises</Text>
@@ -89,11 +107,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#585858ff',
   },
 
-  addExerciseButtonContainer: {
-    // flex: 1,
-    // flexGrow: 3,
-    // flexShrink: 1
-  },
   addExercisesButton: {
     width: '100%',
     backgroundColor: '#0fb800ff',

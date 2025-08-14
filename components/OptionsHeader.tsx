@@ -1,16 +1,30 @@
-import { router } from 'expo-router'
+import { RelativePathString, router } from 'expo-router'
 import React from 'react'
 import { Alert, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native'
 
 type OptionsHeaderProps = {
-    title: string
+    title: string,
+    routeString: string
 }
 
-export default function OptionsHeader({ title }: OptionsHeaderProps) {
+export default function OptionsHeader({ title, routeString }: OptionsHeaderProps) {
+
+    // type NavigateOptions = {
+    //     replace?: boolean;
+    // };
+
+    // const navigateTo = (path: string, options?: NavigateOptions) => {
+    //     if (options?.replace) {
+    //         router.replace(path);
+    //     } else {
+    //         router.push(path);
+    //     }
+    // };
+
     return (
         <View style={styles.optionsHeader}>
             <TouchableNativeFeedback
-                onPress={() => { router.dismiss() }}
+                onPress={() => { router.replace(routeString as RelativePathString) }}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View style={styles.cancelButton}>
                     <Text style={styles.cancelButtonText}>Cancel</Text>

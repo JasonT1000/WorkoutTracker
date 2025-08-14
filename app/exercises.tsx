@@ -1,33 +1,47 @@
 import ExerciseList from '@/components/ExerciseList';
 import OptionsHeader from '@/components/OptionsHeader';
-import { ExerciseWithBodyAreas } from '@/functions/helperTypes';
+import { ExerciseWithBodyAreas, ROUTES } from '@/functions/helperTypes';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Exercises() {
+    const { existingExercisesWithBodyAreas } = useLocalSearchParams()
     const [exercises, setExercises] = useState<ExerciseWithBodyAreas[]>([])
 
     const addExercise = (exerciseInfo: ExerciseWithBodyAreas) => {
-        console.log("exercise clicked on")
-        console.log(exerciseInfo)
+        console.log("adding exercise")
         console.log([...exercises, exerciseInfo])
         setExercises([...exercises, exerciseInfo])
     }
 
+    const removeExercise = (exerciseId: number) => {
+        console.log("removing exercise")
+        setExercises(exercises.filter((exercise) => exercise.id !== exerciseId))
+    }
+
     const returnExercises = () => {
-        router.navigate({
+        const parsedExercises = exercises.map(exercise => {
+            return {
+                id: exercise.id,
+                name: exercise.name,
+                imageUrl: exercise.imageUrl,
+                exerciseTypeId: exercise.exerciseTypeId
+            }
+        })
+
+        router.replace({
             pathname: '/routine',
-            params: { selectedExercises: JSON.stringify(exercises) }
+            params: { existingExercisesWithBodyAreas, newExercises: JSON.stringify(parsedExercises) }
         })
     }
 
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.main}>
-                <OptionsHeader title="Exercises" />
+                <OptionsHeader title="Exercises" routeString={ROUTES.ROUTINE} />
 
                 <View style={styles.body}>
                     <View style={styles.searchContainer}>
@@ -43,7 +57,7 @@ export default function Exercises() {
                         <Text style={styles.containerHeadingtext}>Search buttons</Text>
                     </View>
 
-                    <ExerciseList addExercise={addExercise} />
+                    <ExerciseList addExercise={addExercise} removeExercise={removeExercise} />
 
                     <TouchableNativeFeedback
                         onPress={() => returnExercises()}
@@ -52,12 +66,6 @@ export default function Exercises() {
                             <Text style={styles.addExercisesButtonText}>Add exercises</Text>
                         </View>
                     </TouchableNativeFeedback>
-
-                    {/* <Button
-                        title="Add # exercise"
-                        color={'#0fb800ff'}
-                        onPress={() => returnExercises()}
-                    /> */}
                 </View>
             </SafeAreaView>
         </SafeAreaProvider>

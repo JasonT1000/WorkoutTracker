@@ -6,16 +6,19 @@ import { Alert, Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'r
 
 type ExerciseListItemProps = {
     exerciseInfo: ExerciseWithBodyAreas,
-    addExercise: (exerciseInfo: ExerciseWithBodyAreas) => void
+    addExercise: (exerciseInfo: ExerciseWithBodyAreas) => void,
+    removeExercise: (exerciseId: number) => void
 }
 
-export default function ExerciseListItem({ exerciseInfo, addExercise }: ExerciseListItemProps) {
+export default function ExerciseListItem({ exerciseInfo, addExercise, removeExercise }: ExerciseListItemProps) {
 
     const [isSelected, setIsSelected] = useState(false)
 
     const onExerciseButtonPressed = () => {
         setIsSelected(!isSelected)
-        addExercise(exerciseInfo)
+
+        if (isSelected) { removeExercise(exerciseInfo.id) }
+        else { addExercise(exerciseInfo) }
     }
 
     /**

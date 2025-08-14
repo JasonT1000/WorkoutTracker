@@ -1,31 +1,35 @@
 import { toTitleCase } from '@/functions/helperFunctions';
-import { ExerciseWithBodyAreas } from '@/functions/helperTypes';
+import { NewRoutineExercise, NewRoutineExerciseSet } from '@/functions/helperTypes';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
-import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 import RoutineExerciseSet from './RoutineExerciseSet';
 import RoutineExerciseSetHeader from './RoutineExerciseSetHeader';
 
 type RoutineExerciseProps = {
-    routineExercise: ExerciseWithBodyAreas
+    routineExercise: NewRoutineExercise
 }
-
-type ExerciseSet = {
-    reps: number | null,
-    weight: Float | null,
-    distance: Float | null,
-    time: number | null
-}
-
 
 export default function RoutineExercise({ routineExercise }: RoutineExerciseProps) {
-    const [exerciseSets, setExerciseSets] = useState<ExerciseSet[]>([{ reps: null, weight: null, distance: null, time: null }])
+    const [exerciseSets, setExerciseSets] = useState<NewRoutineExerciseSet[]>([{
+        routineExerciseId: routineExercise.exerciseId,
+        reps: null,
+        weight: null,
+        distance: null,
+        time: null
+    }])
 
     const addSet = () => {
         console.log("adding set")
-        setExerciseSets([...exerciseSets, { reps: null, weight: null, distance: null, time: null }])
+        setExerciseSets([...exerciseSets, {
+            routineExerciseId: routineExercise.exerciseId,
+            reps: null,
+            weight: null,
+            distance: null,
+            time: null
+        }])
+
     }
 
     const removeSet = () => {
@@ -36,7 +40,7 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
         <View style={styles.routineExerciseContainer}>
             <View style={styles.routineExerciseTitleContainer}>
                 <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
-                <Text style={styles.routineExerciseTitle}>{toTitleCase(routineExercise.name)}</Text>
+                <Text style={styles.routineExerciseTitle}>{toTitleCase(routineExercise.exerciseInfo.name)}</Text>
 
                 <TouchableNativeFeedback
                     onPress={() => { Alert.alert('Edit exercise dots pressed') }}
@@ -63,11 +67,15 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
 
             <View style={styles.routineExerciseSetContainer}>
 
-                <RoutineExerciseSetHeader exerciseTypeId={routineExercise.exerciseTypeId} />
+                <RoutineExerciseSetHeader exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId} />
 
                 {
                     [...Array(exerciseSets.length)].map((_, index) => (
-                        <RoutineExerciseSet key={index} exerciseTypeId={routineExercise.exerciseTypeId} />
+                        <RoutineExerciseSet
+                            key={routineExercise.positionIndex.toString() + 're' + index.toString()}
+                            setIndex={index}
+                            positionIndex={routineExercise.positionIndex}
+                            exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId} />
                     ))
                 }
 
@@ -84,73 +92,10 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
 }
 
 const styles = StyleSheet.create({
-    // main: {
-    //     flexDirection: 'column',
-    //     flex: 1,
-    //     // margin: 15,
-    // },
-    // body: {
-    //     // flex: 1,
-    //     margin: 15,
-    // },
-    // routineExercisesContainer: {
-    //     color: 'white',
-    //     fontSize: 24,
-    //     alignContent: 'center',
-    //     verticalAlign: 'middle',
-    //     textAlign: 'center'
-    // },
-    // optionsHeader: {
-    //     flexDirection: 'row',
-    //     justifyContent: 'space-between',
-    //     backgroundColor: '#353535ff',
-    //     alignItems: 'center',
-    //     paddingHorizontal: 15,
-    //     paddingVertical: 8,
-    // },
-
-    // saveButton: {
-    //     backgroundColor: '#afafafff',
-    //     paddingVertical: 7,
-    //     paddingHorizontal: 13,
-    //     borderRadius: 10,
-    // },
-    // cancelButton: {
-    //     paddingVertical: 7,
-    //     paddingRight: 13,
-    //     borderRadius: 10,
-    // },
-    // optionsText: {
-    //     fontSize: 18,
-    //     color: '#ffffffff',
-    // },
-    // cancelButtonText: {
-    //     fontSize: 18,
-    //     color: '#006ec9ff',
-    // },
-    // routineTitleText: {
-    //     color: '#858585ff',
-    //     fontSize: 24,
-    //     paddingBottom: 15,
-    //     marginBottom: 35,
-    //     borderBottomWidth: 1,
-    //     borderBottomColor: '#585858ff',
-    // },
-
-    // topSectionContainer: {
-    //     borderWidth: 1,
-    //     borderColor: 'yellow',
-    //     paddingBottom: 10,
-    // },
-
     routineExerciseContainer: {
-        // flex: 1,
         flexDirection: 'column',
         gap: 5,
         marginBottom: 15,
-        borderWidth: 1,
-        borderColor: '#f50000ff',
-        // paddingVertical: 10,
     },
     routineExerciseTitleContainer: {
         flexDirection: 'row',
@@ -159,8 +104,6 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         marginRight: 10,
-        // borderWidth: 1,
-        // borderColor: '#001affff',
     },
     routineExerciseTitle: {
         color: '#0160adff',
@@ -172,8 +115,6 @@ const styles = StyleSheet.create({
         color: '#d6d6d6ff',
         padding: 10,
         alignSelf: 'center',
-        // borderWidth: 1,
-        // borderColor: '#001affff',
     },
     routineExerciseNotesText: {
         color: '#858585ff',
@@ -195,33 +136,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         gap: 5,
         paddingBottom: 10,
-        // borderBottomColor: '#353535ff',
-        // borderBottomWidth: 1,
     },
-    // routineExerciseSetTitleContainer: {
-    //     flexDirection: 'row',
-    //     justifyContent: 'space-evenly',
-    // },
-    // routineExerciseSetTitleText: {
-    //     fontSize: 18,
-    //     color: '#858585ff',
-    //     width: 100,
-    //     textAlign: 'center',
-    // },
-    // routineExerciseSetRowContainer: {
-    //     flexDirection: 'row',
-    //     justifyContent: 'space-evenly',
-    // },
-    // routineExerciseSetDataContainer: {
-    //     flexDirection: 'row',
-    // },
-    // routineExerciseSetDataText: {
-    //     fontSize: 18,
-    //     color: '#ffffffff',
-    //     width: 100,
-    //     textAlign: 'center',
-    //     verticalAlign: 'middle',
-    // },
     addExerciseSetButton: {
         width: '100%',
         backgroundColor: '#353535ff',
@@ -229,13 +144,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
 
-
-    // addExercisesButton: {
-    //     width: '100%',
-    //     backgroundColor: '#0fb800ff',
-    //     padding: 8,
-    //     borderRadius: 10,
-    // },
     addExerciseSetButtonText: {
         fontSize: 18,
         textAlign: 'center',

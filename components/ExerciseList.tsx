@@ -8,10 +8,11 @@ import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-nativ
 import ExerciseListItem from './ExerciseListItem';
 
 type ExerciseListProps = {
-    addExercise: (exerciseInfo: ExerciseWithBodyAreas) => void
+    addExercise: (exerciseInfo: ExerciseWithBodyAreas) => void,
+    removeExercise: (exerciseId: number) => void
 }
 
-export default function ExerciseList({ addExercise }: ExerciseListProps) {
+export default function ExerciseList({ addExercise, removeExercise }: ExerciseListProps) {
     const db = useSQLiteContext();
     const drizzleDb = drizzle(db, { schema });
 
@@ -59,15 +60,9 @@ export default function ExerciseList({ addExercise }: ExerciseListProps) {
             <FlatList
                 data={exercisesWithBodyAreas}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <ExerciseListItem exerciseInfo={item} addExercise={addExercise} />}
+                renderItem={({ item }) => <ExerciseListItem exerciseInfo={item} addExercise={addExercise} removeExercise={removeExercise} />}
                 automaticallyAdjustContentInsets
             />
-
-            {/* <Button
-                title="Add exercise"
-                color={'#0fb800ff'}
-                onPress={() => { router.navigate({ pathname: '/routine' }) }}
-            /> */}
         </View>
     )
 }

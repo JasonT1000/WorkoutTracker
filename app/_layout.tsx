@@ -9,6 +9,7 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { openDatabaseSync, SQLiteProvider } from 'expo-sqlite';
 import { Suspense, useEffect } from 'react';
+import { RoutineExerciseProvider } from "../state/routine/routineExerciseContext";
 
 export const DATABASE_NAME = 'db';
 
@@ -46,11 +47,13 @@ export default function RootLayout() {
     <Suspense fallback={<ActivityIndicator size="large" />}>
       <SQLiteProvider databaseName={DATABASE_NAME}>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="routine" options={{ headerShown: false }} />
-            <Stack.Screen name="exercises" options={{ headerShown: false }} />
-          </Stack>
+          <RoutineExerciseProvider>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="routine" options={{ headerShown: false }} />
+              <Stack.Screen name="exercises" options={{ headerShown: false }} />
+            </Stack>
+          </RoutineExerciseProvider>
         </ThemeProvider>
       </SQLiteProvider>
     </Suspense>
