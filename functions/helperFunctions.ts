@@ -1,3 +1,5 @@
+import { EXERCISESETTYPE, ExerciseSetTypes } from "./helperTypes";
+
 /**
  * Converts a UTC datetime string to a formatted New Zealand (NZ) local datetime string.
  *
@@ -96,4 +98,17 @@ export const createTitleCaseString = <T>(
     return items
         .map(item => toTitleCase(getValue(item)))
         .join(', ');
+};
+
+
+/**
+ * Retrieves the numeric ID corresponding to a given exercise set type label.
+ * Object.entries() gives you an array of [key, value] pairs.
+ *
+ * @param label - The label of the exercise set type to look up.
+ * @returns The numeric ID of the exercise set type if found, otherwise `undefined`.
+ */
+export const getExerciseSetTypeId = (label: EXERCISESETTYPE): number => {
+    const entry = Object.entries(ExerciseSetTypes).find(([_, value]) => value.type === label);
+    return entry ? parseInt(entry[0]) : 1;
 };

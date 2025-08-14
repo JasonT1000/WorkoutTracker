@@ -1,6 +1,6 @@
 import { EXERCISETYPE, ExerciseTypes } from '@/functions/helperTypes'
 import React from 'react'
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
 
 type RoutineExerciseSetProps = {
     setIndex: number
@@ -21,13 +21,15 @@ export default function RoutineExerciseSet({ setIndex, positionIndex, exerciseTy
 
     return (
         <View style={styles.routineExerciseSetRowContainer}>
-            {
-                (ExerciseTypes[exerciseTypeId] === EXERCISETYPE.BODYWEIGHT ||
-                    ExerciseTypes[exerciseTypeId] === EXERCISETYPE.WEIGHT) &&
-                (
+
+            <TouchableNativeFeedback
+                onPress={() => Alert.alert('edit set type')}
+                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                <View>
                     <Text style={styles.routineExerciseSetDataText}>{setIndex + 1}</Text>
-                )
-            }
+                </View>
+            </TouchableNativeFeedback>
+
             {
                 Array.from({ length: textInputCount }).map((_, index) => (
                     <TextInput

@@ -50,10 +50,18 @@ export const cardioProgram = sqliteTable("cardio_program", {
     name: text().notNull().unique(),
 });
 
+export const exerciseSetType = sqliteTable("exercise_set_type", {
+    id: int().primaryKey({ autoIncrement: true }),
+    type: text().notNull().unique(),
+})
+
 export const routineExerciseSet = sqliteTable("routine_exercise_set", {
     id: int().primaryKey({ autoIncrement: true }),
     routineExerciseId: int('routine_exercise_id')
         .references(() => routineExercise.id, { onDelete: 'cascade' })
+        .notNull(),
+    exerciseSetTypeId: int('exercise_set_type_id')
+        .references(() => exerciseSetType.id)
         .notNull(),
     reps: int().default(0).notNull(),
     weight: real(),
@@ -65,6 +73,9 @@ export const workoutExerciseSet = sqliteTable("workout_exercise_set", {
     id: int().primaryKey({ autoIncrement: true }),
     workoutExerciseId: int('workout_exercise_id')
         .references(() => workoutExercise.id, { onDelete: 'cascade' })
+        .notNull(),
+    exerciseSetTypeId: int('exercise_set_type_id')
+        .references(() => exerciseSetType.id)
         .notNull(),
     reps: int().default(0).notNull(),
     weight: real(),
@@ -209,6 +220,10 @@ export const routineExerciseSetRelations = relations(routineExerciseSet, ({ one 
     routineExercise: one(routineExercise, {
         fields: [routineExerciseSet.routineExerciseId],
         references: [routineExercise.id],
+    }),
+    exerciseSetType: one(exerciseSetType, {
+        fields: [routineExerciseSet.exerciseSetTypeId],
+        references: [exerciseSetType.id],
     })
 }));
 
@@ -236,8 +251,17 @@ export const workoutExerciseSetRelations = relations(workoutExerciseSet, ({ one 
     cardioProgram: one(cardioProgram, {
         fields: [workoutExerciseSet.cardioProgramId],
         references: [cardioProgram.id],
+    }),
+    exerciseSetType: one(exerciseSetType, {
+        fields: [workoutExerciseSet.exerciseSetTypeId],
+        references: [exerciseSetType.id],
     })
 }));
+
+export const exerciseSetTypeRelations = relations(exerciseSetType, ({ many }) => ({
+    routineExerciseSet: many(routineExerciseSet),
+    workoutExerciseSet: many(workoutExerciseSet)
+}))
 
 export const exerciseRelations = relations(exercise, ({ one, many }) => ({
     routineExercise: many(routineExercise),

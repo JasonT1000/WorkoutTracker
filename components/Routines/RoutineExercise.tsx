@@ -1,5 +1,5 @@
-import { toTitleCase } from '@/functions/helperFunctions';
-import { NewRoutineExercise, NewRoutineExerciseSet } from '@/functions/helperTypes';
+import { getExerciseSetTypeId, toTitleCase } from '@/functions/helperFunctions';
+import { EXERCISESETTYPE, NewRoutineExercise, NewRoutineExerciseSet } from '@/functions/helperTypes';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useState } from 'react';
@@ -14,6 +14,7 @@ type RoutineExerciseProps = {
 export default function RoutineExercise({ routineExercise }: RoutineExerciseProps) {
     const [exerciseSets, setExerciseSets] = useState<NewRoutineExerciseSet[]>([{
         routineExerciseId: routineExercise.exerciseId,
+        exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
         reps: null,
         weight: null,
         distance: null,
@@ -24,6 +25,7 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
         console.log("adding set")
         setExerciseSets([...exerciseSets, {
             routineExerciseId: routineExercise.exerciseId,
+            exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
             reps: null,
             weight: null,
             distance: null,
@@ -46,7 +48,7 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
                     onPress={() => { Alert.alert('Edit exercise dots pressed') }}
                     background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                     <View style={styles.exerciseEditButtonContainer}>
-                        <Entypo name="dots-three-horizontal" size={24} color="white" />
+                        <Entypo name="dots-three-vertical" size={24} color="white" />
                     </View>
                 </TouchableNativeFeedback>
             </View>
@@ -120,8 +122,8 @@ const styles = StyleSheet.create({
         color: '#858585ff',
         fontSize: 18,
         paddingBottom: 15,
-        borderWidth: 1,
-        borderColor: '#585858ff',
+        // borderWidth: 1,
+        // borderColor: '#585858ff',
     },
     routineExerciseTimerContainer: {
         flexDirection: 'row',

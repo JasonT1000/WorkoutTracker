@@ -9,11 +9,13 @@ type RoutineExerciseSetHeaderProps = {
 export default function RoutineExerciseSetHeader({ exerciseTypeId }: RoutineExerciseSetHeaderProps) {
     return (
         <View style={styles.routineExerciseSetHeaderContainer}>
+
+            <Text style={styles.routineExerciseSetTitleText}>SET</Text>
+
             {
                 ExerciseTypes[exerciseTypeId] === EXERCISETYPE.WEIGHT &&
                 (
                     <>
-                        <Text style={styles.routineExerciseSetTitleText}>SET</Text>
                         <Text style={styles.routineExerciseSetTitleText}>KG</Text>
                         <Text style={styles.routineExerciseSetTitleText}>REPS</Text>
                     </>
@@ -22,10 +24,7 @@ export default function RoutineExerciseSetHeader({ exerciseTypeId }: RoutineExer
             {
                 ExerciseTypes[exerciseTypeId] === EXERCISETYPE.BODYWEIGHT &&
                 (
-                    <>
-                        <Text style={styles.routineExerciseSetTitleText}>SET</Text>
-                        <Text style={styles.routineExerciseSetTitleText}>REPS</Text>
-                    </>
+                    <Text style={styles.routineExerciseSetTitleText}>REPS</Text>
                 )
             }
             {
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
     },
     routineExerciseSetTitleText: {
-        fontSize: 18,
+        fontSize: 16,
         color: '#858585ff',
         width: 100,
         textAlign: 'center',
