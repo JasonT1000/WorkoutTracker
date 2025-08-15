@@ -4,6 +4,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
+import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 import RoutineExerciseSet from './RoutineExerciseSet';
 import RoutineExerciseSetHeader from './RoutineExerciseSetHeader';
 
@@ -12,30 +13,49 @@ type RoutineExerciseProps = {
 }
 
 export default function RoutineExercise({ routineExercise }: RoutineExerciseProps) {
+
+
+    const [tempIndex, setTempIndex] = useState<number>(0)
     const [exerciseSets, setExerciseSets] = useState<NewRoutineExerciseSet[]>([{
+        tempIndex: tempIndex,
         routineExerciseId: routineExercise.exerciseId,
         exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
-        reps: null,
-        weight: null,
-        distance: null,
-        time: null
+        reps: -1
     }])
 
-    const addSet = () => {
-        console.log("adding set")
-        setExerciseSets([...exerciseSets, {
-            routineExerciseId: routineExercise.exerciseId,
-            exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
-            reps: null,
-            weight: null,
-            distance: null,
-            time: null
-        }])
+    const getTempIndex = (): number => {
+        const newTempIndex = tempIndex + 1
+        setTempIndex(newTempIndex)
 
+        return newTempIndex
     }
 
-    const removeSet = () => {
+    const addSet = () => {
+        console.log("$$$$$$$$$$$$$$$$$$$")
+        console.log("adding set")
+        console.log("currently has " + exerciseSets.length + " items")
+        setExerciseSets([...exerciseSets, {
+            tempIndex: getTempIndex(),
+            routineExerciseId: routineExercise.exerciseId,
+            exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
+            reps: -1
+        }])
+    }
+
+    const updateSet = (setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float) => {
+        console.log("###################")
+        console.log("updating exercise set values")
+        console.log(`setIndex: ${setIndex}, field: ${field}, value: ${value}`)
+        setExerciseSets(exerciseSets.map((exerciseSet, index) =>
+            index === setIndex ? { ...exerciseSet, [field]: value } : exerciseSet
+        ))
+    }
+
+    const removeSet = (setIndex: number) => {
+        console.log("@@@@@@@@@@@@@@@@@@@")
         console.log("removing set")
+        console.log("setIndex = " + setIndex)
+        setExerciseSets((prev) => prev.filter((exerciseSet, index) => index !== setIndex))
     }
 
     return (
@@ -72,12 +92,15 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
                 <RoutineExerciseSetHeader exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId} />
 
                 {
-                    [...Array(exerciseSets.length)].map((_, index) => (
+                    exerciseSets.map((exerciseSet, index) => (
                         <RoutineExerciseSet
-                            key={routineExercise.positionIndex.toString() + 're' + index.toString()}
+                            key={exerciseSet.tempIndex.toString() + 're' + index.toString()}
                             setIndex={index}
+                            exerciseSet={exerciseSet}
                             positionIndex={routineExercise.positionIndex}
-                            exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId} />
+                            exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId}
+                            updateSet={updateSet}
+                            removeSet={removeSet} />
                     ))
                 }
 

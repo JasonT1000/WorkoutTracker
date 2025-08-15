@@ -43,12 +43,22 @@ export type NewRoutineExercise = {
 }
 
 export type NewRoutineExerciseSet = {
+    tempIndex: number,
     routineExerciseId: number,
     exerciseSetTypeId: number,
-    reps: number | null,
-    weight: Float | null,
-    distance: Float | null,
-    time: number | null
+    reps: number,
+    weight?: Float,
+    distance?: Float,
+    time?: number
+}
+
+export enum NewRoutineExerciseSetKey {
+    ROUTINEEXERCISEID = 'routineExerciseId',
+    EXERCISESETTYPEID = 'exerciseSetTypeId',
+    REPS = 'reps',
+    WEIGHT = 'weight',
+    DISTANCE = 'distance',
+    TIME = 'time'
 }
 
 // export const ExerciseSetTypes: Record<number, string> = {

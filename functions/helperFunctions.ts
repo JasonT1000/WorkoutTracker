@@ -112,3 +112,10 @@ export const getExerciseSetTypeId = (label: EXERCISESETTYPE): number => {
     const entry = Object.entries(ExerciseSetTypes).find(([_, value]) => value.type === label);
     return entry ? parseInt(entry[0]) : 1;
 };
+
+export const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
