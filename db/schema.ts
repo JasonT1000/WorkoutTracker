@@ -52,7 +52,7 @@ export const cardioProgram = sqliteTable("cardio_program", {
 
 export const exerciseSetType = sqliteTable("exercise_set_type", {
     id: int().primaryKey({ autoIncrement: true }),
-    type: text().notNull().unique(),
+    type: text().notNull().unique()
 })
 
 export const routineExerciseSet = sqliteTable("routine_exercise_set", {

@@ -12,8 +12,8 @@ export default function Exercises() {
     const [exercises, setExercises] = useState<ExerciseWithBodyAreas[]>([])
 
     const addExercise = (exerciseInfo: ExerciseWithBodyAreas) => {
-        console.log("adding exercise")
-        console.log([...exercises, exerciseInfo])
+        // console.log("adding exercise")
+        // console.log([...exercises, exerciseInfo])
         setExercises([...exercises, exerciseInfo])
     }
 

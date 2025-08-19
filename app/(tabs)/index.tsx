@@ -54,7 +54,6 @@ export default function Index() {
       </View>
 
       <RoutineList />
-
     </SafeAreaView>
   );
 }

@@ -30,6 +30,12 @@ CREATE TABLE `exercise_bodyarea` (
 	CONSTRAINT "muscleIntensity_check1" CHECK("exercise_bodyarea"."muscle_intensity" > 0 AND "exercise_bodyarea"."muscle_intensity" < 6)
 );
 --> statement-breakpoint
+CREATE TABLE `exercise_set_type` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`type` text NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `exercise_set_type_type_unique` ON `exercise_set_type` (`type`);--> statement-breakpoint
 CREATE TABLE `exercise_type` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`type` text NOT NULL
@@ -74,11 +80,13 @@ CREATE TABLE `routine_exercise` (
 CREATE TABLE `routine_exercise_set` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`routine_exercise_id` integer NOT NULL,
+	`exercise_set_type_id` integer NOT NULL,
 	`reps` integer DEFAULT 0 NOT NULL,
 	`weight` real,
 	`distance` real,
 	`time` integer,
-	FOREIGN KEY (`routine_exercise_id`) REFERENCES `routine_exercise`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`routine_exercise_id`) REFERENCES `routine_exercise`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`exercise_set_type_id`) REFERENCES `exercise_set_type`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `workout` (
@@ -104,6 +112,7 @@ CREATE TABLE `workout_exercise` (
 CREATE TABLE `workout_exercise_set` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`workout_exercise_id` integer NOT NULL,
+	`exercise_set_type_id` integer NOT NULL,
 	`reps` integer DEFAULT 0 NOT NULL,
 	`weight` real,
 	`distance` real,
@@ -112,8 +121,8 @@ CREATE TABLE `workout_exercise_set` (
 	`max_heart_rate` integer,
 	`cardio_program_id` integer,
 	FOREIGN KEY (`workout_exercise_id`) REFERENCES `workout_exercise`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`exercise_set_type_id`) REFERENCES `exercise_set_type`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`cardio_program_id`) REFERENCES `cardio_program`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE VIEW `exerciseWithMainBodyArea` AS select "exercise"."id", "exercise"."name", "exercise"."image_url", "exercise"."exercise_type_id", "exercise_type"."type", "bodyarea"."name" from "exercise" inner join "exercise_type" on "exercise"."exercise_type_id" = "exercise_type"."id" left join "exercise_bodyarea" on "exercise"."id" = "exercise_bodyarea"."exercise_id" inner join "bodyarea" on "exercise_bodyarea"."bodyarea_id" = "bodyarea"."id" where "exercise_bodyarea"."ismajorbodyarea" = '1';--> statement-breakpoint
 CREATE VIEW `workout_exercise_set_summary` AS select "workout_exercise_set"."id", "workout_exercise"."id", "exercise"."name", "exercise_type"."type", "workout_exercise_set"."reps", "workout_exercise_set"."weight", "workout_exercise_set"."distance", "workout_exercise_set"."time", "workout_exercise_set"."average_heart_rate", "workout_exercise_set"."max_heart_rate", "cardio_program"."name" from "workout_exercise_set" inner join "workout_exercise" on "workout_exercise_set"."id" = "workout_exercise"."id" inner join "exercise" on "workout_exercise"."id" = "exercise"."id" inner join "exercise_type" on "exercise"."exercise_type_id" = "exercise_type"."id" left join "cardio_program" on "workout_exercise_set"."cardio_program_id" = "cardio_program"."id";

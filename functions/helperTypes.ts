@@ -105,8 +105,6 @@ export enum EXERCISETYPE {
     STRETCH = 'stretch'
 }
 
-// Object.freeze(exerciseTypes)
-
 export enum ROUTES {
     HOME = '/(tabs)',
     STATISTICS = '/(tabs)/statistics',

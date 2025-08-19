@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "dae42179-b22f-4a42-84a9-ec8f4e67d393",
+  "id": "458b3980-5267-43d8-80bf-587d0070fa9c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "bodyarea": {
@@ -207,6 +207,38 @@
           "value": "\"exercise_bodyarea\".\"muscle_intensity\" > 0 AND \"exercise_bodyarea\".\"muscle_intensity\" < 6"
         }
       }
+    },
+    "exercise_set_type": {
+      "name": "exercise_set_type",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "exercise_set_type_type_unique": {
+          "name": "exercise_set_type_type_unique",
+          "columns": [
+            "type"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "exercise_type": {
       "name": "exercise_type",
@@ -480,6 +512,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "exercise_set_type_id": {
+          "name": "exercise_set_type_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "reps": {
           "name": "reps",
           "type": "integer",
@@ -523,6 +562,19 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "routine_exercise_set_exercise_set_type_id_exercise_set_type_id_fk": {
+          "name": "routine_exercise_set_exercise_set_type_id_exercise_set_type_id_fk",
+          "tableFrom": "routine_exercise_set",
+          "tableTo": "exercise_set_type",
+          "columnsFrom": [
+            "exercise_set_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -686,6 +738,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "exercise_set_type_id": {
+          "name": "exercise_set_type_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "reps": {
           "name": "reps",
           "type": "integer",
@@ -752,6 +811,19 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
+        "workout_exercise_set_exercise_set_type_id_exercise_set_type_id_fk": {
+          "name": "workout_exercise_set_exercise_set_type_id_exercise_set_type_id_fk",
+          "tableFrom": "workout_exercise_set",
+          "tableTo": "exercise_set_type",
+          "columnsFrom": [
+            "exercise_set_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
         "workout_exercise_set_cardio_program_id_cardio_program_id_fk": {
           "name": "workout_exercise_set_cardio_program_id_cardio_program_id_fk",
           "tableFrom": "workout_exercise_set",
@@ -772,48 +844,6 @@
     }
   },
   "views": {
-    "exerciseWithMainBodyArea": {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "image_url": {
-          "name": "image_url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "exercise_type_id": {
-          "name": "exercise_type_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "name": "exerciseWithMainBodyArea",
-      "isExisting": false,
-      "definition": "select \"exercise\".\"id\", \"exercise\".\"name\", \"exercise\".\"image_url\", \"exercise\".\"exercise_type_id\", \"exercise_type\".\"type\", \"bodyarea\".\"name\" from \"exercise\" inner join \"exercise_type\" on \"exercise\".\"exercise_type_id\" = \"exercise_type\".\"id\" left join \"exercise_bodyarea\" on \"exercise\".\"id\" = \"exercise_bodyarea\".\"exercise_id\" inner join \"bodyarea\" on \"exercise_bodyarea\".\"bodyarea_id\" = \"bodyarea\".\"id\" where \"exercise_bodyarea\".\"ismajorbodyarea\" = '1'"
-    },
     "workout_exercise_set_summary": {
       "columns": {
         "id": {

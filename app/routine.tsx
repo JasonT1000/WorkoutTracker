@@ -1,9 +1,11 @@
 import OptionsHeader from '@/components/OptionsHeader';
 import RoutineExercise from '@/components/Routines/RoutineExercise';
+import SetTypeModal from '@/components/SetTypeModal';
 import { Exercise, ExerciseWithBodyAreas, NewRoutineExercise, ROUTES } from '@/functions/helperTypes';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DispatchContext, StateContext } from '../state/routine/routineExerciseContext';
 
@@ -13,9 +15,11 @@ export default function Routine() {
   const dispatch = useContext(DispatchContext)
   const [title, onChangeTitle] = useState('')
   const [exercisesWithBodyAreas, setExercisesWithBodyAreas] = useState<ExerciseWithBodyAreas[]>([])
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if (newExercises) {
+      console.log("useEffect running in routine.tsx")
       const parsedExercises = typeof newExercises === 'string'
         ? JSON.parse(newExercises) as Exercise[]
         : [];
@@ -46,45 +50,53 @@ export default function Routine() {
 
   }, [newExercises])
 
+  const toggleModal = () => {
+    setModalVisible(!modalVisible)
+  }
+
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.main}>
+      <GestureHandlerRootView>
+        <SafeAreaView style={styles.main}>
 
-        <OptionsHeader title='Create Routine' routeString={ROUTES.HOME} />
+          <SetTypeModal isModalVisible={modalVisible} toggleModal={toggleModal} />
 
-        <View style={styles.body}>
+          <OptionsHeader title='Create Routine' routeString={ROUTES.HOME} />
 
-          <View>
-            <TextInput
-              style={styles.routineTitleText}
-              onChangeText={onChangeTitle}
-              value={title}
-              placeholder='Routine title'
-              placeholderTextColor={'#858585ff'}
-            />
-          </View>
+          <View style={styles.body}>
 
-          <View style={{ flex: 1 }}>
-
-            <View style={{ flexShrink: 1 }}>
-              <FlatList
-                data={state.routineExercises}
-                keyExtractor={(item) => item.positionIndex.toString()}
-                renderItem={({ item }) => <RoutineExercise routineExercise={item} />}
+            <View>
+              <TextInput
+                style={styles.routineTitleText}
+                onChangeText={onChangeTitle}
+                value={title}
+                placeholder='Routine title'
+                placeholderTextColor={'#858585ff'}
               />
             </View>
 
-            <TouchableNativeFeedback
-              onPress={() => router.navigate({ pathname: '/exercises', params: { existingExercisesWithBodyAreas: JSON.stringify(exercisesWithBodyAreas) } })}
-              background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-              <View style={styles.addExercisesButton}>
-                <Text style={styles.addExercisesButtonText}>Add exercises</Text>
-              </View>
-            </TouchableNativeFeedback>
-          </View>
+            <View style={{ flex: 1 }}>
 
-        </View>
-      </SafeAreaView>
+              <View style={{ flexShrink: 1 }}>
+                <FlatList
+                  data={state.routineExercises}
+                  keyExtractor={(item) => item.positionIndex.toString()}
+                  renderItem={({ item }) => <RoutineExercise routineExercise={item} toggleModal={toggleModal} />}
+                />
+              </View>
+
+              <TouchableNativeFeedback
+                onPress={() => router.navigate({ pathname: '/exercises', params: { existingExercisesWithBodyAreas: JSON.stringify(exercisesWithBodyAreas) } })}
+                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                <View style={styles.addExercisesButton}>
+                  <Text style={styles.addExercisesButtonText}>Add exercises</Text>
+                </View>
+              </TouchableNativeFeedback>
+            </View>
+
+          </View>
+        </SafeAreaView>
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   )
 }

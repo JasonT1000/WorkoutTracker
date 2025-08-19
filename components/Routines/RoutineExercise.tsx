@@ -2,26 +2,24 @@ import { getExerciseSetTypeId, toTitleCase } from '@/functions/helperFunctions';
 import { EXERCISESETTYPE, NewRoutineExercise, NewRoutineExerciseSet } from '@/functions/helperTypes';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
+import { DispatchContext, StateContext } from '../../state/routine/routineExerciseContext';
 import RoutineExerciseSet from './RoutineExerciseSet';
 import RoutineExerciseSetHeader from './RoutineExerciseSetHeader';
 
 type RoutineExerciseProps = {
     routineExercise: NewRoutineExercise
+    toggleModal: () => void
 }
 
-export default function RoutineExercise({ routineExercise }: RoutineExerciseProps) {
+export default function RoutineExercise({ routineExercise, toggleModal }: RoutineExerciseProps) {
+    const state = useContext(StateContext)
+    const dispatch = useContext(DispatchContext)
 
+    const [tempIndex, setTempIndex] = useState<number>(-1)
 
-    const [tempIndex, setTempIndex] = useState<number>(0)
-    const [exerciseSets, setExerciseSets] = useState<NewRoutineExerciseSet[]>([{
-        tempIndex: tempIndex,
-        routineExerciseId: routineExercise.exerciseId,
-        exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
-        reps: -1
-    }])
 
     const getTempIndex = (): number => {
         const newTempIndex = tempIndex + 1
@@ -33,29 +31,40 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
     const addSet = () => {
         console.log("$$$$$$$$$$$$$$$$$$$")
         console.log("adding set")
-        console.log("currently has " + exerciseSets.length + " items")
-        setExerciseSets([...exerciseSets, {
-            tempIndex: getTempIndex(),
-            routineExerciseId: routineExercise.exerciseId,
-            exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
-            reps: -1
-        }])
+
+        dispatch({
+            type: 'ADD_NEWROUTINEEXERCISESET', payload: {
+                newRoutineExerciseIndex: routineExercise.positionIndex,
+                newExerciseSet: {
+                    tempIndex: getTempIndex(),
+                    routineExerciseId: routineExercise.exerciseId,
+                    exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
+                    reps: -1
+                }
+            }
+        })
     }
 
     const updateSet = (setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float) => {
         console.log("###################")
         console.log("updating exercise set values")
         console.log(`setIndex: ${setIndex}, field: ${field}, value: ${value}`)
-        setExerciseSets(exerciseSets.map((exerciseSet, index) =>
-            index === setIndex ? { ...exerciseSet, [field]: value } : exerciseSet
-        ))
+
+        dispatch({
+            type: 'UPDATE_NEWROUTINEEXERCISESET', payload: {
+                newRoutineExerciseIndex: routineExercise.positionIndex,
+                setIndex: setIndex,
+                field: field,
+                value: value
+            }
+        })
     }
 
     const removeSet = (setIndex: number) => {
         console.log("@@@@@@@@@@@@@@@@@@@")
         console.log("removing set")
         console.log("setIndex = " + setIndex)
-        setExerciseSets((prev) => prev.filter((exerciseSet, index) => index !== setIndex))
+        // setExerciseSets((prev) => prev.filter((exerciseSet, index) => index !== setIndex))
     }
 
     return (
@@ -82,7 +91,7 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
                 onPress={() => { Alert.alert('Edit exercise dots pressed') }}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View style={styles.routineExerciseTimerContainer}>
-                    <MaterialCommunityIcons name="timer-outline" size={24} color="white" />
+                    <MaterialCommunityIcons name="timer-outline" size={20} color="white" />
                     <Text style={styles.routineExerciseTimerText}>Rest Timer: OFF</Text>
                 </View>
             </TouchableNativeFeedback>
@@ -92,15 +101,16 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
                 <RoutineExerciseSetHeader exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId} />
 
                 {
-                    exerciseSets.map((exerciseSet, index) => (
+                    routineExercise.routineExerciseSets.map((exerciseSet, index) => (
                         <RoutineExerciseSet
                             key={exerciseSet.tempIndex.toString() + 're' + index.toString()}
                             setIndex={index}
                             exerciseSet={exerciseSet}
-                            positionIndex={routineExercise.positionIndex}
+                            routineExercisePositionIndex={routineExercise.positionIndex}
                             exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId}
                             updateSet={updateSet}
-                            removeSet={removeSet} />
+                            removeSet={removeSet}
+                            toggleModal={toggleModal} />
                     ))
                 }
 
@@ -142,19 +152,20 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     routineExerciseNotesText: {
-        color: '#858585ff',
+        color: '#e4e4e4ff',
         fontSize: 18,
-        paddingBottom: 15,
+        paddingBottom: 5,
         // borderWidth: 1,
         // borderColor: '#585858ff',
     },
     routineExerciseTimerContainer: {
         flexDirection: 'row',
+        gap: 5,
         paddingVertical: 10,
     },
     routineExerciseTimerText: {
         color: '#858585ff',
-        fontSize: 18,
+        fontSize: 16,
         verticalAlign: 'middle',
     },
     routineExerciseSetContainer: {
@@ -164,7 +175,7 @@ const styles = StyleSheet.create({
     },
     addExerciseSetButton: {
         width: '100%',
-        backgroundColor: '#353535ff',
+        backgroundColor: '#272727ff',
         padding: 8,
         borderRadius: 10,
     },
