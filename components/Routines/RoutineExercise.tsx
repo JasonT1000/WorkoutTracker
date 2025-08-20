@@ -20,7 +20,6 @@ export default function RoutineExercise({ routineExercise, toggleModal }: Routin
 
     const [tempIndex, setTempIndex] = useState<number>(-1)
 
-
     const getTempIndex = (): number => {
         const newTempIndex = tempIndex + 1
         setTempIndex(newTempIndex)

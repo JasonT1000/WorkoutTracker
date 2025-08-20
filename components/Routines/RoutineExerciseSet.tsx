@@ -1,8 +1,9 @@
-import { EXERCISETYPE, ExerciseTypes, NewRoutineExerciseSet, NewRoutineExerciseSetKey } from '@/functions/helperTypes'
+import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExerciseSet, NewRoutineExerciseSetKey } from '@/functions/helperTypes'
 import { router } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
 import { Float } from 'react-native/Libraries/Types/CodegenTypes'
+import { StateContext } from '../../state/routine/routineExerciseContext'
 
 type RoutineExerciseSetProps = {
     setIndex: number
@@ -45,11 +46,22 @@ export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExerc
 
     const [routineExerciseSetElements, setRoutineExerciseSetElements] = useState(inputCountMap[ExerciseTypes[exerciseTypeId]])
     const [tempValues, setTempValues] = useState<Record<number, string>>(initTempValues())
-
+    const state = useContext(StateContext)
 
 
     const onHandleChange = (index: number, text: string) => {
         setTempValues((prev) => ({ ...prev, [index]: text }))
+    }
+
+    const getSetType = () => {
+        const exerciseSetTypeInfo = ExerciseSetTypes[exerciseSet.exerciseSetTypeId]
+
+        switch (exerciseSetTypeInfo.type) {
+            case EXERCISESETTYPE.NORMAL:
+                return <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{setIndex + 1}</Text>
+            default:
+                return <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{exerciseSetTypeInfo.shortcode}</Text>
+        }
     }
 
     return (
@@ -60,11 +72,11 @@ export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExerc
                     pathname: '/testModal',
                     params: { routineExercisePositionIndex: routineExercisePositionIndex, setIndex: setIndex }
                 })}
-                // onPress={() => toggleModal()}
-                // onPress={() => removeSet(setIndex)}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View>
-                    <Text style={styles.routineExerciseSetDataText}>{setIndex + 1}</Text>
+                    {
+                        getSetType()
+                    }
                 </View>
             </TouchableNativeFeedback>
 
@@ -90,6 +102,7 @@ const styles = StyleSheet.create({
     routineExerciseSetRowContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
+        height: 42,
     },
 
     routineExerciseSetDataText: {
@@ -97,6 +110,23 @@ const styles = StyleSheet.create({
         color: '#ffffffff',
         width: 100,
         textAlign: 'center',
+        // verticalAlign: 'middle',
+        // alignContent: 'center',
+        // alignSelf: 'center',
+        // textAlignVertical: 'center',
+        // paddingVertical: 0,
+        marginVertical: 0,
+        borderWidth: 1,
+        borderColor: 'purple'
+    },
+
+    shortCodeText: {
+        flex: 1,
+        fontSize: 18,
+        width: 100,
+        textAlign: 'center',
         verticalAlign: 'middle',
+        borderWidth: 1,
+        borderColor: 'green'
     },
 });

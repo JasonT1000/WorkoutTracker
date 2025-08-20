@@ -70,19 +70,6 @@ export enum NewRoutineExerciseSetKey {
 //     6: 'failure',
 // }
 
-export const ExerciseSetTypes: Record<number, {
-    type: string;
-    shortcode: string;
-    colorcode: string;
-}> = {
-    1: { type: 'normal set', shortcode: '1', colorcode: '#ffffff' },
-    2: { type: 'warm up', shortcode: 'W', colorcode: '#f0ad4e' },
-    3: { type: 'left', shortcode: 'L', colorcode: '#5bc0de' },
-    4: { type: 'right', shortcode: 'R', colorcode: '#5cb85c' },
-    5: { type: 'partial reps', shortcode: 'P', colorcode: '#d44fd9ff' },
-    6: { type: 'failure', shortcode: 'F', colorcode: '#d9534f' },
-};
-
 export enum EXERCISESETTYPE {
     NORMAL = 'normal set',
     WARMUP = 'warm up',
@@ -91,6 +78,21 @@ export enum EXERCISESETTYPE {
     PARTIALREPS = 'partial reps',
     FAILURE = 'failure',
 }
+
+export const ExerciseSetTypes: Record<number, {
+    type: EXERCISESETTYPE;
+    shortcode: string;
+    colorcode: string;
+}> = {
+    1: { type: EXERCISESETTYPE.NORMAL, shortcode: '1', colorcode: '#ffffff' },
+    2: { type: EXERCISESETTYPE.WARMUP, shortcode: 'W', colorcode: '#f0ad4e' },
+    3: { type: EXERCISESETTYPE.LEFT, shortcode: 'L', colorcode: '#5bc0de' },
+    4: { type: EXERCISESETTYPE.RIGHT, shortcode: 'R', colorcode: '#5cb85c' },
+    5: { type: EXERCISESETTYPE.PARTIALREPS, shortcode: 'P', colorcode: '#d44fd9ff' },
+    6: { type: EXERCISESETTYPE.FAILURE, shortcode: 'F', colorcode: '#d9534f' },
+};
+
+
 
 export const ExerciseTypes: Record<number, string> = {
     1: 'bodyweight',

@@ -113,17 +113,16 @@ export const getExerciseSetTypeId = (label: EXERCISESETTYPE): number => {
     return entry ? parseInt(entry[0]) : 1;
 };
 
-export const getExerciseSetTypeInfo = (label: EXERCISESETTYPE): Record<number, {
-    type: string;
-    shortcode: string;
-    colorcode: string;
-}> => {
-    const entry = Object.entries(ExerciseSetTypes).find(([_, value]) => value.type === label);
-    console.log("entry")
-    console.log(entry)
-    return ExerciseSetTypes[0]
-    // return entry ?  : ExerciseSetTypes[0];
-};
+// export const getExerciseSetTypeInfo = (label: EXERCISESETTYPE): Record<number, {
+//     type: string;
+//     shortcode: string;
+//     colorcode: string;
+// }> => {
+//     const entry = Object.entries(ExerciseSetTypes).find(([_, value]) => value.type === label);
+//     console.log("entry")
+//     console.log(entry)
+//     return ExerciseSetTypes[0]
+// };
 
 export const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
