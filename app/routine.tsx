@@ -1,6 +1,5 @@
 import OptionsHeader from '@/components/OptionsHeader';
 import RoutineExercise from '@/components/Routines/RoutineExercise';
-import SetTypeModal from '@/components/SetTypeModal';
 import { Exercise, ExerciseWithBodyAreas, NewRoutineExercise, ROUTES } from '@/functions/helperTypes';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext, useEffect, useState } from 'react';
@@ -15,7 +14,6 @@ export default function Routine() {
   const dispatch = useContext(DispatchContext)
   const [title, onChangeTitle] = useState('')
   const [exercisesWithBodyAreas, setExercisesWithBodyAreas] = useState<ExerciseWithBodyAreas[]>([])
-  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if (newExercises) {
@@ -50,17 +48,11 @@ export default function Routine() {
 
   }, [newExercises])
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible)
-  }
 
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView>
         <SafeAreaView style={styles.main}>
-
-          <SetTypeModal isModalVisible={modalVisible} toggleModal={toggleModal} />
-
           <OptionsHeader title='Create Routine' routeString={ROUTES.HOME} />
 
           <View style={styles.body}>
@@ -81,7 +73,7 @@ export default function Routine() {
                 <FlatList
                   data={state.routineExercises}
                   keyExtractor={(item) => item.positionIndex.toString()}
-                  renderItem={({ item }) => <RoutineExercise routineExercise={item} toggleModal={toggleModal} />}
+                  renderItem={({ item }) => <RoutineExercise routineExercise={item} />}
                 />
               </View>
 

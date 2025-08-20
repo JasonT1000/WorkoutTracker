@@ -5,19 +5,16 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useContext, useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
-import { DispatchContext, StateContext } from '../../state/routine/routineExerciseContext';
+import { DispatchContext } from '../../state/routine/routineExerciseContext';
 import RoutineExerciseSet from './RoutineExerciseSet';
 import RoutineExerciseSetHeader from './RoutineExerciseSetHeader';
 
 type RoutineExerciseProps = {
     routineExercise: NewRoutineExercise
-    toggleModal: () => void
 }
 
-export default function RoutineExercise({ routineExercise, toggleModal }: RoutineExerciseProps) {
-    const state = useContext(StateContext)
+export default function RoutineExercise({ routineExercise }: RoutineExerciseProps) {
     const dispatch = useContext(DispatchContext)
-
     const [tempIndex, setTempIndex] = useState<number>(-1)
 
     const getTempIndex = (): number => {
@@ -28,9 +25,6 @@ export default function RoutineExercise({ routineExercise, toggleModal }: Routin
     }
 
     const addSet = () => {
-        console.log("$$$$$$$$$$$$$$$$$$$")
-        console.log("adding set")
-
         dispatch({
             type: 'ADD_NEWROUTINEEXERCISESET', payload: {
                 newRoutineExerciseIndex: routineExercise.positionIndex,
@@ -45,10 +39,6 @@ export default function RoutineExercise({ routineExercise, toggleModal }: Routin
     }
 
     const updateSet = (setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float) => {
-        console.log("###################")
-        console.log("updating exercise set values")
-        console.log(`setIndex: ${setIndex}, field: ${field}, value: ${value}`)
-
         dispatch({
             type: 'UPDATE_NEWROUTINEEXERCISESET', payload: {
                 newRoutineExerciseIndex: routineExercise.positionIndex,
@@ -108,8 +98,7 @@ export default function RoutineExercise({ routineExercise, toggleModal }: Routin
                             routineExercisePositionIndex={routineExercise.positionIndex}
                             exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId}
                             updateSet={updateSet}
-                            removeSet={removeSet}
-                            toggleModal={toggleModal} />
+                            removeSet={removeSet} />
                     ))
                 }
 

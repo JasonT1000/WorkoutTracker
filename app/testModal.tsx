@@ -1,5 +1,6 @@
 import { getExerciseSetTypeId, toTitleCase } from '@/functions/helperFunctions';
 import { EXERCISESETTYPE, ExerciseSetTypes, NewRoutineExerciseSetKey } from '@/functions/helperTypes';
+import Feather from '@expo/vector-icons/Feather';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext } from 'react';
 import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
@@ -39,7 +40,6 @@ export default function TestModal() {
                 }
             )
         }
-        // else { translateY.value = withTiming(0) }
     }).onTouchesUp(() =>
         isClosing.value === false ? translateY.value = withTiming(0) : null
     )
@@ -95,8 +95,8 @@ export default function TestModal() {
                                 onPress={() => router.dismiss()}
                                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}
                             >
-                                <View style={styles.setTypeRow}>
-                                    <Text style={[styles.shortCodeText, { color: '#ff0000ff' }]}>X</Text>
+                                <View style={[{ marginTop: 20 }, styles.setTypeRow]}>
+                                    <Feather name="trash-2" size={24} color='#ff0000ff' style={styles.shortCodeText} />
                                     <Text style={styles.text}>Remove Set</Text>
                                 </View>
                             </TouchableNativeFeedback>
@@ -111,11 +111,8 @@ export default function TestModal() {
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        // position: 'absolute',
-        // top: 0,
         width: '100%',
         backgroundColor: '#000000d5',
-        // zIndex: 999999,
     },
     container: {
         flex: 1,
@@ -145,17 +142,19 @@ const styles = StyleSheet.create({
 
     setTypeRow: {
         flexDirection: 'row',
-        columnGap: 20,
+        columnGap: 30,
         paddingVertical: 10,
         backgroundColor: '#272727ff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#363636ff',
+        borderWidth: 1,
+        borderColor: '#363636ff',
+        borderRadius: 15,
     },
     shortCodeText: {
         fontSize: 22,
         textAlign: 'center',
         width: 30,
         verticalAlign: 'middle',
+        paddingLeft: 10,
     },
     text: {
         color: 'white',

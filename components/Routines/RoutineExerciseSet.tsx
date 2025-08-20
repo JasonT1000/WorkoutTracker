@@ -1,9 +1,8 @@
 import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExerciseSet, NewRoutineExerciseSetKey } from '@/functions/helperTypes'
 import { router } from 'expo-router'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
 import { Float } from 'react-native/Libraries/Types/CodegenTypes'
-import { StateContext } from '../../state/routine/routineExerciseContext'
 
 type RoutineExerciseSetProps = {
     setIndex: number
@@ -12,10 +11,9 @@ type RoutineExerciseSetProps = {
     exerciseTypeId: number
     updateSet: (setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float) => void
     removeSet: (setIndex: number) => void
-    toggleModal: () => void
 }
 
-export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExercisePositionIndex, exerciseTypeId, updateSet, removeSet, toggleModal }: RoutineExerciseSetProps) {
+export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExercisePositionIndex, exerciseTypeId, updateSet, removeSet }: RoutineExerciseSetProps) {
 
     // How many TextInput components to make for each exercise type
     const inputCountMap: Record<string, {
@@ -44,10 +42,8 @@ export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExerc
         return updateTempValues
     }
 
-    const [routineExerciseSetElements, setRoutineExerciseSetElements] = useState(inputCountMap[ExerciseTypes[exerciseTypeId]])
+    const [routineExerciseSetElements] = useState(inputCountMap[ExerciseTypes[exerciseTypeId]])
     const [tempValues, setTempValues] = useState<Record<number, string>>(initTempValues())
-    const state = useContext(StateContext)
-
 
     const onHandleChange = (index: number, text: string) => {
         setTempValues((prev) => ({ ...prev, [index]: text }))
@@ -100,33 +96,30 @@ export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExerc
 
 const styles = StyleSheet.create({
     routineExerciseSetRowContainer: {
+        flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        height: 42,
-    },
-
-    routineExerciseSetDataText: {
-        fontSize: 18,
-        color: '#ffffffff',
-        width: 100,
-        textAlign: 'center',
-        // verticalAlign: 'middle',
-        // alignContent: 'center',
-        // alignSelf: 'center',
-        // textAlignVertical: 'center',
-        // paddingVertical: 0,
-        marginVertical: 0,
-        borderWidth: 1,
-        borderColor: 'purple'
+        gap: 5,
     },
 
     shortCodeText: {
-        flex: 1,
         fontSize: 18,
-        width: 100,
+        width: 60,
+        height: 40,
         textAlign: 'center',
         verticalAlign: 'middle',
-        borderWidth: 1,
-        borderColor: 'green'
+        // borderWidth: 1,
+        // borderColor: 'green'
+    },
+    routineExerciseSetDataText: {
+        width: 80,
+        height: 40,
+        fontSize: 18,
+        color: '#ffffffff',
+        textAlign: 'center',
+        verticalAlign: 'middle',
+        // borderWidth: 1,
+        // borderColor: 'purple',
+        padding: 0,
+        margin: 0,
     },
 });

@@ -57,21 +57,15 @@ const addExerciseSet = (state: State, newRoutineExerciseIndex: number, newExerci
 }
 
 const updateExerciseSet = (state: State, newRoutineExerciseIndex: number, setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float): NewRoutineExercise[] => {
-    console.log("*************** updateExerciseSet in Reducer ****************")
-    console.log("newRoutineExerciseIndex")
-    console.log(newRoutineExerciseIndex)
     const newRoutineExercises = state.routineExercises.map(routineExercise => {
         if (routineExercise.positionIndex === newRoutineExerciseIndex) {
-            console.log("found routine exercise with that position index")
             const newExerciseSets = routineExercise.routineExerciseSets.map(exerciseSet =>
                 exerciseSet.tempIndex === setIndex ? { ...exerciseSet, [field]: value } : exerciseSet
             );
             return { ...routineExercise, routineExerciseSets: newExerciseSets };
         }
-        console.log("Could NOT find routine exercise with that position index")
         return routineExercise;
     });
 
-    console.log("*************** updateExerciseSet in Reducer ****************")
     return newRoutineExercises;
 }
