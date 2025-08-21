@@ -1,4 +1,4 @@
-import { getExerciseSetTypeId, toTitleCase } from '@/functions/helperFunctions';
+import { formatTime, getExerciseSetTypeId, toTitleCase } from '@/functions/helperFunctions';
 import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExercise, NewRoutineExerciseSet } from '@/functions/helperTypes';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -66,34 +66,38 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
             case EXERCISESETTYPE.NORMAL:
                 return <>
                     <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{setIndex + 1}</Text>
-                    <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{setText}</Text>
+                    <Text style={[styles.setText, { color: exerciseSetTypeInfo.colorcode }]}>{setText}</Text>
                 </>
             default:
                 return <>
                     <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{exerciseSetTypeInfo.shortcode}</Text>
-                    <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{setText}</Text>
+                    <Text style={[styles.setText, { color: exerciseSetTypeInfo.colorcode }]}>{setText}</Text>
                 </>
         }
     }
 
     const getSetInfoText = (exerciseSet: NewRoutineExerciseSet): string => {
         let reps: string = '- reps';
-        let weight: string = '';
+        let time: string = '0min';
 
         if (exerciseSet.reps > 1) { reps = exerciseSet.reps + " reps" }
         else if (exerciseSet.reps === 0) { reps = exerciseSet.reps + "rep" }
 
-        if (exerciseSet.weight && exerciseSet.weight > 0) { weight = exerciseSet.weight + "kgs x" }
+        if (exerciseSet.time && exerciseSet.time > 0) { time = formatTime(exerciseSet.time) }
 
         switch (ExerciseTypes[routineExercise.exerciseInfo.exerciseTypeId]) {
             case EXERCISETYPE.BODYWEIGHT:
                 return reps
             case EXERCISETYPE.WEIGHT:
+                let weight: string = '';
+                if (exerciseSet.weight && exerciseSet.weight > 0) { weight = exerciseSet.weight + "kgs x" }
                 return weight + reps
             case EXERCISETYPE.CARDIO:
-                return ''
+                let distance: string = '';
+                if (exerciseSet.distance && exerciseSet.distance >= 0) { distance = exerciseSet.distance + "km x" }
+                return distance + time
             case EXERCISETYPE.STRETCH:
-                return ''
+                return time
 
             default:
                 return 'No set info to display'
@@ -101,12 +105,19 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
     }
 
 
-    if (isActive) {
+    if (isActive) { // Expanded View
         return (
             <View style={styles.routineExerciseContainer}>
                 <View style={styles.routineExerciseTitleContainer}>
                     <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
-                    <Text style={styles.routineExerciseTitle}>{toTitleCase(routineExercise.exerciseInfo.name)}</Text>
+                    <TouchableNativeFeedback
+                        onPress={() => { setIsActive(!isActive) }}
+                        background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}
+                    >
+                        <View style={styles.routineExerciseTitleTouchContainer}>
+                            <Text style={styles.routineExerciseTitle}>{toTitleCase(routineExercise.exerciseInfo.name)}</Text>
+                        </View>
+                    </TouchableNativeFeedback>
 
                     <TouchableNativeFeedback
                         onPress={() => { Alert.alert('Edit exercise dots pressed') }}
@@ -159,36 +170,39 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
             </View>
         )
     }
-    else {
+    else { // Collapsed View
         return (
-            <View style={styles.routineExerciseContainer}>
-                <View style={styles.routineExerciseTitleContainer}>
-                    <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
-                    <View style={{ flexDirection: 'column' }}>
-                        <Text style={styles.routineExerciseTitle}>{toTitleCase(routineExercise.exerciseInfo.name)}</Text>
-                        <View style={styles.routineExerciseSetContainer}>
-                            {
-                                routineExercise.routineExerciseSets.map((exerciseSet, index) => (
-                                    <View key={'re' + index.toString()} style={{ flexDirection: 'row' }}>
-                                        {
-                                            getSetTypeComponent(exerciseSet, index)
-                                        }
-                                    </View>
-                                ))
-                            }
+            <TouchableNativeFeedback
+                onPress={() => { setIsActive(!isActive) }}
+                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}
+            >
+                <View style={styles.routineExerciseContainer}>
+                    <View style={styles.routineExerciseTitleContainer}>
+                        <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
+                        <View style={{ flexDirection: 'column', flex: 1 }}>
+                            <Text style={styles.routineExerciseTitle}>{toTitleCase(routineExercise.exerciseInfo.name)}</Text>
+                            <View style={styles.routineExerciseSetInfoContainer}>
+                                {
+                                    routineExercise.routineExerciseSets.map((exerciseSet, index) => (
+                                        <View key={'re' + index.toString()} style={{ flexDirection: 'row' }}>
+                                            {
+                                                getSetTypeComponent(exerciseSet, index)
+                                            }
+                                        </View>
+                                    ))
+                                }
+                            </View>
                         </View>
+                        <TouchableNativeFeedback
+                            onPress={() => { Alert.alert('Edit exercise dots pressed') }}
+                            background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                            <View style={styles.exerciseEditButtonContainer}>
+                                <Entypo name="dots-three-vertical" size={24} color="white" />
+                            </View>
+                        </TouchableNativeFeedback>
                     </View>
-                    <TouchableNativeFeedback
-                        onPress={() => { Alert.alert('Edit exercise dots pressed') }}
-                        background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                        <View style={styles.exerciseEditButtonContainer}>
-                            <Entypo name="dots-three-vertical" size={24} color="white" />
-                        </View>
-                    </TouchableNativeFeedback>
                 </View>
-
-
-            </View>
+            </TouchableNativeFeedback>
         )
     }
 }
@@ -207,6 +221,9 @@ const styles = StyleSheet.create({
         height: 50,
         marginRight: 10,
     },
+    routineExerciseTitleTouchContainer: {
+        flex: 1,
+    },
     routineExerciseTitle: {
         color: '#0160adff',
         fontSize: 20,
@@ -216,7 +233,8 @@ const styles = StyleSheet.create({
     exerciseEditButtonContainer: {
         color: '#d6d6d6ff',
         padding: 10,
-        alignSelf: 'center',
+        // alignSelf: 'center',
+        alignSelf: 'flex-start',
     },
     routineExerciseNotesText: {
         color: '#e4e4e4ff',
@@ -240,6 +258,11 @@ const styles = StyleSheet.create({
         gap: 5,
         paddingBottom: 10,
     },
+    routineExerciseSetInfoContainer: {
+        flexDirection: 'column',
+        // gap: 5,
+        // paddingBottom: 10,
+    },
     addExerciseSetButton: {
         width: '100%',
         backgroundColor: '#272727ff',
@@ -249,12 +272,15 @@ const styles = StyleSheet.create({
 
     shortCodeText: {
         fontSize: 16,
-        width: 60,
-        height: 40,
+        width: 25,
+        // height: 40,
         // textAlign: 'center',
         // verticalAlign: 'middle',
         // borderWidth: 1,
         // borderColor: 'green'
+    },
+    setText: {
+        fontSize: 16,
     },
 
     addExerciseSetButtonText: {

@@ -113,20 +113,16 @@ export const getExerciseSetTypeId = (label: EXERCISESETTYPE): number => {
     return entry ? parseInt(entry[0]) : 1;
 };
 
-// export const getExerciseSetTypeInfo = (label: EXERCISESETTYPE): Record<number, {
-//     type: string;
-//     shortcode: string;
-//     colorcode: string;
-// }> => {
-//     const entry = Object.entries(ExerciseSetTypes).find(([_, value]) => value.type === label);
-//     console.log("entry")
-//     console.log(entry)
-//     return ExerciseSetTypes[0]
-// };
-
-export const formatTime = (seconds: number) => {
+export const formatTime = (seconds: number): string => {
+    const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
+
+    // if only minutes and is 0 return 0min
+    // if only seconds and is 0 return 0min
+    // if only seconds return 59s
+    // if hours return 1h
+    // if all return 1h 1min 1s
 
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }

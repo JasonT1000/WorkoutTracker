@@ -37,6 +37,11 @@ export default function Routine() {
             routineExerciseId: exercise.id,
             exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
             reps: -1
+          }, {
+            tempIndex: 0,
+            routineExerciseId: exercise.id,
+            exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
+            reps: -1
           }],
           exerciseInfo: {
             name: exercise.name,
