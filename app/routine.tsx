@@ -1,6 +1,7 @@
 import OptionsHeader from '@/components/OptionsHeader';
 import RoutineExercise from '@/components/Routines/RoutineExercise';
-import { Exercise, ExerciseWithBodyAreas, NewRoutineExercise, ROUTES } from '@/functions/helperTypes';
+import { getExerciseSetTypeId } from '@/functions/helperFunctions';
+import { Exercise, EXERCISESETTYPE, ExerciseWithBodyAreas, NewRoutineExercise, ROUTES } from '@/functions/helperTypes';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
@@ -31,7 +32,12 @@ export default function Routine() {
           exerciseId: exercise.id,
           restTimer: 0,
           notes: "",
-          routineExerciseSets: [],
+          routineExerciseSets: [{
+            tempIndex: 0,
+            routineExerciseId: exercise.id,
+            exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
+            reps: -1
+          }],
           exerciseInfo: {
             name: exercise.name,
             imageUrl: exercise.imageUrl,

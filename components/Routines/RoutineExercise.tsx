@@ -1,11 +1,11 @@
 import { getExerciseSetTypeId, toTitleCase } from '@/functions/helperFunctions';
-import { EXERCISESETTYPE, NewRoutineExercise, NewRoutineExerciseSet } from '@/functions/helperTypes';
+import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExercise, NewRoutineExerciseSet } from '@/functions/helperTypes';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useContext, useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
-import { DispatchContext } from '../../state/routine/routineExerciseContext';
+import { DispatchContext, StateContext } from '../../state/routine/routineExerciseContext';
 import RoutineExerciseSet from './RoutineExerciseSet';
 import RoutineExerciseSetHeader from './RoutineExerciseSetHeader';
 
@@ -14,22 +14,24 @@ type RoutineExerciseProps = {
 }
 
 export default function RoutineExercise({ routineExercise }: RoutineExerciseProps) {
+    const state = useContext(StateContext)
     const dispatch = useContext(DispatchContext)
-    const [tempIndex, setTempIndex] = useState<number>(-1)
+    const [isActive, setIsActive] = useState(false)
+    // const [tempIndex, setTempIndex] = useState<number>(routineExercise.routineExerciseSets.length - 1)
 
-    const getTempIndex = (): number => {
-        const newTempIndex = tempIndex + 1
-        setTempIndex(newTempIndex)
+    // const getTempIndex = (): number => {
+    //     const newTempIndex = tempIndex + 1
+    //     setTempIndex(newTempIndex)
 
-        return newTempIndex
-    }
+    //     return newTempIndex
+    // }
 
     const addSet = () => {
         dispatch({
             type: 'ADD_NEWROUTINEEXERCISESET', payload: {
                 newRoutineExerciseIndex: routineExercise.positionIndex,
                 newExerciseSet: {
-                    tempIndex: getTempIndex(),
+                    // tempIndex: getTempIndex(),
                     routineExerciseId: routineExercise.exerciseId,
                     exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
                     reps: -1
@@ -56,62 +58,139 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
         // setExerciseSets((prev) => prev.filter((exerciseSet, index) => index !== setIndex))
     }
 
-    return (
-        <View style={styles.routineExerciseContainer}>
-            <View style={styles.routineExerciseTitleContainer}>
-                <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
-                <Text style={styles.routineExerciseTitle}>{toTitleCase(routineExercise.exerciseInfo.name)}</Text>
+    const getSetTypeComponent = (exerciseSet: NewRoutineExerciseSet, setIndex: number) => {
+        const exerciseSetTypeInfo = ExerciseSetTypes[exerciseSet.exerciseSetTypeId]
+        let setText = getSetInfoText(exerciseSet)
 
+        switch (exerciseSetTypeInfo.type) {
+            case EXERCISESETTYPE.NORMAL:
+                return <>
+                    <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{setIndex + 1}</Text>
+                    <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{setText}</Text>
+                </>
+            default:
+                return <>
+                    <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{exerciseSetTypeInfo.shortcode}</Text>
+                    <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{setText}</Text>
+                </>
+        }
+    }
+
+    const getSetInfoText = (exerciseSet: NewRoutineExerciseSet): string => {
+        let reps: string = '- reps';
+        let weight: string = '';
+
+        if (exerciseSet.reps > 1) { reps = exerciseSet.reps + " reps" }
+        else if (exerciseSet.reps === 0) { reps = exerciseSet.reps + "rep" }
+
+        if (exerciseSet.weight && exerciseSet.weight > 0) { weight = exerciseSet.weight + "kgs x" }
+
+        switch (ExerciseTypes[routineExercise.exerciseInfo.exerciseTypeId]) {
+            case EXERCISETYPE.BODYWEIGHT:
+                return reps
+            case EXERCISETYPE.WEIGHT:
+                return weight + reps
+            case EXERCISETYPE.CARDIO:
+                return ''
+            case EXERCISETYPE.STRETCH:
+                return ''
+
+            default:
+                return 'No set info to display'
+        }
+    }
+
+
+    if (isActive) {
+        return (
+            <View style={styles.routineExerciseContainer}>
+                <View style={styles.routineExerciseTitleContainer}>
+                    <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
+                    <Text style={styles.routineExerciseTitle}>{toTitleCase(routineExercise.exerciseInfo.name)}</Text>
+
+                    <TouchableNativeFeedback
+                        onPress={() => { Alert.alert('Edit exercise dots pressed') }}
+                        background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                        <View style={styles.exerciseEditButtonContainer}>
+                            <Entypo name="dots-three-vertical" size={24} color="white" />
+                        </View>
+                    </TouchableNativeFeedback>
+                </View>
+
+                <TextInput
+                    style={styles.routineExerciseNotesText}
+                    placeholder='Add exercise notes here'
+                    placeholderTextColor={'#858585ff'}
+                />
                 <TouchableNativeFeedback
                     onPress={() => { Alert.alert('Edit exercise dots pressed') }}
                     background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                    <View style={styles.exerciseEditButtonContainer}>
-                        <Entypo name="dots-three-vertical" size={24} color="white" />
+                    <View style={styles.routineExerciseTimerContainer}>
+                        <MaterialCommunityIcons name="timer-outline" size={20} color="white" />
+                        <Text style={styles.routineExerciseTimerText}>Rest Timer: OFF</Text>
                     </View>
                 </TouchableNativeFeedback>
-            </View>
 
-            <TextInput
-                style={styles.routineExerciseNotesText}
-                placeholder='Add routine exercise notes here'
-                placeholderTextColor={'#858585ff'}
-            />
-            <TouchableNativeFeedback
-                onPress={() => { Alert.alert('Edit exercise dots pressed') }}
-                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                <View style={styles.routineExerciseTimerContainer}>
-                    <MaterialCommunityIcons name="timer-outline" size={20} color="white" />
-                    <Text style={styles.routineExerciseTimerText}>Rest Timer: OFF</Text>
+                <View style={styles.routineExerciseSetContainer}>
+
+                    <RoutineExerciseSetHeader exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId} />
+
+                    {
+                        routineExercise.routineExerciseSets.map((exerciseSet, index) => (
+                            <RoutineExerciseSet
+                                key={'re' + index.toString()}
+                                setIndex={index}
+                                exerciseSet={exerciseSet}
+                                routineExercisePositionIndex={routineExercise.positionIndex}
+                                exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId}
+                                updateSet={updateSet}
+                                removeSet={removeSet} />
+                        ))
+                    }
+
+                    <TouchableNativeFeedback
+                        onPress={() => addSet()}
+                        background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                        <View style={styles.addExerciseSetButton}>
+                            <Text style={styles.addExerciseSetButtonText}>Add Set</Text>
+                        </View>
+                    </TouchableNativeFeedback>
                 </View>
-            </TouchableNativeFeedback>
-
-            <View style={styles.routineExerciseSetContainer}>
-
-                <RoutineExerciseSetHeader exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId} />
-
-                {
-                    routineExercise.routineExerciseSets.map((exerciseSet, index) => (
-                        <RoutineExerciseSet
-                            key={exerciseSet.tempIndex.toString() + 're' + index.toString()}
-                            setIndex={index}
-                            exerciseSet={exerciseSet}
-                            routineExercisePositionIndex={routineExercise.positionIndex}
-                            exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId}
-                            updateSet={updateSet}
-                            removeSet={removeSet} />
-                    ))
-                }
-
-                <TouchableNativeFeedback
-                    onPress={() => addSet()}
-                    background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                    <View style={styles.addExerciseSetButton}>
-                        <Text style={styles.addExerciseSetButtonText}>Add Set</Text>
-                    </View>
-                </TouchableNativeFeedback>
             </View>
-        </View>
-    )
+        )
+    }
+    else {
+        return (
+            <View style={styles.routineExerciseContainer}>
+                <View style={styles.routineExerciseTitleContainer}>
+                    <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
+                    <View style={{ flexDirection: 'column' }}>
+                        <Text style={styles.routineExerciseTitle}>{toTitleCase(routineExercise.exerciseInfo.name)}</Text>
+                        <View style={styles.routineExerciseSetContainer}>
+                            {
+                                routineExercise.routineExerciseSets.map((exerciseSet, index) => (
+                                    <View key={'re' + index.toString()} style={{ flexDirection: 'row' }}>
+                                        {
+                                            getSetTypeComponent(exerciseSet, index)
+                                        }
+                                    </View>
+                                ))
+                            }
+                        </View>
+                    </View>
+                    <TouchableNativeFeedback
+                        onPress={() => { Alert.alert('Edit exercise dots pressed') }}
+                        background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                        <View style={styles.exerciseEditButtonContainer}>
+                            <Entypo name="dots-three-vertical" size={24} color="white" />
+                        </View>
+                    </TouchableNativeFeedback>
+                </View>
+
+
+            </View>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
@@ -166,6 +245,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#272727ff',
         padding: 8,
         borderRadius: 10,
+    },
+
+    shortCodeText: {
+        fontSize: 16,
+        width: 60,
+        height: 40,
+        // textAlign: 'center',
+        // verticalAlign: 'middle',
+        // borderWidth: 1,
+        // borderColor: 'green'
     },
 
     addExerciseSetButtonText: {

@@ -52,7 +52,7 @@ export default function RootLayout() {
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="routine" options={{ headerShown: false }} />
               <Stack.Screen name="exercises" options={{ headerShown: false }} />
-              <Stack.Screen name="testModal" options={{ headerShown: false, presentation: "containedTransparentModal" }} />
+              <Stack.Screen name="newRoutineExerciseSetModal" options={{ headerShown: false, presentation: "containedTransparentModal" }} />
             </Stack>
           </RoutineExerciseProvider>
         </ThemeProvider>

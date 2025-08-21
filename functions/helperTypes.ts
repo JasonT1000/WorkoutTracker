@@ -43,7 +43,6 @@ export type NewRoutineExercise = {
 }
 
 export type NewRoutineExerciseSet = {
-    tempIndex: number,
     routineExerciseId: number,
     exerciseSetTypeId: number,
     reps: number,

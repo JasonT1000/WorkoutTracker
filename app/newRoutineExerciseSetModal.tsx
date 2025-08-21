@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DispatchContext } from '../state/routine/routineExerciseContext';
 
 
-export default function TestModal() {
+export default function NewRoutineExerciseSetModal() {
     const { routineExercisePositionIndex, setIndex } = useLocalSearchParams()
     const dispatch = useContext(DispatchContext)
     const translateY = useSharedValue(0);
@@ -67,6 +67,18 @@ export default function TestModal() {
         router.dismiss()
     }
 
+    const removeExerciseSet = () => {
+        console.log("remove Exercise Set")
+        dispatch({
+            type: 'REMOVE_NEWROUTINEEXERCISESET', payload: {
+                newRoutineExerciseIndex: parseInt(routineExercisePositionIndex as string),
+                setIndex: parseInt(setIndex as string)
+            }
+        })
+
+        router.dismiss()
+    }
+
     return (
         <SafeAreaView style={styles.main}>
             <GestureHandlerRootView>
@@ -92,7 +104,7 @@ export default function TestModal() {
                         }
                         {
                             <TouchableNativeFeedback
-                                onPress={() => router.dismiss()}
+                                onPress={() => removeExerciseSet()}
                                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}
                             >
                                 <View style={[{ marginTop: 20 }, styles.setTypeRow]}>

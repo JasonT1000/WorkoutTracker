@@ -65,7 +65,7 @@ export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExerc
 
             <TouchableNativeFeedback
                 onPress={() => router.navigate({
-                    pathname: '/testModal',
+                    pathname: '/newRoutineExerciseSetModal',
                     params: { routineExercisePositionIndex: routineExercisePositionIndex, setIndex: setIndex }
                 })}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>

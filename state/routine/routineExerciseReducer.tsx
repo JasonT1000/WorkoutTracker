@@ -11,7 +11,7 @@ export type Action =
     | { type: 'REMOVE_NEWROUTINEEXERCISE'; payload: number }
     | { type: 'ADD_NEWROUTINEEXERCISESET'; payload: { newRoutineExerciseIndex: number, newExerciseSet: NewRoutineExerciseSet } }
     | { type: 'UPDATE_NEWROUTINEEXERCISESET'; payload: { newRoutineExerciseIndex: number, setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float } }
-    | { type: 'REMOVE_NEWROUTINEEXERCISESET'; payload: number }
+    | { type: 'REMOVE_NEWROUTINEEXERCISESET'; payload: { newRoutineExerciseIndex: number, setIndex: number } }
     | { type: 'CLEAR_NEWROUTINEEXERCISES' };
 
 export const initialState: State = {
@@ -35,7 +35,7 @@ export const reducer = (state: State, action: Action): State => {
             return { routineExercises: updateExerciseSet(state, action.payload.newRoutineExerciseIndex, action.payload.setIndex, action.payload.field, action.payload.value) }
         case "REMOVE_NEWROUTINEEXERCISESET":
             // Add functionality
-            return state
+            return { routineExercises: removeExerciseSet(state, action.payload.newRoutineExerciseIndex, action.payload.setIndex) }
         case "CLEAR_NEWROUTINEEXERCISES":
             return { ...state, routineExercises: [] }
         default:
@@ -59,8 +59,8 @@ const addExerciseSet = (state: State, newRoutineExerciseIndex: number, newExerci
 const updateExerciseSet = (state: State, newRoutineExerciseIndex: number, setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float): NewRoutineExercise[] => {
     const newRoutineExercises = state.routineExercises.map(routineExercise => {
         if (routineExercise.positionIndex === newRoutineExerciseIndex) {
-            const newExerciseSets = routineExercise.routineExerciseSets.map(exerciseSet =>
-                exerciseSet.tempIndex === setIndex ? { ...exerciseSet, [field]: value } : exerciseSet
+            const newExerciseSets = routineExercise.routineExerciseSets.map((exerciseSet, index) =>
+                index === setIndex ? { ...exerciseSet, [field]: value } : exerciseSet
             );
             return { ...routineExercise, routineExerciseSets: newExerciseSets };
         }
@@ -69,3 +69,16 @@ const updateExerciseSet = (state: State, newRoutineExerciseIndex: number, setInd
 
     return newRoutineExercises;
 }
+
+const removeExerciseSet = (state: State, newRoutineExerciseIndex: number, setIndex: number): NewRoutineExercise[] => {
+    const newRoutineExercises = state.routineExercises.map(routineExercise => {
+        if (routineExercise.positionIndex === newRoutineExerciseIndex) {
+            const exerciseSets = routineExercise.routineExerciseSets.filter((set, index) => index !== setIndex)
+
+            return { ...routineExercise, routineExerciseSets: exerciseSets }
+        }
+        return routineExercise
+    })
+    return newRoutineExercises;
+}
+
