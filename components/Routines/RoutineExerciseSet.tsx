@@ -11,9 +11,10 @@ type RoutineExerciseSetProps = {
     exerciseTypeId: number
     updateSet: (setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float) => void
     removeSet: (setIndex: number) => void
+    scrollToInput: (index: number) => void
 }
 
-export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExercisePositionIndex, exerciseTypeId, updateSet, removeSet }: RoutineExerciseSetProps) {
+export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExercisePositionIndex, exerciseTypeId, updateSet, removeSet, scrollToInput }: RoutineExerciseSetProps) {
 
     // How many TextInput components to make for each exercise type
     const inputCountMap: Record<string, {
@@ -87,6 +88,9 @@ export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExerc
                         placeholder='-'
                         placeholderTextColor={'#858585ff'}
                         keyboardType='number-pad'
+                        onFocus={() => {
+                            scrollToInput(index)
+                        }}
                     />
                 ))
             }

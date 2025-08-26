@@ -3,7 +3,7 @@ import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRout
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useContext, useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
+import { Alert, FlatList, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 import { DispatchContext, StateContext } from '../../state/routine/routineExerciseContext';
 import RoutineExerciseSet from './RoutineExerciseSet';
@@ -11,9 +11,10 @@ import RoutineExerciseSetHeader from './RoutineExerciseSetHeader';
 
 type RoutineExerciseProps = {
     routineExercise: NewRoutineExercise
+    flatListRef: React.RefObject<FlatList<any> | null>
 }
 
-export default function RoutineExercise({ routineExercise }: RoutineExerciseProps) {
+export default function RoutineExercise({ routineExercise, flatListRef }: RoutineExerciseProps) {
     const state = useContext(StateContext)
     const dispatch = useContext(DispatchContext)
     const [isActive, setIsActive] = useState(false)
@@ -25,6 +26,13 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
 
     //     return newTempIndex
     // }
+
+    const scrollToInput = (index: number) => {
+        if (flatListRef) {
+            flatListRef.current?.scrollToIndex({ index: routineExercise.positionIndex, animated: true, viewOffset: -600 })
+            // flatListRef.current?.scrollToOffset({ offset: -1200, animated: true })
+        }
+    }
 
     const addSet = () => {
         dispatch({
@@ -155,7 +163,8 @@ export default function RoutineExercise({ routineExercise }: RoutineExerciseProp
                                 routineExercisePositionIndex={routineExercise.positionIndex}
                                 exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId}
                                 updateSet={updateSet}
-                                removeSet={removeSet} />
+                                removeSet={removeSet}
+                                scrollToInput={scrollToInput} />
                         ))
                     }
 

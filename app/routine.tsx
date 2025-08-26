@@ -3,8 +3,8 @@ import RoutineExercise from '@/components/Routines/RoutineExercise';
 import { getExerciseSetTypeId } from '@/functions/helperFunctions';
 import { Exercise, EXERCISESETTYPE, ExerciseWithBodyAreas, NewRoutineExercise, ROUTES } from '@/functions/helperTypes';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useContext, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { FlatList, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DispatchContext, StateContext } from '../state/routine/routineExerciseContext';
@@ -15,6 +15,8 @@ export default function Routine() {
   const dispatch = useContext(DispatchContext)
   const [title, onChangeTitle] = useState('')
   const [exercisesWithBodyAreas, setExercisesWithBodyAreas] = useState<ExerciseWithBodyAreas[]>([])
+  //refs
+  const flatListRef = useRef<FlatList>(null)
 
   useEffect(() => {
     if (newExercises) {
@@ -80,13 +82,18 @@ export default function Routine() {
 
             <View style={{ flex: 1 }}>
 
-              <View style={{ flexShrink: 1 }}>
+              {/* <View style={{ flexShrink: 1 }}> */}
+              <KeyboardAvoidingView behavior='position' enabled={true} style={{ flex: 1 }}>
+
                 <FlatList
+                  ref={flatListRef}
+                  keyboardShouldPersistTaps='handled'
                   data={state.routineExercises}
                   keyExtractor={(item) => item.positionIndex.toString()}
-                  renderItem={({ item }) => <RoutineExercise routineExercise={item} />}
+                  renderItem={({ item }) => <RoutineExercise routineExercise={item} flatListRef={flatListRef} />}
                 />
-              </View>
+              </KeyboardAvoidingView>
+              {/* </View> */}
 
               <TouchableNativeFeedback
                 onPress={() => router.navigate({ pathname: '/exercises', params: { existingExercisesWithBodyAreas: JSON.stringify(exercisesWithBodyAreas) } })}
