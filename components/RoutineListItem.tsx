@@ -1,5 +1,5 @@
 import * as schema from '@/db/schema';
-import { createTitleCaseString, toTitleCase } from '@/functions/helperFunctions';
+import { createTitleCaseString, toTitleCase } from '@/helperFiles/helperFunctions';
 import Entypo from '@expo/vector-icons/Entypo';
 import React from 'react';
 import { Alert, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';

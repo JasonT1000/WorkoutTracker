@@ -1,5 +1,5 @@
-import { createTitleCaseString, toTitleCase } from '@/functions/helperFunctions';
-import { ExerciseWithBodyAreas } from '@/functions/helperTypes';
+import { createTitleCaseString, toTitleCase } from '@/helperFiles/helperFunctions';
+import { ExerciseWithBodyAreas } from '@/helperFiles/helperTypes';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import React, { useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';

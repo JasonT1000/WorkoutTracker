@@ -1,23 +1,25 @@
-import { formatTime, getExerciseSetTypeId, toTitleCase } from '@/functions/helperFunctions';
-import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExercise, NewRoutineExerciseSet } from '@/functions/helperTypes';
+import { formatTime, getExerciseSetTypeId, toTitleCase } from '@/helperFiles/helperFunctions';
+import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExercise, NewRoutineExerciseSet } from '@/helperFiles/helperTypes';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { Alert, FlatList, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
-import { DispatchContext, StateContext } from '../../state/routine/routineExerciseContext';
+import { DispatchContext } from '../../state/routine/routineExerciseContext';
 import RoutineExerciseSet from './RoutineExerciseSet';
 import RoutineExerciseSetHeader from './RoutineExerciseSetHeader';
 
 type RoutineExerciseProps = {
     routineExercise: NewRoutineExercise
     flatListRef: React.RefObject<FlatList<any> | null>
+    expandedId: number
+    updateExpandedId: (routineExerciseId: number) => void
+    // scrollToInput: (yOffset: number) => void
 }
 
-export default function RoutineExercise({ routineExercise, flatListRef }: RoutineExerciseProps) {
-    const state = useContext(StateContext)
+export default function RoutineExercise({ routineExercise, flatListRef, expandedId, updateExpandedId }: RoutineExerciseProps) {
     const dispatch = useContext(DispatchContext)
-    const [isActive, setIsActive] = useState(false)
+    const routineExerciseRef = useRef<View>(null)
     // const [tempIndex, setTempIndex] = useState<number>(routineExercise.routineExerciseSets.length - 1)
 
     // const getTempIndex = (): number => {
@@ -27,12 +29,34 @@ export default function RoutineExercise({ routineExercise, flatListRef }: Routin
     //     return newTempIndex
     // }
 
-    const scrollToInput = (index: number) => {
-        if (flatListRef) {
-            flatListRef.current?.scrollToIndex({ index: routineExercise.positionIndex, animated: true, viewOffset: -600 })
-            // flatListRef.current?.scrollToOffset({ offset: -1200, animated: true })
+    useEffect(() => {
+        // if (routineExerciseRef.current) {
+        const getMeasurements = async () => {
+            // Need measurements from ancestor
+            // routineExerciseRef.current?.measureLayout(flatListRef.current?, (left: number, top: number, width: number, height: number) => {
+            //     console.log(top)
+            //     scrollToInput(top)
+            // })
+            // routineExerciseRef.current?.measure((x, y, width, height, pageX, pageY) => {
+            //     console.log("absolute x and y position for current routine exercise")
+            //     console.log(x)
+            //     console.log(y)
+            //     console.log(pageY)
+            //     console.log(height)
+            //     scrollToInput(pageY)
+            // })
         }
-    }
+
+        getMeasurements()
+        // }
+    }, [routineExerciseRef.current])
+
+    // const scrollToInput = (yOffset: number) => {
+    //     if (flatListRef) {
+    //         // flatListRef.current?.scrollToIndex({ index: routineExercise.positionIndex, animated: true, viewOffset: -600 })
+    //         flatListRef.current?.scrollToOffset({ offset: yOffset, animated: true })
+    //     }
+    // }
 
     const addSet = () => {
         dispatch({
@@ -112,14 +136,19 @@ export default function RoutineExercise({ routineExercise, flatListRef }: Routin
         }
     }
 
+    // const handleLayout = (event: LayoutChangeEvent) => {
+    //     const { y } = event.nativeEvent.layout
+    //     console.log(y)
+    //     scrollToInput(y)
+    // }
 
-    if (isActive) { // Expanded View
+    if (expandedId === routineExercise.positionIndex) { // Expanded View
         return (
-            <View style={styles.routineExerciseContainer}>
+            <View style={styles.routineExerciseContainer} ref={routineExerciseRef}>
                 <View style={styles.routineExerciseTitleContainer}>
                     <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
                     <TouchableNativeFeedback
-                        onPress={() => { setIsActive(!isActive) }}
+                        onPress={() => { updateExpandedId(-1) }}
                         background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}
                     >
                         <View style={styles.routineExerciseTitleTouchContainer}>
@@ -138,7 +167,7 @@ export default function RoutineExercise({ routineExercise, flatListRef }: Routin
 
                 <TextInput
                     style={styles.routineExerciseNotesText}
-                    placeholder='Add exercise notes here'
+                    placeholder='Notes...'
                     placeholderTextColor={'#858585ff'}
                 />
                 <TouchableNativeFeedback
@@ -164,7 +193,8 @@ export default function RoutineExercise({ routineExercise, flatListRef }: Routin
                                 exerciseTypeId={routineExercise.exerciseInfo.exerciseTypeId}
                                 updateSet={updateSet}
                                 removeSet={removeSet}
-                                scrollToInput={scrollToInput} />
+                            // scrollToInput={scrollToInput}
+                            />
                         ))
                     }
 
@@ -182,7 +212,7 @@ export default function RoutineExercise({ routineExercise, flatListRef }: Routin
     else { // Collapsed View
         return (
             <TouchableNativeFeedback
-                onPress={() => { setIsActive(!isActive) }}
+                onPress={() => { updateExpandedId(routineExercise.positionIndex) }}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}
             >
                 <View style={styles.routineExerciseContainer}>

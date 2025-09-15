@@ -3,19 +3,20 @@ import { Stack } from "expo-router";
 import { ActivityIndicator, useColorScheme } from "react-native";
 
 import { addData } from "@/db/addData";
+import { db } from "@/db/dbConnection";
 import migrations from '@/drizzle/migrations';
-import { convertNZDateTimetoUTC } from "@/functions/helperFunctions";
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { DATABASE_NAME } from "@/helperFiles/constants";
+import { convertNZDateTimetoUTC } from "@/helperFiles/helperFunctions";
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import { openDatabaseSync, SQLiteProvider } from 'expo-sqlite';
+import { SQLiteProvider } from 'expo-sqlite';
 import { Suspense, useEffect } from 'react';
 import { RoutineExerciseProvider } from "../state/routine/routineExerciseContext";
 
-export const DATABASE_NAME = 'db';
+// export const DATABASE_NAME = 'db';
 
 export default function RootLayout() {
-  const expoDb = openDatabaseSync(DATABASE_NAME, { enableChangeListener: true });
-  const db = drizzle(expoDb);
+  // const expoDb = openDatabaseSync(DATABASE_NAME, { enableChangeListener: true });
+  // const db = drizzle(expoDb);
   const { success, error } = useMigrations(db, migrations);
 
   const colorScheme = useColorScheme();

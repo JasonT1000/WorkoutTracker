@@ -1,5 +1,5 @@
-import { getExerciseSetTypeId, toTitleCase } from '@/functions/helperFunctions';
-import { EXERCISESETTYPE, ExerciseSetTypes, NewRoutineExerciseSetKey } from '@/functions/helperTypes';
+import { getExerciseSetTypeId, toTitleCase } from '@/helperFiles/helperFunctions';
+import { EXERCISESETTYPE, ExerciseSetTypes, NewRoutineExerciseSetKey } from '@/helperFiles/helperTypes';
 import Feather from '@expo/vector-icons/Feather';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext } from 'react';

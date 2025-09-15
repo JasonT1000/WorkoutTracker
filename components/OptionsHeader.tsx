@@ -5,9 +5,10 @@ import { Alert, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-na
 type OptionsHeaderProps = {
     title: string,
     routeString: string
+    save?: () => void
 }
 
-export default function OptionsHeader({ title, routeString }: OptionsHeaderProps) {
+export default function OptionsHeader({ title, routeString, save }: OptionsHeaderProps) {
 
     // type NavigateOptions = {
     //     replace?: boolean;
@@ -20,6 +21,13 @@ export default function OptionsHeader({ title, routeString }: OptionsHeaderProps
     //         router.push(path);
     //     }
     // };
+
+    const onSave = () => {
+        if (save) { save() }
+        else {
+            Alert.alert('Touchable pressed')
+        }
+    }
 
     return (
         <View style={styles.optionsHeader}>
@@ -34,7 +42,7 @@ export default function OptionsHeader({ title, routeString }: OptionsHeaderProps
             <Text style={styles.optionsText}>{title}</Text>
 
             <TouchableNativeFeedback
-                onPress={() => { Alert.alert('Touchable pressed') }}
+                onPress={() => { onSave() }}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View style={styles.saveButton}>
                     <Text style={styles.optionsText}>Save</Text>

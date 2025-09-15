@@ -1,5 +1,5 @@
 import * as schema from '@/db/schema';
-import { ExerciseWithBodyAreas } from '@/functions/helperTypes';
+import { ExerciseWithBodyAreas } from '@/helperFiles/helperTypes';
 import { eq, sql } from 'drizzle-orm';
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";

@@ -1,6 +1,6 @@
 import RoutineList from '@/components/RoutineList';
 import * as schema from '@/db/schema';
-import { convertUTCtoNZDateTime } from '@/functions/helperFunctions';
+import { convertUTCtoNZDateTime } from '@/helperFiles/helperFunctions';
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { router } from 'expo-router';

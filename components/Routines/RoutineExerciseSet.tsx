@@ -1,4 +1,4 @@
-import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExerciseSet, NewRoutineExerciseSetKey } from '@/functions/helperTypes'
+import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExerciseSet, NewRoutineExerciseSetKey } from '@/helperFiles/helperTypes'
 import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
@@ -11,10 +11,10 @@ type RoutineExerciseSetProps = {
     exerciseTypeId: number
     updateSet: (setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float) => void
     removeSet: (setIndex: number) => void
-    scrollToInput: (index: number) => void
+    // scrollToInput: (index: number) => void
 }
 
-export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExercisePositionIndex, exerciseTypeId, updateSet, removeSet, scrollToInput }: RoutineExerciseSetProps) {
+export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExercisePositionIndex, exerciseTypeId, updateSet, removeSet }: RoutineExerciseSetProps) {
 
     // How many TextInput components to make for each exercise type
     const inputCountMap: Record<string, {
@@ -85,12 +85,10 @@ export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExerc
                         value={tempValues[index]}
                         onChangeText={(text) => { onHandleChange(index, text) }}
                         onSubmitEditing={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(e.nativeEvent.text)) }}
+                        onBlur={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(tempValues[index])) }}
                         placeholder='-'
                         placeholderTextColor={'#858585ff'}
                         keyboardType='number-pad'
-                        onFocus={() => {
-                            scrollToInput(index)
-                        }}
                     />
                 ))
             }

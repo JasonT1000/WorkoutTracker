@@ -1,10 +1,11 @@
 import OptionsHeader from '@/components/OptionsHeader';
 import RoutineExercise from '@/components/Routines/RoutineExercise';
-import { getExerciseSetTypeId } from '@/functions/helperFunctions';
-import { Exercise, EXERCISESETTYPE, ExerciseWithBodyAreas, NewRoutineExercise, ROUTES } from '@/functions/helperTypes';
+import { insertRoutine, insertRoutineExercises } from '@/db/inserts';
+import { getExerciseSetTypeId } from '@/helperFiles/helperFunctions';
+import { Exercise, EXERCISESETTYPE, ExerciseWithBodyAreas, NewRoutineExercise, ROUTES } from '@/helperFiles/helperTypes';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DispatchContext, StateContext } from '../state/routine/routineExerciseContext';
@@ -13,8 +14,9 @@ export default function Routine() {
   const { existingExercisesWithBodyAreas, newExercises } = useLocalSearchParams()
   const state = useContext(StateContext)
   const dispatch = useContext(DispatchContext)
-  const [title, onChangeTitle] = useState('')
+  const [title, onChangeTitle] = useState(state.routineName)
   const [exercisesWithBodyAreas, setExercisesWithBodyAreas] = useState<ExerciseWithBodyAreas[]>([])
+  const [expandedId, setExpandedId] = useState<number>(-1)
   //refs
   const flatListRef = useRef<FlatList>(null)
 
@@ -62,11 +64,55 @@ export default function Routine() {
   }, [newExercises])
 
 
+  const updateExpandedId = (newId: number) => {
+    setExpandedId(newId)
+  }
+
+  // const scrollToInput = (yOffset: number) => {
+  //   if (flatListRef) {
+  //     // flatListRef.current?.scrollToIndex({ index: routineExercise.positionIndex, animated: true, viewOffset: -600 })
+  //     flatListRef.current?.scrollToOffset({ offset: yOffset, animated: true })
+  //   }
+  // }
+
+  const updateRoutineTitle = () => {
+    dispatch({ type: 'UPDATE_ROUTINENAME', payload: title })
+  }
+
+  const saveNewRoutine = async () => {
+    if (state.routineName !== '' && state.routineExercises.length > 0) {
+      console.log("$$$$$$$$$ saving new routine to database")
+      const routineId = await insertRoutine(state.routineName)
+      console.log("inserted new routine into database with routineId")
+      console.log(routineId[0].insertedId)
+      if (routineId[0].insertedId) {
+        try {
+          await insertRoutineExercises(routineId[0].insertedId, state.routineExercises)
+          dispatch({ type: 'RESET_NEWROUTINE' })
+          router.replace(ROUTES.HOME)
+        } catch (error) {
+          console.warn('failled to save new routine', error)
+        }
+      }
+    }
+    else {
+      if (state.routineName === '' && state.routineExercises.length < 1) {
+        Alert.alert('Whoopsie doodle, your routine needs a name and some exercises')
+      }
+      else if (state.routineName === '') {
+        Alert.alert('Whoopsie doodle, your routine needs a name')
+      }
+      else {
+        Alert.alert('Whoopsie doodle, your routine needs some exercises')
+      }
+    }
+  }
+
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView>
         <SafeAreaView style={styles.main}>
-          <OptionsHeader title='Create Routine' routeString={ROUTES.HOME} />
+          <OptionsHeader title='Create Routine' routeString={ROUTES.HOME} save={saveNewRoutine} />
 
           <View style={styles.body}>
 
@@ -77,23 +123,24 @@ export default function Routine() {
                 value={title}
                 placeholder='Routine title'
                 placeholderTextColor={'#858585ff'}
+                onSubmitEditing={updateRoutineTitle}
+                onBlur={updateRoutineTitle}
               />
             </View>
 
             <View style={{ flex: 1 }}>
 
-              {/* <View style={{ flexShrink: 1 }}> */}
-              <KeyboardAvoidingView behavior='position' enabled={true} style={{ flex: 1 }}>
-
+              <View style={{ flexShrink: 1 }}>
+                {/* <KeyboardAvoidingView behavior='position' enabled={true} style={{ flex: 1 }}> */}
                 <FlatList
                   ref={flatListRef}
-                  keyboardShouldPersistTaps='handled'
+                  keyboardShouldPersistTaps='never'
                   data={state.routineExercises}
                   keyExtractor={(item) => item.positionIndex.toString()}
-                  renderItem={({ item }) => <RoutineExercise routineExercise={item} flatListRef={flatListRef} />}
+                  renderItem={({ item }) => <RoutineExercise routineExercise={item} flatListRef={flatListRef} expandedId={expandedId} updateExpandedId={updateExpandedId} />}
                 />
-              </KeyboardAvoidingView>
-              {/* </View> */}
+                {/* </KeyboardAvoidingView> */}
+              </View>
 
               <TouchableNativeFeedback
                 onPress={() => router.navigate({ pathname: '/exercises', params: { existingExercisesWithBodyAreas: JSON.stringify(exercisesWithBodyAreas) } })}

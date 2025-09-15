@@ -1,4 +1,4 @@
-import { EXERCISETYPE, ExerciseTypes } from '@/functions/helperTypes';
+import { EXERCISETYPE, ExerciseTypes } from '@/helperFiles/helperTypes';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 

@@ -1,6 +1,6 @@
 import ExerciseList from '@/components/ExerciseList';
 import OptionsHeader from '@/components/OptionsHeader';
-import { ExerciseWithBodyAreas, ROUTES } from '@/functions/helperTypes';
+import { ExerciseWithBodyAreas, ROUTES } from '@/helperFiles/helperTypes';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
