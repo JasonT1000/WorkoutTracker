@@ -7,6 +7,7 @@ import { db } from "@/db/dbConnection";
 import migrations from '@/drizzle/migrations';
 import { DATABASE_NAME } from "@/helperFiles/constants";
 import { convertNZDateTimetoUTC } from "@/helperFiles/helperFunctions";
+import { WorkoutExerciseProvider } from "@/state/workout/workoutExerciseContext";
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { SQLiteProvider } from 'expo-sqlite';
 import { Suspense, useEffect } from 'react';
@@ -48,14 +49,17 @@ export default function RootLayout() {
     <Suspense fallback={<ActivityIndicator size="large" />}>
       <SQLiteProvider databaseName={DATABASE_NAME}>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <RoutineExerciseProvider>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="routine" options={{ headerShown: false }} />
-              <Stack.Screen name="exercises" options={{ headerShown: false }} />
-              <Stack.Screen name="newRoutineExerciseSetModal" options={{ headerShown: false, presentation: "containedTransparentModal" }} />
-            </Stack>
-          </RoutineExerciseProvider>
+          <WorkoutExerciseProvider>
+            <RoutineExerciseProvider>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="workout" options={{ headerShown: false }} />
+                <Stack.Screen name="routine" options={{ headerShown: false }} />
+                <Stack.Screen name="exercises" options={{ headerShown: false }} />
+                <Stack.Screen name="newRoutineExerciseSetModal" options={{ headerShown: false, presentation: "containedTransparentModal" }} />
+              </Stack>
+            </RoutineExerciseProvider>
+          </WorkoutExerciseProvider>
         </ThemeProvider>
       </SQLiteProvider>
     </Suspense>

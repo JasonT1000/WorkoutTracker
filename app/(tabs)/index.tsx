@@ -1,12 +1,13 @@
 import RoutineList from '@/components/RoutineList';
 import * as schema from '@/db/schema';
 import { convertUTCtoNZDateTime } from '@/helperFiles/helperFunctions';
+import { ROUTES } from '@/helperFiles/helperTypes';
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { router } from 'expo-router';
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect } from 'react';
-import { Alert, StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
+import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -34,7 +35,8 @@ export default function Index() {
       <View style={styles.topSectionContainer}>
         <Text style={styles.containerHeadingtext}>Workout</Text>
         <TouchableNativeFeedback
-          onPress={() => Alert.alert('Simple Button pressed')}
+          // onPress={() => Alert.alert('Simple Button pressed')}
+          onPress={() => router.navigate({ pathname: ROUTES.WORKOUT })}
           background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
           <View style={styles.addExercisesButton}>
             <Text style={styles.addExercisesButtonText}>New Workout</Text>
@@ -45,7 +47,7 @@ export default function Index() {
       <View style={styles.topSectionContainer}>
         <Text style={styles.containerHeadingtext}>Routines</Text>
         <TouchableNativeFeedback
-          onPress={() => router.navigate({ pathname: '/routine' })}
+          onPress={() => router.navigate({ pathname: ROUTES.ROUTINE })}
           background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
           <View style={styles.addExercisesButton}>
             <Text style={styles.addExercisesButtonText}>New Routine</Text>
@@ -54,6 +56,7 @@ export default function Index() {
       </View>
 
       <RoutineList />
+
     </SafeAreaView>
   );
 }

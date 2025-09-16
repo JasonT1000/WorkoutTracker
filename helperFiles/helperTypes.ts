@@ -60,6 +60,40 @@ export enum NewRoutineExerciseSetKey {
     TIME = 'time'
 }
 
+export type NewWorkoutExercise = {
+    positionIndex: number
+    workoutId: number
+    exerciseId: number
+    restTimer: number
+    notes: string
+    workoutExerciseSets: NewWorkoutExerciseSet[]
+    exerciseInfo: ExerciseInfo
+}
+
+export type NewWorkoutExerciseSet = {
+    workoutExerciseId: number,
+    exerciseSetTypeId: number,
+    reps: number,
+    weight?: Float,
+    distance?: Float,
+    time?: number,
+    averageHeartRate?: number,
+    maxHeartRate?: number,
+    cardioProgramId?: number
+}
+
+export enum NewWorkoutExerciseSetKey {
+    WORKOUTEXERCISEID = 'workoutExerciseId',
+    EXERCISESETTYPEID = 'exerciseSetTypeId',
+    REPS = 'reps',
+    WEIGHT = 'weight',
+    DISTANCE = 'distance',
+    TIME = 'time',
+    AVERAGEHEARTRATE = 'averageHeartRate',
+    MAXHEARTRATE = 'maxHeartRate',
+    CARDIOPROGRAMID = 'cardioProgramId'
+}
+
 // export const ExerciseSetTypes: Record<number, string> = {
 //     1: 'normal set',
 //     2: 'warm up',
@@ -91,8 +125,6 @@ export const ExerciseSetTypes: Record<number, {
     6: { type: EXERCISESETTYPE.FAILURE, shortcode: 'F', colorcode: '#d9534f' },
 };
 
-
-
 export const ExerciseTypes: Record<number, string> = {
     1: 'bodyweight',
     2: 'weight',
@@ -109,5 +141,7 @@ export enum EXERCISETYPE {
 export enum ROUTES {
     HOME = '/(tabs)',
     STATISTICS = '/(tabs)/statistics',
-    ROUTINE = '/routine'
+    ROUTINE = '/routine',
+    WORKOUT = '/workout',
+    EXERCISE = '/exercises'
 }

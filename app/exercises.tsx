@@ -8,7 +8,7 @@ import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'reac
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Exercises() {
-    const { existingExercisesWithBodyAreas } = useLocalSearchParams()
+    const { returnRoute, existingExercisesWithBodyAreas } = useLocalSearchParams()
     const [exercises, setExercises] = useState<ExerciseWithBodyAreas[]>([])
 
     const addExercise = (exerciseInfo: ExerciseWithBodyAreas) => {
@@ -33,7 +33,7 @@ export default function Exercises() {
         })
 
         router.replace({
-            pathname: '/routine',
+            pathname: returnRoute as ROUTES,
             params: { existingExercisesWithBodyAreas, newExercises: JSON.stringify(parsedExercises) }
         })
     }
@@ -41,7 +41,7 @@ export default function Exercises() {
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.main}>
-                <OptionsHeader title="Exercises" routeString={ROUTES.ROUTINE} />
+                <OptionsHeader title="Exercises" cancelButtonRoute={returnRoute as ROUTES} />
 
                 <View style={styles.body}>
                     <View style={styles.searchContainer}>

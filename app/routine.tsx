@@ -37,12 +37,6 @@ export default function Routine() {
           restTimer: 0,
           notes: "",
           routineExerciseSets: [{
-            tempIndex: 0,
-            routineExerciseId: exercise.id,
-            exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
-            reps: -1
-          }, {
-            tempIndex: 0,
             routineExerciseId: exercise.id,
             exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
             reps: -1
@@ -112,7 +106,7 @@ export default function Routine() {
     <SafeAreaProvider>
       <GestureHandlerRootView>
         <SafeAreaView style={styles.main}>
-          <OptionsHeader title='Create Routine' routeString={ROUTES.HOME} save={saveNewRoutine} />
+          <OptionsHeader title='Create Routine' cancelButtonRoute={ROUTES.HOME} save={saveNewRoutine} />
 
           <View style={styles.body}>
 
