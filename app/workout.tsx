@@ -1,6 +1,6 @@
 import OptionsHeader from '@/components/OptionsHeader';
 import WorkoutExercise from '@/components/Workouts/WorkoutExercise';
-import { formatTime, getExerciseSetTypeId } from '@/helperFiles/helperFunctions';
+import { formatTimerTime, getExerciseSetTypeId } from '@/helperFiles/helperFunctions';
 import { Exercise, EXERCISESETTYPE, ExerciseWithBodyAreas, NewWorkoutExercise, ROUTES } from '@/helperFiles/helperTypes';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -41,7 +41,8 @@ export default function Workout() {
           workoutExerciseSets: [{
             workoutExerciseId: exercise.id,
             exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
-            reps: -1
+            reps: -1,
+            isCompleted: false
           }],
           exerciseInfo: {
             name: exercise.name,
@@ -132,14 +133,15 @@ export default function Workout() {
 
           <View style={styles.body}>
 
-            <View>
-              <View>
-                <Text style={{ color: 'white' }}>Duration</Text>
-                <Text style={{ color: 'white' }}>Volume</Text>
+            <View style={styles.workoutInfoContainer}>
+              <View style={styles.workoutInfoColumn}>
+                <Text style={styles.workoutInfoHeading}>Duration</Text>
+                <Text style={styles.workoutInfoTextTime}>{formatTimerTime(duration)}</Text>
+
               </View>
-              <View>
-                <Text style={{ color: 'white' }}>{formatTime(duration)}</Text>
-                <Text>0 kg</Text>
+              <View style={styles.workoutInfoColumn}>
+                <Text style={styles.workoutInfoHeading}>Volume</Text>
+                <Text style={styles.workoutInfoText}>0 kg</Text>
               </View>
             </View>
 
@@ -182,13 +184,33 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 15,
   },
-  routineTitleText: {
-    color: '#858585ff',
-    fontSize: 24,
+
+  workoutInfoContainer: {
+    flexDirection: 'row',
     paddingBottom: 15,
-    marginBottom: 35,
+    marginBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#585858ff',
+    justifyContent: 'space-evenly'
+  },
+  workoutInfoColumn: {
+    flexDirection: 'column',
+    flex: 1,
+  },
+  workoutInfoHeading: {
+    color: '#858585ff',
+    fontSize: 14,
+    textAlign: 'center'
+  },
+  workoutInfoTextTime: {
+    color: '#0160adff',
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  workoutInfoText: {
+    color: '#ffffffff',
+    fontSize: 16,
+    textAlign: 'center'
   },
 
   addExercisesButton: {

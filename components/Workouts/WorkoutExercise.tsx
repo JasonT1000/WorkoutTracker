@@ -65,7 +65,8 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
                 newExerciseSet: {
                     workoutExerciseId: workoutExercise.exerciseId,
                     exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
-                    reps: -1
+                    reps: -1,
+                    isCompleted: false
                 }
             }
         })
@@ -305,6 +306,7 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: '#272727ff',
         padding: 8,
+        marginTop: 10,
         borderRadius: 10,
     },
 

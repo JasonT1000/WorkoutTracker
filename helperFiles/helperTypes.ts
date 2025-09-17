@@ -79,7 +79,8 @@ export type NewWorkoutExerciseSet = {
     time?: number,
     averageHeartRate?: number,
     maxHeartRate?: number,
-    cardioProgramId?: number
+    cardioProgramId?: number,
+    isCompleted: boolean
 }
 
 export enum NewWorkoutExerciseSetKey {
@@ -91,7 +92,8 @@ export enum NewWorkoutExerciseSetKey {
     TIME = 'time',
     AVERAGEHEARTRATE = 'averageHeartRate',
     MAXHEARTRATE = 'maxHeartRate',
-    CARDIOPROGRAMID = 'cardioProgramId'
+    CARDIOPROGRAMID = 'cardioProgramId',
+    ISCOMPLETED = 'isCompleted'
 }
 
 // export const ExerciseSetTypes: Record<number, string> = {

@@ -1,4 +1,5 @@
 import { EXERCISETYPE, ExerciseTypes } from '@/helperFiles/helperTypes';
+
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -11,6 +12,7 @@ export default function WorkoutExerciseSetHeader({ exerciseTypeId }: WorkoutExer
         <View style={styles.workoutExerciseSetHeaderContainer}>
 
             <Text style={styles.titleTextSet}>SET</Text>
+            <Text style={styles.titleTextPrevious}>PREVIOUS</Text>
 
             {
                 ExerciseTypes[exerciseTypeId] === EXERCISETYPE.WEIGHT &&
@@ -44,6 +46,7 @@ export default function WorkoutExerciseSetHeader({ exerciseTypeId }: WorkoutExer
                     </>
                 )
             }
+
         </View>
     )
 }
@@ -58,6 +61,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#858585ff',
         width: 60,
+        textAlign: 'center',
+    },
+    titleTextPrevious: {
+        fontSize: 14,
+        color: '#858585ff',
+        width: 80,
         textAlign: 'center',
     },
     workoutExerciseSetTitleText: {

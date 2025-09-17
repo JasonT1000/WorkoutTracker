@@ -1,4 +1,5 @@
 import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewWorkoutExerciseSet, NewWorkoutExerciseSetKey } from '@/helperFiles/helperTypes'
+import Checkbox from 'expo-checkbox'
 import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
@@ -15,6 +16,7 @@ type WorkoutExerciseSetProps = {
 }
 
 export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExercisePositionIndex, exerciseTypeId, updateSet, removeSet }: WorkoutExerciseSetProps) {
+    const [isChecked, setIsChecked] = useState(false)
 
     // How many TextInput components to make for each exercise type
     const inputCountMap: Record<string, {
@@ -29,7 +31,10 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
     // set default values when populating text inputs
     const initTempValues = (): Record<number, string> => {
         const updateTempValues = inputCountMap[ExerciseTypes[exerciseTypeId]].exerciseTypeKeys.reduce((acc, key, index) => {
-            if (exerciseSet[key] && exerciseSet[key] < 0) {
+            if (key === NewWorkoutExerciseSetKey.ISCOMPLETED) {
+                acc[index] = exerciseSet[key]?.toString() ?? false
+            }
+            else if (exerciseSet[key] && exerciseSet[key] < 0) {
                 acc[index] = ''
             }
             else {
@@ -61,8 +66,10 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
         }
     }
 
+    const highlightStyle = { backgroundColor: isChecked ? '#0fb80065' : undefined }
+
     return (
-        <View style={styles.workoutExerciseSetRowContainer}>
+        <View style={[styles.workoutExerciseSetRowContainer, highlightStyle]}>
 
             <TouchableNativeFeedback
                 onPress={() => router.navigate({
@@ -77,21 +84,34 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
                 </View>
             </TouchableNativeFeedback>
 
+            <Text style={styles.workoutExerciseSetDataText}>Prev kg</Text>
+
             {
                 Array.from(workoutExerciseSetElements.exerciseTypeKeys).map((exerciseSetTypeKey, index) => (
-                    <TextInput
-                        key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
-                        style={styles.workoutExerciseSetDataText}
-                        value={tempValues[index]}
-                        onChangeText={(text) => { onHandleChange(index, text) }}
-                        onSubmitEditing={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(e.nativeEvent.text)) }}
-                        onBlur={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(tempValues[index])) }}
-                        placeholder='-'
-                        placeholderTextColor={'#858585ff'}
-                        keyboardType='number-pad'
-                    />
+                    index > workoutExerciseSetElements.exerciseTypeKeys.length - 1 ?
+                        <TextInput
+                            key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
+                            style={styles.workoutExerciseSetDataText}
+                            value={tempValues[index]}
+                            onChangeText={(text) => { onHandleChange(index, text) }}
+                            onSubmitEditing={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(e.nativeEvent.text)) }}
+                            onBlur={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(tempValues[index])) }}
+                            placeholder='-'
+                            placeholderTextColor={'#858585ff'}
+                            keyboardType='number-pad'
+                        />
+                        : null
                 ))
             }
+
+            <View style={styles.checkboxContainer}>
+                <Checkbox
+                    style={styles.workoutExerciseSetCheckbox}
+                    value={isChecked}
+                    onValueChange={setIsChecked}
+                    color={isChecked ? '#0fb800ff' : undefined}
+                />
+            </View>
         </View>
     )
 }
@@ -121,6 +141,24 @@ const styles = StyleSheet.create({
         verticalAlign: 'middle',
         // borderWidth: 1,
         // borderColor: 'purple',
+        padding: 0,
+        margin: 0,
+    },
+
+    checkboxContainer: {
+        position: 'absolute',
+        color: '#ffffffff',
+        justifyContent: 'center',
+        top: 7,
+        right: 10,
+    },
+    workoutExerciseSetCheckbox: {
+        width: 25,
+        height: 25,
+        fontSize: 18,
+        color: '#ffffffff',
+        textAlign: 'center',
+        verticalAlign: 'middle',
         padding: 0,
         margin: 0,
     },

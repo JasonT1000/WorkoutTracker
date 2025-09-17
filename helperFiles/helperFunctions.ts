@@ -126,3 +126,18 @@ export const formatTime = (seconds: number): string => {
 
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
+
+export const formatTimerTime = (seconds: number): string => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    if (seconds < 60) {
+        return `${secs.toString()}s`
+    }
+    else if (seconds < 3600) {
+        return `${mins.toString().padStart(2, '0')}min ${secs.toString().padStart(2, '0')}s`;
+    }
+
+    return `${hrs.toString().padStart(2, '0')}hr ${mins.toString().padStart(2, '0')}min ${secs.toString().padStart(2, '0')}s`;
+}
