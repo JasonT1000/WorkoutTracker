@@ -136,8 +136,8 @@ export const formatTimerTime = (seconds: number): string => {
         return `${secs.toString()}s`
     }
     else if (seconds < 3600) {
-        return `${mins.toString().padStart(2, '0')}min ${secs.toString().padStart(2, '0')}s`;
+        return `${mins.toString()}min ${secs.toString()}s`;
     }
 
-    return `${hrs.toString().padStart(2, '0')}hr ${mins.toString().padStart(2, '0')}min ${secs.toString().padStart(2, '0')}s`;
+    return `${hrs.toString()}hr ${mins.toString()}min ${secs.toString()}s`;
 }

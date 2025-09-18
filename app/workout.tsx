@@ -3,8 +3,9 @@ import WorkoutExercise from '@/components/Workouts/WorkoutExercise';
 import { formatTimerTime, getExerciseSetTypeId } from '@/helperFiles/helperFunctions';
 import { Exercise, EXERCISESETTYPE, ExerciseWithBodyAreas, NewWorkoutExercise, ROUTES } from '@/helperFiles/helperTypes';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import AsyncStorage from 'expo-sqlite/kv-store';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Alert, FlatList, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { Alert, AppState, AppStateStatus, FlatList, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DispatchContext, StateContext } from '../state/workout/workoutExerciseContext';
@@ -18,6 +19,7 @@ export default function Workout() {
   const [exercisesWithBodyAreas, setExercisesWithBodyAreas] = useState<ExerciseWithBodyAreas[]>([])
   const [expandedId, setExpandedId] = useState<number>(-1)
   //refs
+  const appState = useRef<AppStateStatus>(AppState.currentState)
   const flatListRef = useRef<FlatList>(null)
   const latestDurationRef = useRef(0)
   const isDiscardingWorkoutRef = useRef(false)
@@ -67,43 +69,39 @@ export default function Workout() {
       setDuration(prev => prev + 1)
     }, 1000);
 
-    // return () => clearInterval(interval)
-
-    return () => {
-      clearInterval(interval)
-    }
-
-    // // Timestamp based so dont have to keep a timer going in the background
-    // const startTime = Date.now();
-
-    // const getElapsed = () => {
-    //   const now = Date.now();
-    //   const elapsedMs = now - startTime;
-    //   const minutes = Math.floor(elapsedMs / 60000);
-    //   const seconds = Math.floor((elapsedMs % 60000) / 1000);
-    //   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    // };
+    return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {
     latestDurationRef.current = duration
   }, [duration])
 
+  // When app loses focus, store the current datetime in async storage.
+  // When app gains focus, calculate and update the workout duration with stored datetime in async storage 
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
+        recordCurrentTime()
+      }
+      else if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        //App is active again
+        updateDurationWithElapsedTime()
+      }
+
+      appState.current = nextAppState
+    })
+
+    return () => {
+      subscription.remove()
+    }
+  }, [])
+
+  // Store current duration and set a start datetime when we navigate away from this page
   useFocusEffect(
     useCallback(() => {
       // Invoked whenever the route is focused.
       // Timestamp based so dont have to keep a timer going in the background when page loses focus
       if (state.startDatetime > 0) {
-        const startTime = state.startDatetime;
-
-        const getElapsed = () => {
-          const now = Date.now();
-          const elapsedMs = now - startTime;
-          const seconds = Math.floor((elapsedMs % 60000) / 1000);
-
-          return seconds
-        };
-
         setDuration(state.duration + getElapsed())
       }
 
@@ -120,6 +118,45 @@ export default function Workout() {
     }, []),
   );
 
+  // Store current datetime from async storage and store it for when app becomes active again
+  const recordCurrentTime = async () => {
+    try {
+      const now = Date.now()
+      await AsyncStorage.setItem("@start_time", now.toString())
+    } catch (error) {
+      console.warn(error)
+      Alert.alert("Couldnt set current time", "before app went to background")
+    }
+  }
+
+  // Read datetime stored in async storage and calculate the elapsed time and add it to the current duration
+  const updateDurationWithElapsedTime = async () => {
+    try {
+      const startTime = await AsyncStorage.getItem("@start_time");
+      if (startTime) {
+
+        const now = Date.now();
+        const elapsedMs = now - parseInt(startTime);
+        const seconds = Math.floor((elapsedMs % 60000) / 1000);
+
+        setDuration(latestDurationRef.current + seconds)
+      }
+
+    } catch (error) {
+      console.warn(error)
+      Alert.alert("Couldnt add elapsed time", "when app came back from background")
+    }
+  }
+
+  // Find elapsed time from when navigated away from workout page to when it was opened again
+  const getElapsed = () => {
+    const now = Date.now();
+    const startTime = state.startDatetime;
+    const elapsedMs = now - startTime;
+    const seconds = Math.floor((elapsedMs % 60000) / 1000);
+
+    return seconds
+  };
 
   const updateExpandedId = (newId: number) => {
     setExpandedId(newId)
@@ -131,10 +168,6 @@ export default function Workout() {
   //     flatListRef.current?.scrollToOffset({ offset: yOffset, animated: true })
   //   }
   // }
-
-  const updateWorkoutDuration = () => {
-    dispatch({ type: 'UPDATE_WORKOUTDURATION', payload: duration })
-  }
 
   const saveNewWorkout = async () => {
     if (state.duration > 5 && state.workoutExercises.length > 0) {
@@ -167,7 +200,7 @@ export default function Workout() {
   }
 
   const onHandleDiscardWorkout = () => {
-    Alert.alert('Discard Workout', 'Are you sure you want to discard this workout?', [
+    Alert.alert('', 'Are you sure you want to discard this workout?', [
       {
         text: 'Discard Workout', style: 'cancel', onPress: () => {
           // dispatch({ type: 'RESET_NEWWORKOUT' })
@@ -296,6 +329,6 @@ const styles = StyleSheet.create({
   discardWorkoutButtonText: {
     fontSize: 18,
     textAlign: 'center',
-    color: '#f02e2eff'
+    color: '#da423cff'
   },
 });
