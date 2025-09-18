@@ -145,5 +145,6 @@ export enum ROUTES {
     STATISTICS = '/(tabs)/statistics',
     ROUTINE = '/routine',
     WORKOUT = '/workout',
-    EXERCISE = '/exercises'
+    EXERCISE = '/exercises',
+    EXERCISESETMODAL = '/exerciseSetModal',
 }

@@ -1,4 +1,4 @@
-import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExerciseSet, NewRoutineExerciseSetKey } from '@/helperFiles/helperTypes'
+import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExerciseSet, NewRoutineExerciseSetKey, ROUTES } from '@/helperFiles/helperTypes'
 import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
@@ -66,8 +66,8 @@ export default function RoutineExerciseSet({ setIndex, exerciseSet, routineExerc
 
             <TouchableNativeFeedback
                 onPress={() => router.navigate({
-                    pathname: '/newRoutineExerciseSetModal',
-                    params: { routineExercisePositionIndex: routineExercisePositionIndex, setIndex: setIndex }
+                    pathname: ROUTES.EXERCISESETMODAL,
+                    params: { exercisePositionIndex: routineExercisePositionIndex, setIndex: setIndex, currentRoute: ROUTES.ROUTINE }
                 })}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View>

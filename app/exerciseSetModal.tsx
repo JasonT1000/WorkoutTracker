@@ -1,5 +1,5 @@
 import { getExerciseSetTypeId, toTitleCase } from '@/helperFiles/helperFunctions';
-import { EXERCISESETTYPE, ExerciseSetTypes, NewRoutineExerciseSetKey } from '@/helperFiles/helperTypes';
+import { EXERCISESETTYPE, ExerciseSetTypes, NewRoutineExerciseSetKey, ROUTES } from '@/helperFiles/helperTypes';
 import Feather from '@expo/vector-icons/Feather';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext } from 'react';
@@ -7,12 +7,14 @@ import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DispatchContext } from '../state/routine/routineExerciseContext';
+import { DispatchContext as RoutineDispatchContext } from '../state/routine/routineExerciseContext';
+import { DispatchContext as WorkoutDispatchContext } from '../state/workout/workoutExerciseContext';
 
 
-export default function NewRoutineExerciseSetModal() {
-    const { routineExercisePositionIndex, setIndex } = useLocalSearchParams()
-    const dispatch = useContext(DispatchContext)
+export default function ExerciseSetModal() {
+    const { exercisePositionIndex, setIndex, currentRoute } = useLocalSearchParams()
+    const routineDispatch = useContext(RoutineDispatchContext)
+    const workoutDispatch = useContext(WorkoutDispatchContext)
     const translateY = useSharedValue(0);
     const isClosing = useSharedValue(false)
 
@@ -55,26 +57,53 @@ export default function NewRoutineExerciseSetModal() {
     })
 
     const UpdateExerciseSetType = (exerciseType: EXERCISESETTYPE) => {
-        dispatch({
-            type: 'UPDATE_NEWROUTINEEXERCISESET', payload: {
-                newRoutineExerciseIndex: parseInt(routineExercisePositionIndex as string),
-                setIndex: parseInt(setIndex as string),
-                field: NewRoutineExerciseSetKey.EXERCISESETTYPEID,
-                value: getExerciseSetTypeId(exerciseType)
-            }
-        })
+        console.log("updateExerciseSEtType 1")
+
+
+        if (currentRoute === ROUTES.ROUTINE) {
+            console.log("updateExerciseSEtType 2")
+            routineDispatch({
+                type: 'UPDATE_NEWROUTINEEXERCISESET', payload: {
+                    newRoutineExerciseIndex: parseInt(exercisePositionIndex as string),
+                    setIndex: parseInt(setIndex as string),
+                    field: NewRoutineExerciseSetKey.EXERCISESETTYPEID,
+                    value: getExerciseSetTypeId(exerciseType)
+                }
+            })
+        }
+        else { // from Workout route
+            console.log("updateExerciseSEtType 3", exercisePositionIndex)
+            workoutDispatch({
+                type: 'UPDATE_NEWWORKOUTEXERCISESET', payload: {
+                    newWorkoutExerciseIndex: parseInt(exercisePositionIndex as string),
+                    setIndex: parseInt(setIndex as string),
+                    field: NewRoutineExerciseSetKey.EXERCISESETTYPEID,
+                    value: getExerciseSetTypeId(exerciseType)
+                }
+            })
+        }
 
         router.dismiss()
     }
 
     const removeExerciseSet = () => {
         console.log("remove Exercise Set")
-        dispatch({
-            type: 'REMOVE_NEWROUTINEEXERCISESET', payload: {
-                newRoutineExerciseIndex: parseInt(routineExercisePositionIndex as string),
-                setIndex: parseInt(setIndex as string)
-            }
-        })
+        if (currentRoute === ROUTES.ROUTINE) {
+            routineDispatch({
+                type: 'REMOVE_NEWROUTINEEXERCISESET', payload: {
+                    newRoutineExerciseIndex: parseInt(exercisePositionIndex as string),
+                    setIndex: parseInt(setIndex as string)
+                }
+            })
+        }
+        else { // from Workout route
+            workoutDispatch({
+                type: 'REMOVE_NEWWORKOUTEXERCISESET', payload: {
+                    newWorkoutExerciseIndex: parseInt(exercisePositionIndex as string),
+                    setIndex: parseInt(setIndex as string)
+                }
+            })
+        }
 
         router.dismiss()
     }

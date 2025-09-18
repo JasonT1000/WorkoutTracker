@@ -115,7 +115,7 @@ export const getExerciseSetTypeId = (label: EXERCISESETTYPE): number => {
 
 export const formatTime = (seconds: number): string => {
     const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor(seconds / 60);
+    const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
 
     // if only minutes and is 0 return 0min
@@ -129,7 +129,7 @@ export const formatTime = (seconds: number): string => {
 
 export const formatTimerTime = (seconds: number): string => {
     const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor(seconds / 60);
+    const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
 
     if (seconds < 60) {

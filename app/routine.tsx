@@ -137,7 +137,7 @@ export default function Routine() {
               </View>
 
               <TouchableNativeFeedback
-                onPress={() => router.navigate({ pathname: '/exercises', params: { existingExercisesWithBodyAreas: JSON.stringify(exercisesWithBodyAreas) } })}
+                onPress={() => router.navigate({ pathname: ROUTES.EXERCISE, params: { returnRoute: ROUTES.ROUTINE, existingExercisesWithBodyAreas: JSON.stringify(exercisesWithBodyAreas) } })}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View style={styles.addExercisesButton}>
                   <Text style={styles.addExercisesButtonText}>Add exercises</Text>

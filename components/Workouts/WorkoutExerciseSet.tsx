@@ -1,4 +1,4 @@
-import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewWorkoutExerciseSet, NewWorkoutExerciseSetKey } from '@/helperFiles/helperTypes'
+import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewWorkoutExerciseSet, NewWorkoutExerciseSetKey, ROUTES } from '@/helperFiles/helperTypes'
 import Checkbox from 'expo-checkbox'
 import { router } from 'expo-router'
 import React, { useState } from 'react'
@@ -10,21 +10,19 @@ type WorkoutExerciseSetProps = {
     exerciseSet: NewWorkoutExerciseSet
     workoutExercisePositionIndex: number
     exerciseTypeId: number
-    updateSet: (setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float) => void
+    updateSet: (setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float | boolean) => void
     removeSet: (setIndex: number) => void
     // scrollToInput: (index: number) => void
 }
 
 export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExercisePositionIndex, exerciseTypeId, updateSet, removeSet }: WorkoutExerciseSetProps) {
-    const [isChecked, setIsChecked] = useState(false)
-
     // How many TextInput components to make for each exercise type
     const inputCountMap: Record<string, {
         exerciseTypeKeys: (keyof NewWorkoutExerciseSet)[]
     }> = {
         [EXERCISETYPE.BODYWEIGHT]: { exerciseTypeKeys: [NewWorkoutExerciseSetKey.REPS] },
         [EXERCISETYPE.WEIGHT]: { exerciseTypeKeys: [NewWorkoutExerciseSetKey.WEIGHT, NewWorkoutExerciseSetKey.REPS] },
-        [EXERCISETYPE.CARDIO]: { exerciseTypeKeys: [NewWorkoutExerciseSetKey.DISTANCE, NewWorkoutExerciseSetKey.TIME] },
+        [EXERCISETYPE.CARDIO]: { exerciseTypeKeys: [NewWorkoutExerciseSetKey.DISTANCE, NewWorkoutExerciseSetKey.TIME, NewWorkoutExerciseSetKey.AVERAGEHEARTRATE, NewWorkoutExerciseSetKey.MAXHEARTRATE, NewWorkoutExerciseSetKey.CARDIOPROGRAMID] },
         [EXERCISETYPE.STRETCH]: { exerciseTypeKeys: [NewWorkoutExerciseSetKey.TIME] },
     }
 
@@ -48,11 +46,18 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
         return updateTempValues
     }
 
+
     const [workoutExerciseSetElements] = useState(inputCountMap[ExerciseTypes[exerciseTypeId]])
     const [tempValues, setTempValues] = useState<Record<number, string>>(initTempValues())
+    const [isChecked, setIsChecked] = useState<boolean>(false)
 
     const onHandleChange = (index: number, text: string) => {
         setTempValues((prev) => ({ ...prev, [index]: text }))
+    }
+
+    const onHandleCheckboxChange = (value: boolean) => {
+        setIsChecked(value)
+        updateSet(setIndex, NewWorkoutExerciseSetKey.ISCOMPLETED, value)
     }
 
     const getSetType = () => {
@@ -70,25 +75,27 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
 
     return (
         <View style={[styles.workoutExerciseSetRowContainer, highlightStyle]}>
+            <View style={[styles.workoutExerciseSetDataRowContainer]}>
 
-            <TouchableNativeFeedback
-                onPress={() => router.navigate({
-                    pathname: '/newRoutineExerciseSetModal',
-                    params: { workoutExercisePositionIndex: workoutExercisePositionIndex, setIndex: setIndex }
-                })}
-                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                <View>
-                    {
-                        getSetType()
-                    }
-                </View>
-            </TouchableNativeFeedback>
 
-            <Text style={styles.workoutExerciseSetDataText}>Prev kg</Text>
 
-            {
-                Array.from(workoutExerciseSetElements.exerciseTypeKeys).map((exerciseSetTypeKey, index) => (
-                    index > workoutExerciseSetElements.exerciseTypeKeys.length - 1 ?
+                <TouchableNativeFeedback
+                    onPress={() => router.navigate({
+                        pathname: ROUTES.EXERCISESETMODAL,
+                        params: { exercisePositionIndex: workoutExercisePositionIndex, setIndex: setIndex, currentRoute: ROUTES.WORKOUT }
+                    })}
+                    background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                    <View>
+                        {
+                            getSetType()
+                        }
+                    </View>
+                </TouchableNativeFeedback>
+
+                <Text style={styles.prevWorkoutExerciseSetDataText}>Prev kg</Text>
+
+                {
+                    Array.from(workoutExerciseSetElements.exerciseTypeKeys).map((exerciseSetTypeKey, index) => (
                         <TextInput
                             key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
                             style={styles.workoutExerciseSetDataText}
@@ -100,15 +107,16 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
                             placeholderTextColor={'#858585ff'}
                             keyboardType='number-pad'
                         />
-                        : null
-                ))
-            }
+                    ))
+                }
+
+            </View>
 
             <View style={styles.checkboxContainer}>
                 <Checkbox
                     style={styles.workoutExerciseSetCheckbox}
                     value={isChecked}
-                    onValueChange={setIsChecked}
+                    onValueChange={(e) => onHandleCheckboxChange(e.valueOf())}
                     color={isChecked ? '#0fb800ff' : undefined}
                 />
             </View>
@@ -120,20 +128,43 @@ const styles = StyleSheet.create({
     workoutExerciseSetRowContainer: {
         flex: 1,
         flexDirection: 'row',
-        gap: 5,
+        // justifyContent: 'space-between',
+        // marginRight: 45,
+        // gap: 5,
+    },
+    workoutExerciseSetDataRowContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginRight: 45,
+        // gap: 5,
     },
 
     shortCodeText: {
         fontSize: 18,
-        width: 60,
+        width: 35,
         height: 40,
-        textAlign: 'center',
+        // textAlign: 'center',
+        paddingLeft: 6,
         verticalAlign: 'middle',
         // borderWidth: 1,
         // borderColor: 'green'
     },
+    prevWorkoutExerciseSetDataText: {
+        width: 75,
+        height: 40,
+        fontSize: 18,
+        color: '#ffffffff',
+        // textAlign: 'center',
+        paddingLeft: 6,
+        verticalAlign: 'middle',
+        // borderWidth: 1,
+        // borderColor: 'purple',
+        padding: 0,
+        margin: 0,
+    },
     workoutExerciseSetDataText: {
-        width: 80,
+        width: 40,
         height: 40,
         fontSize: 18,
         color: '#ffffffff',

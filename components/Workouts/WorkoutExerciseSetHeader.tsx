@@ -35,6 +35,9 @@ export default function WorkoutExerciseSetHeader({ exerciseTypeId }: WorkoutExer
                     <>
                         <Text style={styles.workoutExerciseSetTitleText}>KM</Text>
                         <Text style={styles.workoutExerciseSetTitleText}>TIME</Text>
+                        <Text style={styles.workoutExerciseSetTitleText}>AvgHR</Text>
+                        <Text style={styles.workoutExerciseSetTitleText}>MaxHR</Text>
+                        <Text style={styles.workoutExerciseSetTitleText}>CPrgm</Text>
                     </>
                 )
             }
@@ -55,24 +58,26 @@ const styles = StyleSheet.create({
     workoutExerciseSetHeaderContainer: {
         flexDirection: 'row',
         flex: 1,
-        gap: 5,
+        marginRight: 45,
+        // gap: 5,
+        justifyContent: 'space-between'
     },
     titleTextSet: {
         fontSize: 14,
         color: '#858585ff',
-        width: 60,
-        textAlign: 'center',
+        width: 40,
+        // textAlign: 'center',
     },
     titleTextPrevious: {
         fontSize: 14,
         color: '#858585ff',
-        width: 80,
+        width: 73,
         textAlign: 'center',
     },
     workoutExerciseSetTitleText: {
         fontSize: 14,
         color: '#858585ff',
-        width: 80,
+        width: 40,
         textAlign: 'center',
     },
 });

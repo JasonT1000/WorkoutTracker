@@ -72,7 +72,7 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
         })
     }
 
-    const updateSet = (setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float) => {
+    const updateSet = (setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float | boolean) => {
         dispatch({
             type: 'UPDATE_NEWWORKOUTEXERCISESET', payload: {
                 newWorkoutExerciseIndex: workoutExercise.positionIndex,

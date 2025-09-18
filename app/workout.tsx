@@ -2,8 +2,8 @@ import OptionsHeader from '@/components/OptionsHeader';
 import WorkoutExercise from '@/components/Workouts/WorkoutExercise';
 import { formatTimerTime, getExerciseSetTypeId } from '@/helperFiles/helperFunctions';
 import { Exercise, EXERCISESETTYPE, ExerciseWithBodyAreas, NewWorkoutExercise, ROUTES } from '@/helperFiles/helperTypes';
-import { router, useLocalSearchParams } from 'expo-router';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -19,6 +19,8 @@ export default function Workout() {
   const [expandedId, setExpandedId] = useState<number>(-1)
   //refs
   const flatListRef = useRef<FlatList>(null)
+  const latestDurationRef = useRef(0)
+  const isDiscardingWorkoutRef = useRef(false)
 
   useEffect(() => {
     if (newExercises) {
@@ -65,7 +67,11 @@ export default function Workout() {
       setDuration(prev => prev + 1)
     }, 1000);
 
-    return () => clearInterval(interval)
+    // return () => clearInterval(interval)
+
+    return () => {
+      clearInterval(interval)
+    }
 
     // // Timestamp based so dont have to keep a timer going in the background
     // const startTime = Date.now();
@@ -78,6 +84,41 @@ export default function Workout() {
     //   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
     // };
   }, [])
+
+  useEffect(() => {
+    latestDurationRef.current = duration
+  }, [duration])
+
+  useFocusEffect(
+    useCallback(() => {
+      // Invoked whenever the route is focused.
+      // Timestamp based so dont have to keep a timer going in the background when page loses focus
+      if (state.startDatetime > 0) {
+        const startTime = state.startDatetime;
+
+        const getElapsed = () => {
+          const now = Date.now();
+          const elapsedMs = now - startTime;
+          const seconds = Math.floor((elapsedMs % 60000) / 1000);
+
+          return seconds
+        };
+
+        setDuration(state.duration + getElapsed())
+      }
+
+      // Return function is invoked whenever the route gets out of focus.
+      return () => {
+        if (isDiscardingWorkoutRef.current === true) {
+          dispatch({ type: 'RESET_NEWWORKOUT' })
+        }
+        else {
+          dispatch({ type: 'UPDATE_WORKOUTDURATION', payload: latestDurationRef.current })
+          dispatch({ type: 'UPDATE_WORKOUTSTARTDATETIME' })
+        }
+      };
+    }, []),
+  );
 
 
   const updateExpandedId = (newId: number) => {
@@ -113,16 +154,29 @@ export default function Workout() {
       // }
     }
     else {
-      if (state.duration < 5 && state.workoutExercises.length < 1) {
-        Alert.alert('Whoopsie doodle, minimum workout time is 5 seconds and your workout needs some exercises')
+      if (duration < 5 && state.workoutExercises.length < 1) {
+        Alert.alert('Whoopsie doodle', 'Minimum workout time is 5 seconds and your workout needs some exercises')
       }
-      else if (state.duration < 5) {
-        Alert.alert('Whoopsie doodle, minimum workout time is 5 seconds')
+      else if (duration < 5) {
+        Alert.alert('Whoopsie doodle', 'Minimum workout time is 5 seconds')
       }
       else {
-        Alert.alert('Whoopsie doodle, your workout needs some exercises')
+        Alert.alert('Whoopsie doodle', 'Your workout needs some exercises')
       }
     }
+  }
+
+  const onHandleDiscardWorkout = () => {
+    Alert.alert('Discard Workout', 'Are you sure you want to discard this workout?', [
+      {
+        text: 'Discard Workout', style: 'cancel', onPress: () => {
+          // dispatch({ type: 'RESET_NEWWORKOUT' })
+          isDiscardingWorkoutRef.current = true
+          router.replace(ROUTES.HOME)
+        }
+      },
+      { text: 'Cancel', style: 'default' }
+    ])
   }
 
   return (
@@ -164,6 +218,14 @@ export default function Workout() {
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View style={styles.addExercisesButton}>
                   <Text style={styles.addExercisesButtonText}>Add exercises</Text>
+                </View>
+              </TouchableNativeFeedback>
+
+              <TouchableNativeFeedback
+                onPress={() => onHandleDiscardWorkout()}
+                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                <View style={styles.discardWorkoutButton}>
+                  <Text style={styles.discardWorkoutButtonText}>Discard Workout</Text>
                 </View>
               </TouchableNativeFeedback>
             </View>
@@ -223,5 +285,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     color: '#ffffffff'
+  },
+  discardWorkoutButton: {
+    width: '100%',
+    backgroundColor: '#272727ff',
+    padding: 8,
+    borderRadius: 10,
+    marginTop: 15,
+  },
+  discardWorkoutButtonText: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#f02e2eff'
   },
 });
