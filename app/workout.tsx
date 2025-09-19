@@ -1,5 +1,6 @@
 import OptionsHeader from '@/components/OptionsHeader';
 import WorkoutExercise from '@/components/Workouts/WorkoutExercise';
+import { insertWorkout, insertWorkoutExercises } from '@/db/inserts';
 import { formatTimerTime, getExerciseSetTypeId } from '@/helperFiles/helperFunctions';
 import { Exercise, EXERCISESETTYPE, ExerciseWithBodyAreas, NewWorkoutExercise, ROUTES } from '@/helperFiles/helperTypes';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -97,12 +98,15 @@ export default function Workout() {
   }, [])
 
   // Store current duration and set a start datetime when we navigate away from this page
+  // Timestamp based so dont have to keep a timer going in the background when page loses focus
   useFocusEffect(
     useCallback(() => {
       // Invoked whenever the route is focused.
-      // Timestamp based so dont have to keep a timer going in the background when page loses focus
       if (state.startDatetime > 0) {
         setDuration(state.duration + getElapsed())
+      }
+      if (state.datetime === '') {
+        dispatch({ type: 'UPDATE_WORKOUTDATE' })
       }
 
       // Return function is invoked whenever the route gets out of focus.
@@ -158,6 +162,7 @@ export default function Workout() {
     return seconds
   };
 
+  // Change the currently expanded exercise
   const updateExpandedId = (newId: number) => {
     setExpandedId(newId)
   }
@@ -170,27 +175,31 @@ export default function Workout() {
   // }
 
   const saveNewWorkout = async () => {
-    if (state.duration > 5 && state.workoutExercises.length > 0) {
+    console.log('state.workoutExercises')
+    console.log(state.workoutExercises)
+    console.log('state.workoutExercises[0].workoutExerciseSets')
+    console.log(state.workoutExercises[0].workoutExerciseSets)
+    if (latestDurationRef.current > 5 && state.workoutExercises.length > 0) {
       console.log('%%%%%%%%%%%%% saving workout to database')
-      // console.log("$$$$$$$$$ saving new routine to database")
-      // const workoutId = await insertWorkout(state.routineId, state.datetime, duration, state.notes)
-      // console.log("inserted new routine into database with workoutId")
-      // console.log(workoutId[0].insertedId)
-      // if (workoutId[0].insertedId) {
-      //   try {
-      //     await insertWorkoutExercises(workoutId[0].insertedId, state.workoutExercises)
-      //     dispatch({ type: 'RESET_NEWWORKOUT' })
-      //     router.replace(ROUTES.HOME)
-      //   } catch (error) {
-      //     console.warn('failled to save new routine', error)
-      //   }
-      // }
+      const workoutId = await insertWorkout(state.routineId, state.datetime, latestDurationRef.current, state.notes)
+      console.log("inserted new routine into database with workoutId")
+      console.log(workoutId[0].insertedId)
+      if (workoutId[0].insertedId) {
+        try {
+          await insertWorkoutExercises(workoutId[0].insertedId, state.workoutExercises)
+          dispatch({ type: 'RESET_NEWWORKOUT' })
+          isDiscardingWorkoutRef.current = true
+          router.replace(ROUTES.HOME)
+        } catch (error) {
+          console.warn('failled to save new routine', error)
+        }
+      }
     }
     else {
-      if (duration < 5 && state.workoutExercises.length < 1) {
+      if (latestDurationRef.current < 5 && state.workoutExercises.length < 1) {
         Alert.alert('Whoopsie doodle', 'Minimum workout time is 5 seconds and your workout needs some exercises')
       }
-      else if (duration < 5) {
+      else if (latestDurationRef.current < 5) {
         Alert.alert('Whoopsie doodle', 'Minimum workout time is 5 seconds')
       }
       else {

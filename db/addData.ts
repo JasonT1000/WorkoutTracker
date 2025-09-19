@@ -1,4 +1,4 @@
-import { bodyArea, exercise, exerciseBodyArea, exerciseSetType, exerciseType, routine, routineExercise, routineExerciseSet, workout, workoutExercise, workoutExerciseSet } from "@/db/schema"
+import { bodyArea, cardioProgram, exercise, exerciseBodyArea, exerciseSetType, exerciseType, routine, routineExercise, routineExerciseSet, workout, workoutExercise, workoutExerciseSet } from "@/db/schema"
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite"
 import AsyncStorage from 'expo-sqlite/kv-store'
 
@@ -18,6 +18,21 @@ export const addData = async (db: ExpoSQLiteDatabase) => {
         { type: 'weight' },
         { type: 'cardio' },
         { type: 'stretch' }
+    ])
+
+    await db.insert(cardioProgram).values([
+        { name: 'Grand stationary bike 1' },
+        { name: 'Grand stationary bike 2' },
+        { name: 'Grand stationary bike 3' },
+        { name: 'Grand stationary bike 4' },
+        { name: 'Grand stationary bike 5' },
+        { name: 'Grand stationary bike 6' },
+        { name: 'Grand stationary bike 7' },
+        { name: 'Grand stationary bike 8' },
+        { name: 'Grand stationary bike 9' },
+        { name: 'Grand stationary bike 10' },
+        { name: 'Grand stationary bike 11' },
+        { name: 'Grand stationary bike 12' }
     ])
 
     await db.insert(exercise).values([

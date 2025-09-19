@@ -1,4 +1,4 @@
-import { NewRoutineExercise, NewWorkoutExercise } from '@/helperFiles/helperTypes';
+import { NewRoutineExercise, NewWorkoutExercise, NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
 import { db } from './dbConnection';
 import { routine, routineExercise, routineExerciseSet, workout, workoutExercise, workoutExerciseSet } from './schema';
 
@@ -48,10 +48,10 @@ export const insertRoutineExercises = async (routineId: number, data: NewRoutine
 // --------------------------- Workouts ---------------------------
 export const insertWorkout = async (routineId: number, datetime: string, duration: number, notes: string) => {
     return await db.insert(workout).values({
-        routineId: routineId,
+        routineId: routineId >= 0 ? routineId : null,
         datetime: datetime,
         duration: duration,
-        notes: notes
+        notes: notes !== '' ? notes : null
     }).returning({ insertedId: workout.id })
 }
 
@@ -63,25 +63,29 @@ export const insertWorkoutExercises = async (workoutId: number, data: NewWorkout
                 workoutId: workoutId,
                 exerciseId: newWorkoutExercise.exerciseId,
                 restTimer: newWorkoutExercise.restTimer,
-                notes: newWorkoutExercise.notes
+                notes: newWorkoutExercise.notes !== '' ? newWorkoutExercise.notes : null
             }).returning({ insertedId: workoutExercise.id })
 
-            console.log("inserted new workoutExercise into database with routineId")
+            console.log("inserted new workoutExercise into database with exerciseId")
             console.log(exerciseId[0].insertedId)
             if (exerciseId[0].insertedId) {
+                console.log("1111111111111")
                 newWorkoutExercise.workoutExerciseSets.forEach(async exerciseSet => {
                     try {
-                        await db.insert(workoutExerciseSet).values({
-                            workoutExerciseId: exerciseId[0].insertedId,
-                            exerciseSetTypeId: exerciseSet.exerciseSetTypeId,
-                            reps: exerciseSet.reps,
-                            weight: exerciseSet.weight,
-                            distance: exerciseSet.distance,
-                            time: exerciseSet.time,
-                            averageHeartRate: exerciseSet.averageHeartRate,
-                            maxHeartRate: exerciseSet.maxHeartRate,
-                            cardioProgramId: exerciseSet.cardioProgramId
-                        })
+                        if (exerciseSet.isCompleted && exerciseHasSomeValues(exerciseSet)) {
+                            console.log("222222222222")
+                            await db.insert(workoutExerciseSet).values({
+                                workoutExerciseId: exerciseId[0].insertedId,
+                                exerciseSetTypeId: exerciseSet.exerciseSetTypeId,
+                                reps: exerciseSet.reps > 0 ? exerciseSet.reps : 1,
+                                weight: exerciseSet.weight ? exerciseSet.weight : null,
+                                distance: exerciseSet.distance ? exerciseSet.distance : null,
+                                time: exerciseSet.time ? exerciseSet.time : null,
+                                averageHeartRate: exerciseSet.averageHeartRate ? exerciseSet.averageHeartRate : null,
+                                maxHeartRate: exerciseSet.maxHeartRate ? exerciseSet.maxHeartRate : null,
+                                cardioProgramId: exerciseSet.cardioProgramId ? exerciseSet.cardioProgramId : null
+                            })
+                        }
                     } catch (error) {
                         console.warn('Insert failed for', exerciseSet, error)
                     }
@@ -93,4 +97,16 @@ export const insertWorkoutExercises = async (workoutId: number, data: NewWorkout
     });
 
     return
+}
+
+const exerciseHasSomeValues = (exerciseSet: NewWorkoutExerciseSet): boolean => {
+    if (exerciseSet.reps > 0
+        || exerciseSet.weight && exerciseSet.weight > 0
+        || exerciseSet.distance && exerciseSet.distance > 0
+        || exerciseSet.time && exerciseSet.time > 0
+    ) {
+        return true
+    }
+
+    return false
 }

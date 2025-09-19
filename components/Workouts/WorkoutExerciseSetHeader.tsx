@@ -58,15 +58,13 @@ const styles = StyleSheet.create({
     workoutExerciseSetHeaderContainer: {
         flexDirection: 'row',
         flex: 1,
-        marginRight: 45,
-        // gap: 5,
+        marginRight: 41,
         justifyContent: 'space-between'
     },
     titleTextSet: {
         fontSize: 14,
         color: '#858585ff',
-        width: 40,
-        // textAlign: 'center',
+        width: 42,
     },
     titleTextPrevious: {
         fontSize: 14,
