@@ -5,9 +5,10 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useContext, useEffect, useRef } from 'react';
 import { Alert, FlatList, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
-import { DispatchContext } from '../../state/workout/workoutExerciseContext';
+import { DispatchContext, StateContext } from '../../state/workout/workoutExerciseContext';
 import WorkoutExerciseSet from './WorkoutExerciseSet';
 import WorkoutExerciseSetHeader from './WorkoutExerciseSetHeader';
+
 
 type WorkoutExerciseProps = {
     workoutExercise: NewWorkoutExercise
@@ -19,6 +20,7 @@ type WorkoutExerciseProps = {
 
 export default function WorkoutExercise({ workoutExercise, flatListRef, expandedId, updateExpandedId }: WorkoutExerciseProps) {
     const dispatch = useContext(DispatchContext)
+    const state = useContext(StateContext)
     const workoutExerciseRef = useRef<View>(null)
     // const [tempIndex, setTempIndex] = useState<number>(routineExercise.routineExerciseSets.length - 1)
 
@@ -136,6 +138,13 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
         }
     }
 
+    const getSetsCompletedText = () => {
+        const completed = workoutExercise.workoutExerciseSets.filter(exerciseSet => exerciseSet.isCompleted).length
+        const total = workoutExercise.workoutExerciseSets.length
+
+        return `${completed}/${total} done`
+    }
+
     // const handleLayout = (event: LayoutChangeEvent) => {
     //     const { y } = event.nativeEvent.layout
     //     console.log(y)
@@ -167,6 +176,31 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
 
                 <TextInput
                     style={styles.workoutExerciseNotesText}
+                    value={state.workoutExercises[workoutExercise.positionIndex].notes}
+                    onChangeText={(text) => {
+                        dispatch({
+                            type: 'UPDATE_WORKOUTNOTES', payload: {
+                                exerciseIndex: workoutExercise.positionIndex,
+                                notes: text
+                            }
+                        })
+                    }}
+                    onSubmitEditing={(e) => {
+                        dispatch({
+                            type: 'UPDATE_WORKOUTNOTES', payload: {
+                                exerciseIndex: workoutExercise.positionIndex,
+                                notes: e.nativeEvent.text
+                            }
+                        })
+                    }}
+                    onBlur={(e) => {
+                        dispatch({
+                            type: 'UPDATE_WORKOUTNOTES', payload: {
+                                exerciseIndex: workoutExercise.positionIndex,
+                                notes: e.nativeEvent.text
+                            }
+                        })
+                    }}
                     placeholder='Notes...'
                     placeholderTextColor={'#858585ff'}
                 />
@@ -220,6 +254,8 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
                         <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
                         <View style={{ flexDirection: 'column', flex: 1 }}>
                             <Text style={styles.workoutExerciseTitle}>{toTitleCase(workoutExercise.exerciseInfo.name)}</Text>
+                            <Text style={styles.setsCompletedText}>{getSetsCompletedText()}</Text>
+
                             <View style={styles.workoutExerciseSetInfoContainer}>
                                 {
                                     workoutExercise.workoutExerciseSets.map((exerciseSet, index) => (
@@ -321,6 +357,11 @@ const styles = StyleSheet.create({
     },
     setText: {
         fontSize: 16,
+    },
+
+    setsCompletedText: {
+        fontSize: 16,
+        color: '#858585ff',
     },
 
     addExerciseSetButtonText: {

@@ -174,36 +174,67 @@ export default function Workout() {
   //   }
   // }
 
-  const saveNewWorkout = async () => {
+  const saveNewWorkout = () => {
     console.log('state.workoutExercises')
     console.log(state.workoutExercises)
-    console.log('state.workoutExercises[0].workoutExerciseSets')
-    console.log(state.workoutExercises[0].workoutExerciseSets)
-    if (latestDurationRef.current > 5 && state.workoutExercises.length > 0) {
-      console.log('%%%%%%%%%%%%% saving workout to database')
-      const workoutId = await insertWorkout(state.routineId, state.datetime, latestDurationRef.current, state.notes)
-      console.log("inserted new routine into database with workoutId")
-      console.log(workoutId[0].insertedId)
-      if (workoutId[0].insertedId) {
-        try {
-          await insertWorkoutExercises(workoutId[0].insertedId, state.workoutExercises)
-          dispatch({ type: 'RESET_NEWWORKOUT' })
-          isDiscardingWorkoutRef.current = true
-          router.replace(ROUTES.HOME)
-        } catch (error) {
-          console.warn('failled to save new routine', error)
-        }
-      }
+    const { total, completed } = getSetsCompleted()
+    // let errorStringStart = 'Whoopsie doodle, '
+    let aErrorStrings = []
+
+    if (latestDurationRef.current > 5 && state.workoutExercises.length > 0 && total === completed) {
+      saveWorkout()
+    }
+    else if (latestDurationRef.current > 5 && state.workoutExercises.length > 0 && completed > 0 && total !== completed) {
+      Alert.alert('Save Workout', 'Are you sure you want to save this workout?, there are some sets that are not completed yet. Incomplete sets will not be saved', [
+        {
+          text: 'Save Workout', style: 'default', onPress: () => {
+            saveWorkout()
+          }
+        },
+        { text: 'Cancel', style: 'default' }
+      ])
     }
     else {
-      if (latestDurationRef.current < 5 && state.workoutExercises.length < 1) {
-        Alert.alert('Whoopsie doodle', 'Minimum workout time is 5 seconds and your workout needs some exercises')
+      if (latestDurationRef.current < 5) {
+        aErrorStrings.push('minimum workout time is 5 seconds')
       }
-      else if (latestDurationRef.current < 5) {
-        Alert.alert('Whoopsie doodle', 'Minimum workout time is 5 seconds')
+      if (state.workoutExercises.length < 1) {
+        aErrorStrings.push('your workout needs some exercises')
       }
-      else {
-        Alert.alert('Whoopsie doodle', 'Your workout needs some exercises')
+      if (completed === 0) {
+        aErrorStrings.push('you have no completed sets')
+      }
+
+      aErrorStrings[0] = aErrorStrings[0].charAt(0).toUpperCase() + aErrorStrings[0].slice(1);
+      Alert.alert('Whoopsie doodle', aErrorStrings.join(' and '))
+    }
+  }
+
+  const getSetsCompleted = (): { total: number, completed: number } => {
+    let total = 0
+    let completed = 0
+
+    for (const workoutExercise of state.workoutExercises) {
+      total += workoutExercise.workoutExerciseSets.length
+      completed += workoutExercise.workoutExerciseSets.filter(workoutSet => workoutSet.isCompleted).length
+    }
+
+    return { total: total, completed: completed }
+  }
+
+  const saveWorkout = async () => {
+    console.log('%%%%%%%%%%%%% saving workout to database')
+    const workoutId = await insertWorkout(state.routineId, state.datetime, latestDurationRef.current, state.notes)
+    console.log("inserted new routine into database with workoutId")
+    console.log(workoutId[0].insertedId)
+    if (workoutId[0].insertedId) {
+      try {
+        await insertWorkoutExercises(workoutId[0].insertedId, state.workoutExercises)
+        dispatch({ type: 'RESET_NEWWORKOUT' })
+        isDiscardingWorkoutRef.current = true
+        router.replace(ROUTES.HOME)
+      } catch (error) {
+        console.warn('failled to save new routine', error)
       }
     }
   }

@@ -14,7 +14,7 @@ export type Action =
     | { type: 'UPDATE_ROUTINEID'; payload: number }
     | { type: 'UPDATE_WORKOUTDATE'; }
     | { type: 'UPDATE_WORKOUTDURATION'; payload: number }
-    | { type: 'UPDATE_WORKOUTNOTES'; payload: { notes: string } }
+    | { type: 'UPDATE_WORKOUTNOTES'; payload: { exerciseIndex: number, notes: string } }
     | { type: 'ADD_NEWWORKOUTEXERCISE'; payload: NewWorkoutExercise[] }
     | { type: 'REPLACE_NEWWORKOUTEXERCISES'; payload: NewWorkoutExercise[] }
     | { type: 'REMOVE_NEWWORKOUTEXERCISE'; payload: number }
@@ -43,7 +43,7 @@ export const reducer = (state: State, action: Action): State => {
         case "UPDATE_WORKOUTDURATION":
             return { ...state, duration: action.payload }
         case "UPDATE_WORKOUTNOTES":
-            return { ...state, notes: action.payload.notes }
+            return { ...state, workoutExercises: updateExerciseNotes(state, action.payload.exerciseIndex, action.payload.notes) }
         case "ADD_NEWWORKOUTEXERCISE":
             return { ...state, workoutExercises: [...state.workoutExercises, ...action.payload] }
         case "REPLACE_NEWWORKOUTEXERCISES":
@@ -66,6 +66,19 @@ export const reducer = (state: State, action: Action): State => {
         default:
             return state;
     }
+}
+
+const updateExerciseNotes = (state: State, exerciseIndex: number, newNotes: string): NewWorkoutExercise[] => {
+    const workoutExerciseIndex = state.workoutExercises.findIndex(we => we.positionIndex === exerciseIndex)
+
+    if (workoutExerciseIndex >= 0) {
+        let newStateWorkoutExercises = [...state.workoutExercises]
+        newStateWorkoutExercises[workoutExerciseIndex].notes = newNotes
+
+        return newStateWorkoutExercises
+    }
+
+    return state.workoutExercises
 }
 
 const addExerciseSet = (state: State, newWorkoutExerciseIndex: number, newExerciseSet: NewWorkoutExerciseSet): NewWorkoutExercise[] => {

@@ -51,7 +51,7 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
     // State
     const [workoutExerciseSetElements] = useState(inputCountMap[ExerciseTypes[exerciseTypeId]])
     const [tempValues, setTempValues] = useState<Record<number, string>>(initTempValues())
-    const [isChecked, setIsChecked] = useState<boolean>(false)
+    const [isChecked, setIsChecked] = useState<boolean>(exerciseSet.isCompleted)
     const [showPicker, setShowPicker] = useState<boolean>(false)
     const [timeString, setTimeString] = useState<string | null>(null)
 
