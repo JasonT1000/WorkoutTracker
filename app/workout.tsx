@@ -2,7 +2,7 @@ import OptionsHeader from '@/components/OptionsHeader';
 import WorkoutExercise from '@/components/Workouts/WorkoutExercise';
 import { insertWorkout, insertWorkoutExercises } from '@/db/inserts';
 import { formatTimerTime, getExerciseSetTypeId } from '@/helperFiles/helperFunctions';
-import { Exercise, EXERCISESETTYPE, ExerciseWithBodyAreas, NewWorkoutExercise, ROUTES } from '@/helperFiles/helperTypes';
+import { Exercise, EXERCISESETTYPE, NewWorkoutExercise, ROUTES } from '@/helperFiles/helperTypes';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from 'expo-sqlite/kv-store';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -12,12 +12,11 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DispatchContext, StateContext } from '../state/workout/workoutExerciseContext';
 
 export default function Workout() {
-  const { existingExercisesWithBodyAreas, newExercises } = useLocalSearchParams()
+  const { newExercises } = useLocalSearchParams()
   const state = useContext(StateContext)
   const dispatch = useContext(DispatchContext)
   const [duration, setDuration] = useState<number>(state.duration)
   const [weightVolume, setWeightVolume] = useState<number>(0)
-  const [exercisesWithBodyAreas, setExercisesWithBodyAreas] = useState<ExerciseWithBodyAreas[]>([])
   const [expandedId, setExpandedId] = useState<number>(-1)
   //refs
   const appState = useRef<AppStateStatus>(AppState.currentState)
@@ -25,6 +24,8 @@ export default function Workout() {
   const latestDurationRef = useRef(0)
   const isDiscardingWorkoutRef = useRef(false)
 
+
+  // Add newly added exercises to global workout state
   useEffect(() => {
     if (newExercises) {
       console.log("useEffect running in routine.tsx")
@@ -65,6 +66,7 @@ export default function Workout() {
 
   }, [newExercises])
 
+  // Start timer
   useEffect(() => {
     const interval = setInterval(() => {
       setDuration(prev => prev + 1)
@@ -73,6 +75,7 @@ export default function Workout() {
     return () => clearInterval(interval)
   }, [])
 
+  // Update timer reference
   useEffect(() => {
     latestDurationRef.current = duration
   }, [duration])
@@ -239,6 +242,22 @@ export default function Workout() {
     }
   }
 
+  const removeExercise = (exerciseIndex: number, exerciseName: string) => {
+    // remove exercise from global state
+    Alert.alert('Remove Exercise', `Are you sure you want to remove exercise ${exerciseName}?`, [
+      {
+        text: 'Remove Exercise', style: 'cancel', onPress: () => {
+          dispatch({
+            type: 'REMOVE_NEWWORKOUTEXERCISE', payload: {
+              exerciseIndex: exerciseIndex,
+            }
+          })
+        }
+      },
+      { text: 'Cancel', style: 'default' }
+    ])
+  }
+
   const onHandleDiscardWorkout = () => {
     Alert.alert('', 'Are you sure you want to discard this workout?', [
       {
@@ -281,13 +300,13 @@ export default function Workout() {
                   keyboardShouldPersistTaps='never'
                   data={state.workoutExercises}
                   keyExtractor={(item) => item.positionIndex.toString()}
-                  renderItem={({ item }) => <WorkoutExercise workoutExercise={item} flatListRef={flatListRef} expandedId={expandedId} updateExpandedId={updateExpandedId} />}
+                  renderItem={({ item }) => <WorkoutExercise workoutExercise={item} flatListRef={flatListRef} expandedId={expandedId} updateExpandedId={updateExpandedId} removeExercise={removeExercise} />}
                 />
                 {/* </KeyboardAvoidingView> */}
               </View>
 
               <TouchableNativeFeedback
-                onPress={() => router.navigate({ pathname: ROUTES.EXERCISE, params: { returnRoute: ROUTES.WORKOUT, existingExercisesWithBodyAreas: JSON.stringify(exercisesWithBodyAreas) } })}
+                onPress={() => router.navigate({ pathname: ROUTES.EXERCISE, params: { returnRoute: ROUTES.WORKOUT } })}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View style={styles.addExercisesButton}>
                   <Text style={styles.addExercisesButtonText}>Add exercises</Text>

@@ -2,7 +2,7 @@ import OptionsHeader from '@/components/OptionsHeader';
 import RoutineExercise from '@/components/Routines/RoutineExercise';
 import { insertRoutine, insertRoutineExercises } from '@/db/inserts';
 import { getExerciseSetTypeId } from '@/helperFiles/helperFunctions';
-import { Exercise, EXERCISESETTYPE, ExerciseWithBodyAreas, NewRoutineExercise, ROUTES } from '@/helperFiles/helperTypes';
+import { Exercise, EXERCISESETTYPE, NewRoutineExercise, ROUTES } from '@/helperFiles/helperTypes';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
@@ -11,11 +11,10 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DispatchContext, StateContext } from '../state/routine/routineExerciseContext';
 
 export default function Routine() {
-  const { existingExercisesWithBodyAreas, newExercises } = useLocalSearchParams()
+  const { newExercises } = useLocalSearchParams()
   const state = useContext(StateContext)
   const dispatch = useContext(DispatchContext)
   const [title, onChangeTitle] = useState(state.routineName)
-  const [exercisesWithBodyAreas, setExercisesWithBodyAreas] = useState<ExerciseWithBodyAreas[]>([])
   const [expandedId, setExpandedId] = useState<number>(-1)
   //refs
   const flatListRef = useRef<FlatList>(null)
@@ -137,7 +136,7 @@ export default function Routine() {
               </View>
 
               <TouchableNativeFeedback
-                onPress={() => router.navigate({ pathname: ROUTES.EXERCISE, params: { returnRoute: ROUTES.ROUTINE, existingExercisesWithBodyAreas: JSON.stringify(exercisesWithBodyAreas) } })}
+                onPress={() => router.navigate({ pathname: ROUTES.EXERCISE, params: { returnRoute: ROUTES.ROUTINE } })}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View style={styles.addExercisesButton}>
                   <Text style={styles.addExercisesButtonText}>Add exercises</Text>

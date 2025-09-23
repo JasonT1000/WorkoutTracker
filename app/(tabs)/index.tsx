@@ -29,6 +29,14 @@ export default function Index() {
 
   }, []);
 
+  const startRoutine = (routineId: number) => {
+    // query database for all routineExercises with that routineId
+    // will want exerciseInfo aswell
+    // query database for all routineExerciseSets for those routineExercises
+
+    // Set the workout global state to the values of queries
+  }
+
   return (
     <SafeAreaView style={styles.main}>
 

@@ -17,7 +17,7 @@ export type Action =
     | { type: 'UPDATE_WORKOUTNOTES'; payload: { exerciseIndex: number, notes: string } }
     | { type: 'ADD_NEWWORKOUTEXERCISE'; payload: NewWorkoutExercise[] }
     | { type: 'REPLACE_NEWWORKOUTEXERCISES'; payload: NewWorkoutExercise[] }
-    | { type: 'REMOVE_NEWWORKOUTEXERCISE'; payload: number }
+    | { type: 'REMOVE_NEWWORKOUTEXERCISE'; payload: { exerciseIndex: number } }
     | { type: 'ADD_NEWWORKOUTEXERCISESET'; payload: { newWorkoutExerciseIndex: number, newExerciseSet: NewWorkoutExerciseSet } }
     | { type: 'UPDATE_NEWWORKOUTEXERCISESET'; payload: { newWorkoutExerciseIndex: number, setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float | boolean } }
     | { type: 'REMOVE_NEWWORKOUTEXERCISESET'; payload: { newWorkoutExerciseIndex: number, setIndex: number } }
@@ -49,8 +49,7 @@ export const reducer = (state: State, action: Action): State => {
         case "REPLACE_NEWWORKOUTEXERCISES":
             return { ...state, workoutExercises: [...action.payload] }
         case "REMOVE_NEWWORKOUTEXERCISE":
-            // Add functionality
-            return state
+            return { ...state, workoutExercises: removeExercise(state, action.payload.exerciseIndex) }
         case "ADD_NEWWORKOUTEXERCISESET":
             return { ...state, workoutExercises: addExerciseSet(state, action.payload.newWorkoutExerciseIndex, action.payload.newExerciseSet) }
         case "UPDATE_NEWWORKOUTEXERCISESET":
@@ -69,29 +68,30 @@ export const reducer = (state: State, action: Action): State => {
 }
 
 const updateExerciseNotes = (state: State, exerciseIndex: number, newNotes: string): NewWorkoutExercise[] => {
-    const workoutExerciseIndex = state.workoutExercises.findIndex(we => we.positionIndex === exerciseIndex)
+    let newStateWorkoutExercises = [...state.workoutExercises]
+    newStateWorkoutExercises[exerciseIndex].notes = newNotes
 
-    if (workoutExerciseIndex >= 0) {
-        let newStateWorkoutExercises = [...state.workoutExercises]
-        newStateWorkoutExercises[workoutExerciseIndex].notes = newNotes
+    return newStateWorkoutExercises
+}
 
-        return newStateWorkoutExercises
-    }
+const removeExercise = (state: State, exerciseIndex: number): NewWorkoutExercise[] => {
+    let newStateWorkoutExercises = [...state.workoutExercises]
+    newStateWorkoutExercises = newStateWorkoutExercises.filter(exercise => exercise.positionIndex !== exerciseIndex)
 
-    return state.workoutExercises
+    return newStateWorkoutExercises.map((workoutExercise: NewWorkoutExercise, index: number) => { return { ...workoutExercise, positionIndex: index } })
 }
 
 const addExerciseSet = (state: State, newWorkoutExerciseIndex: number, newExerciseSet: NewWorkoutExerciseSet): NewWorkoutExercise[] => {
-    const workoutExerciseIndex = state.workoutExercises.findIndex(re => re.positionIndex === newWorkoutExerciseIndex)
+    // const workoutExerciseIndex = state.workoutExercises.findIndex(re => re.positionIndex === newWorkoutExerciseIndex)
 
-    if (workoutExerciseIndex >= 0) {
-        let newStateWorkoutExercises = [...state.workoutExercises]
-        newStateWorkoutExercises[workoutExerciseIndex].workoutExerciseSets.push(newExerciseSet)
+    // if (workoutExerciseIndex >= 0) {
+    let newStateWorkoutExercises = [...state.workoutExercises]
+    newStateWorkoutExercises[newWorkoutExerciseIndex].workoutExerciseSets.push(newExerciseSet)
 
-        return newStateWorkoutExercises
-    }
+    return newStateWorkoutExercises
+    // }
 
-    return state.workoutExercises
+    // return state.workoutExercises
 }
 
 const updateExerciseSet = (state: State, newWorkoutExerciseIndex: number, setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float | boolean): NewWorkoutExercise[] => {

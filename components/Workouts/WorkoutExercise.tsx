@@ -2,7 +2,7 @@ import { formatTime, getExerciseSetTypeId, toTitleCase } from '@/helperFiles/hel
 import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewWorkoutExercise, NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Alert, FlatList, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 import { DispatchContext, StateContext } from '../../state/workout/workoutExerciseContext';
@@ -15,12 +15,15 @@ type WorkoutExerciseProps = {
     flatListRef: React.RefObject<FlatList<any> | null>
     expandedId: number
     updateExpandedId: (workoutExerciseId: number) => void
+    removeExercise: (exerciseIndex: number, exerciseName: string) => void
     // scrollToInput: (yOffset: number) => void
 }
 
-export default function WorkoutExercise({ workoutExercise, flatListRef, expandedId, updateExpandedId }: WorkoutExerciseProps) {
+export default function WorkoutExercise({ workoutExercise, flatListRef, expandedId, updateExpandedId, removeExercise }: WorkoutExerciseProps) {
     const dispatch = useContext(DispatchContext)
     const state = useContext(StateContext)
+    const [notes, setNotes] = useState<string>(workoutExercise.notes)
+    // Refs
     const workoutExerciseRef = useRef<View>(null)
     // const [tempIndex, setTempIndex] = useState<number>(routineExercise.routineExerciseSets.length - 1)
 
@@ -145,6 +148,15 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
         return `${completed}/${total} done`
     }
 
+    const updateExerciseNotes = () => {
+        dispatch({
+            type: 'UPDATE_WORKOUTNOTES', payload: {
+                exerciseIndex: workoutExercise.positionIndex,
+                notes: notes
+            }
+        })
+    }
+
     // const handleLayout = (event: LayoutChangeEvent) => {
     //     const { y } = event.nativeEvent.layout
     //     console.log(y)
@@ -166,7 +178,7 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
                     </TouchableNativeFeedback>
 
                     <TouchableNativeFeedback
-                        onPress={() => { Alert.alert('Edit exercise dots pressed') }}
+                        onPress={() => { removeExercise(workoutExercise.positionIndex, workoutExercise.exerciseInfo.name) }}
                         background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                         <View style={styles.exerciseEditButtonContainer}>
                             <Entypo name="dots-three-vertical" size={24} color="white" />
@@ -176,36 +188,15 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
 
                 <TextInput
                     style={styles.workoutExerciseNotesText}
-                    value={state.workoutExercises[workoutExercise.positionIndex].notes}
-                    onChangeText={(text) => {
-                        dispatch({
-                            type: 'UPDATE_WORKOUTNOTES', payload: {
-                                exerciseIndex: workoutExercise.positionIndex,
-                                notes: text
-                            }
-                        })
-                    }}
-                    onSubmitEditing={(e) => {
-                        dispatch({
-                            type: 'UPDATE_WORKOUTNOTES', payload: {
-                                exerciseIndex: workoutExercise.positionIndex,
-                                notes: e.nativeEvent.text
-                            }
-                        })
-                    }}
-                    onBlur={(e) => {
-                        dispatch({
-                            type: 'UPDATE_WORKOUTNOTES', payload: {
-                                exerciseIndex: workoutExercise.positionIndex,
-                                notes: e.nativeEvent.text
-                            }
-                        })
-                    }}
+                    value={notes}
+                    onChangeText={(text) => { setNotes(text) }}
+                    onSubmitEditing={(e) => { updateExerciseNotes() }}
+                    onBlur={(e) => { updateExerciseNotes() }}
                     placeholder='Notes...'
                     placeholderTextColor={'#858585ff'}
                 />
                 <TouchableNativeFeedback
-                    onPress={() => { Alert.alert('Edit exercise dots pressed') }}
+                    onPress={() => { Alert.alert('modify timer') }}
                     background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                     <View style={styles.workoutExerciseTimerContainer}>
                         <MaterialCommunityIcons name="timer-outline" size={20} color="white" />
@@ -269,7 +260,7 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
                             </View>
                         </View>
                         <TouchableNativeFeedback
-                            onPress={() => { Alert.alert('Edit exercise dots pressed') }}
+                            onPress={() => { removeExercise(workoutExercise.positionIndex, workoutExercise.exerciseInfo.name) }}
                             background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                             <View style={styles.exerciseEditButtonContainer}>
                                 <Entypo name="dots-three-vertical" size={24} color="white" />

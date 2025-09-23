@@ -57,6 +57,8 @@ export const insertWorkout = async (routineId: number, datetime: string, duratio
 
 export const insertWorkoutExercises = async (workoutId: number, data: NewWorkoutExercise[]) => {
     data.forEach(async newWorkoutExercise => {
+        console.log('newWorkoutExercise.notes')
+        console.log(newWorkoutExercise.notes)
         try {
             const exerciseId = await db.insert(workoutExercise).values({
                 positionIndex: newWorkoutExercise.positionIndex,
