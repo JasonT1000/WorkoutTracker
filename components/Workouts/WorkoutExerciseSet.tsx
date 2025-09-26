@@ -2,7 +2,7 @@ import { formatTime } from '@/helperFiles/helperFunctions'
 import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewWorkoutExerciseSet, NewWorkoutExerciseSetKey, ROUTES } from '@/helperFiles/helperTypes'
 import Checkbox from 'expo-checkbox'
 import { router } from 'expo-router'
-import React, { useRef, useState } from 'react'
+import React, { ReactNode, useRef, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
 import { TimerPickerModal } from 'react-native-timer-picker'
 import { Float } from 'react-native/Libraries/Types/CodegenTypes'
@@ -97,6 +97,57 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
         setTempValues((prev) => ({ ...prev, [workoutExerciseSetElementIndexRef.current]: totalSeconds.toString() }))
     };
 
+    const getSetElement = (exerciseSetTypeKey: keyof NewWorkoutExerciseSet, index: number): ReactNode => {
+
+        switch (exerciseSetTypeKey) {
+            case NewWorkoutExerciseSetKey.TIME:
+                return <TouchableNativeFeedback
+                    key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
+                    onPress={() => {
+                        workoutExerciseSetElementIndexRef.current = index
+                        setShowPicker(true)
+                    }}
+                    background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                    <View style={styles.workoutExerciseSetDataText}>
+                        <Text style={styles.workoutExerciseSetDataText}>{formatTime(parseInt(tempValues[index]))}</Text>
+                    </View>
+                </TouchableNativeFeedback>
+
+            case NewWorkoutExerciseSetKey.CARDIOPROGRAMID:
+                return <TouchableNativeFeedback
+                    key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
+                    onPress={() => {
+                        router.navigate({
+                            pathname: ROUTES.CARDIOPROGRAMS,
+                            params: {
+                                returnRoute: ROUTES.WORKOUT,
+                                existingCardioProgramId: exerciseSet.cardioProgramId ? exerciseSet.cardioProgramId?.toString() : '-1',
+                                exercisePositionIndex: workoutExercisePositionIndex.toString(),
+                                exerciseSetIndex: setIndex.toString()
+                            }
+                        })
+                    }}
+                    background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                    <View style={styles.workoutExerciseSetDataText}>
+                        <Text style={styles.workoutExerciseSetDataText}>{exerciseSet.cardioProgramId}</Text>
+                    </View>
+                </TouchableNativeFeedback>
+
+            default:
+                return <TextInput
+                    key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
+                    style={styles.workoutExerciseSetDataText}
+                    value={tempValues[index]}
+                    onChangeText={(text) => { onHandleChange(index, text) }}
+                    onSubmitEditing={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(e.nativeEvent.text)) }}
+                    onBlur={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(tempValues[index])) }}
+                    placeholder='-'
+                    placeholderTextColor={'#858585ff'}
+                    keyboardType='number-pad'
+                />
+        }
+    }
+
     return (
         <View style={[styles.workoutExerciseSetRowContainer, highlightStyle]}>
             <View style={[styles.workoutExerciseSetDataRowContainer]}>
@@ -120,32 +171,35 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
 
                 {
                     Array.from(workoutExerciseSetElements.exerciseTypeKeys).map((exerciseSetTypeKey, index) => (
-                        exerciseSetTypeKey === NewWorkoutExerciseSetKey.TIME ?
-                            <TouchableNativeFeedback
-                                key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
-                                onPress={() => {
-                                    workoutExerciseSetElementIndexRef.current = index
-                                    setShowPicker(true)
-                                }}
-                                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                                <View style={styles.workoutExerciseSetDataText}>
-                                    <Text style={styles.workoutExerciseSetDataText}>{formatTime(parseInt(tempValues[index]))}</Text>
-                                </View>
-                            </TouchableNativeFeedback>
 
-                            :
+                        getSetElement(exerciseSetTypeKey, index)
 
-                            <TextInput
-                                key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
-                                style={styles.workoutExerciseSetDataText}
-                                value={tempValues[index]}
-                                onChangeText={(text) => { onHandleChange(index, text) }}
-                                onSubmitEditing={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(e.nativeEvent.text)) }}
-                                onBlur={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(tempValues[index])) }}
-                                placeholder='-'
-                                placeholderTextColor={'#858585ff'}
-                                keyboardType='number-pad'
-                            />
+                        // exerciseSetTypeKey === NewWorkoutExerciseSetKey.TIME ?
+                        //     <TouchableNativeFeedback
+                        //         key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
+                        //         onPress={() => {
+                        //             workoutExerciseSetElementIndexRef.current = index
+                        //             setShowPicker(true)
+                        //         }}
+                        //         background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                        //         <View style={styles.workoutExerciseSetDataText}>
+                        //             <Text style={styles.workoutExerciseSetDataText}>{formatTime(parseInt(tempValues[index]))}</Text>
+                        //         </View>
+                        //     </TouchableNativeFeedback>
+
+                        //     :
+
+                        //     <TextInput
+                        //         key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
+                        //         style={styles.workoutExerciseSetDataText}
+                        //         value={tempValues[index]}
+                        //         onChangeText={(text) => { onHandleChange(index, text) }}
+                        //         onSubmitEditing={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(e.nativeEvent.text)) }}
+                        //         onBlur={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(tempValues[index])) }}
+                        //         placeholder='-'
+                        //         placeholderTextColor={'#858585ff'}
+                        //         keyboardType='number-pad'
+                        //     />
                     ))
                 }
 

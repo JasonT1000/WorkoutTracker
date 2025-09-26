@@ -49,6 +49,7 @@ export type NewRoutineExerciseSet = {
     weight?: Float,
     distance?: Float,
     time?: number
+    cardioProgramId?: number,
 }
 
 export enum NewRoutineExerciseSetKey {
@@ -57,7 +58,8 @@ export enum NewRoutineExerciseSetKey {
     REPS = 'reps',
     WEIGHT = 'weight',
     DISTANCE = 'distance',
-    TIME = 'time'
+    TIME = 'time',
+    CARDIOPROGRAMID = 'cardioProgramId',
 }
 
 export type NewWorkoutExercise = {
@@ -140,11 +142,17 @@ export enum EXERCISETYPE {
     STRETCH = 'stretch'
 }
 
+export type CardioProgram = {
+    id: number,
+    name: string
+}
+
 export enum ROUTES {
     HOME = '/(tabs)',
     STATISTICS = '/(tabs)/statistics',
     ROUTINE = '/routine',
     WORKOUT = '/workout',
     EXERCISE = '/exercises',
+    CARDIOPROGRAMS = '/cardioPrograms',
     EXERCISESETMODAL = '/exerciseSetModal',
 }

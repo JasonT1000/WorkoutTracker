@@ -10,6 +10,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 export default function Exercises() {
     const { returnRoute } = useLocalSearchParams()
     const [exercises, setExercises] = useState<ExerciseWithBodyAreas[]>([])
+    const [searchTerm, setSearchTerm] = useState<string>('')
 
     const addExercise = (exerciseInfo: ExerciseWithBodyAreas) => {
         // console.log("adding exercise")
@@ -21,6 +22,14 @@ export default function Exercises() {
         console.log("removing exercise")
         setExercises(exercises.filter((exercise) => exercise.id !== exerciseId))
     }
+
+    const testFilter = () => {
+        console.log('searchTerm')
+        console.log(searchTerm)
+    }
+    // const getFilteredExercises = () => {
+    //     return exercises.filter(exercise => exercise.name.includes(searchTerm.toLowerCase()))
+    // }
 
     const returnExercises = () => {
         const parsedExercises = exercises.map(exercise => {
@@ -51,13 +60,17 @@ export default function Exercises() {
                             placeholder='Search exercises'
                             placeholderTextColor={'#858585ff'}
                             maxLength={33}
+                            value={searchTerm}
+                            onChangeText={setSearchTerm}
+                        // onSubmitEditing={(e) => testFilter(e.nativeEvent.text)}
+                        // onBlur={(e) => testFilter()}
                         />
                     </View>
                     <View>
                         <Text style={styles.containerHeadingtext}>Search buttons</Text>
                     </View>
 
-                    <ExerciseList addExercise={addExercise} removeExercise={removeExercise} />
+                    <ExerciseList addExercise={addExercise} removeExercise={removeExercise} searchTerm={searchTerm} />
 
                     <TouchableNativeFeedback
                         onPress={() => returnExercises()}
@@ -99,6 +112,7 @@ const styles = StyleSheet.create({
     searchBoxText: {
         color: '#858585ff',
         fontSize: 18,
+        width: '100%'
     },
 
     exerciseContainer: {

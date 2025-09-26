@@ -56,6 +56,7 @@ export default function RootLayout() {
                 <Stack.Screen name="workout" options={{ headerShown: false }} />
                 <Stack.Screen name="routine" options={{ headerShown: false }} />
                 <Stack.Screen name="exercises" options={{ headerShown: false }} />
+                <Stack.Screen name="cardioPrograms" options={{ headerShown: false }} />
                 <Stack.Screen name="exerciseSetModal" options={{ headerShown: false, presentation: "containedTransparentModal" }} />
               </Stack>
             </RoutineExerciseProvider>

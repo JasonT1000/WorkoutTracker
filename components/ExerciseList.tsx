@@ -9,10 +9,11 @@ import ExerciseListItem from './ExerciseListItem';
 
 type ExerciseListProps = {
     addExercise: (exerciseInfo: ExerciseWithBodyAreas) => void,
-    removeExercise: (exerciseId: number) => void
+    removeExercise: (exerciseId: number) => void,
+    searchTerm: string
 }
 
-export default function ExerciseList({ addExercise, removeExercise }: ExerciseListProps) {
+export default function ExerciseList({ addExercise, removeExercise, searchTerm }: ExerciseListProps) {
     const db = useSQLiteContext();
     const drizzleDb = drizzle(db, { schema });
 
@@ -52,13 +53,18 @@ export default function ExerciseList({ addExercise, removeExercise }: ExerciseLi
 
     }, []);
 
+    const getFilteredExercises = () => {
+        return exercisesWithBodyAreas.filter(exercise => exercise.name.includes(searchTerm.toLowerCase()))
+        // add ability to search by exercise name and exercise bodyArea
+    }
+
     if (isLoading) return <ActivityIndicator />
 
     return (
         <View style={{ flex: 1 }}>
             <Text style={styles.containerHeadingtext}>Exercise list</Text>
             <FlatList
-                data={exercisesWithBodyAreas}
+                data={getFilteredExercises()}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => <ExerciseListItem exerciseInfo={item} addExercise={addExercise} removeExercise={removeExercise} />}
                 automaticallyAdjustContentInsets
