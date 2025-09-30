@@ -3,7 +3,7 @@ import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewWork
 import Checkbox from 'expo-checkbox'
 import { router } from 'expo-router'
 import React, { ReactNode, useRef, useState } from 'react'
-import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
+import { Alert, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
 import { TimerPickerModal } from 'react-native-timer-picker'
 import { Float } from 'react-native/Libraries/Types/CodegenTypes'
 
@@ -63,8 +63,17 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
     }
 
     const onHandleCheckboxChange = (value: boolean) => {
-        setIsChecked(value)
-        updateSet(setIndex, NewWorkoutExerciseSetKey.ISCOMPLETED, value)
+        if (exerciseSet.reps > 0
+            || exerciseSet.weight && exerciseSet.weight > 0
+            || exerciseSet.distance && exerciseSet.distance > 0
+            || exerciseSet.time && exerciseSet.time > 0
+        ) {
+            setIsChecked(value)
+            updateSet(setIndex, NewWorkoutExerciseSetKey.ISCOMPLETED, value)
+        }
+        else {
+            Alert.alert('Whoopsie doodle', 'There are no set values to complete')
+        }
     }
 
     const getSetType = () => {

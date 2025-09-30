@@ -69,6 +69,7 @@ export type NewWorkoutExercise = {
     restTimer: number
     notes: string
     workoutExerciseSets: NewWorkoutExerciseSet[]
+    previousExerciseSets: NewWorkoutExerciseSet[]
     exerciseInfo: ExerciseInfo
 }
 

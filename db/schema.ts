@@ -140,6 +140,7 @@ export const exerciseBodyArea = sqliteTable("exercise_bodyarea", {
 export type Routine = typeof routine.$inferSelect;
 export type Exercise = typeof exercise.$inferSelect;
 export type RoutineExercise = typeof routineExercise.$inferSelect;
+export type WorkoutExerciseSet = typeof workoutExerciseSet.$inferSelect
 
 
 // ----------------------------------------- VIEWS -----------------------------------------

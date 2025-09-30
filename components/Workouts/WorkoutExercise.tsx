@@ -2,7 +2,7 @@ import { formatTime, getExerciseSetTypeId, toTitleCase } from '@/helperFiles/hel
 import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewWorkoutExercise, NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { Alert, FlatList, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 import { DispatchContext, StateContext } from '../../state/workout/workoutExerciseContext';
@@ -34,27 +34,27 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
     //     return newTempIndex
     // }
 
-    useEffect(() => {
-        // if (routineExerciseRef.current) {
-        const getMeasurements = async () => {
-            // Need measurements from ancestor
-            // routineExerciseRef.current?.measureLayout(flatListRef.current?, (left: number, top: number, width: number, height: number) => {
-            //     console.log(top)
-            //     scrollToInput(top)
-            // })
-            // routineExerciseRef.current?.measure((x, y, width, height, pageX, pageY) => {
-            //     console.log("absolute x and y position for current routine exercise")
-            //     console.log(x)
-            //     console.log(y)
-            //     console.log(pageY)
-            //     console.log(height)
-            //     scrollToInput(pageY)
-            // })
-        }
+    // useEffect(() => {
+    // if (routineExerciseRef.current) {
+    // const getMeasurements = async () => {
+    // Need measurements from ancestor
+    // routineExerciseRef.current?.measureLayout(flatListRef.current?, (left: number, top: number, width: number, height: number) => {
+    //     console.log(top)
+    //     scrollToInput(top)
+    // })
+    // routineExerciseRef.current?.measure((x, y, width, height, pageX, pageY) => {
+    //     console.log("absolute x and y position for current routine exercise")
+    //     console.log(x)
+    //     console.log(y)
+    //     console.log(pageY)
+    //     console.log(height)
+    //     scrollToInput(pageY)
+    // })
+    // }
 
-        getMeasurements()
-        // }
-    }, [workoutExerciseRef.current])
+    // getMeasurements()
+    // }
+    // }, [workoutExerciseRef.current])
 
     // const scrollToInput = (yOffset: number) => {
     //     if (flatListRef) {

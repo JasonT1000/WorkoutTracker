@@ -1,6 +1,7 @@
 import OptionsHeader from '@/components/OptionsHeader';
 import WorkoutExercise from '@/components/Workouts/WorkoutExercise';
 import { insertWorkout, insertWorkoutExercises } from '@/db/inserts';
+import { getPreviousWorkoutSets } from '@/db/queries/workouts';
 import { formatTimerTime, getExerciseSetTypeId } from '@/helperFiles/helperFunctions';
 import { Exercise, EXERCISESETTYPE, NewWorkoutExercise, ROUTES } from '@/helperFiles/helperTypes';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -13,11 +14,13 @@ import { DispatchContext, StateContext } from '../state/workout/workoutExerciseC
 
 export default function Workout() {
   const { newExercises } = useLocalSearchParams()
+  //state
   const state = useContext(StateContext)
   const dispatch = useContext(DispatchContext)
   const [duration, setDuration] = useState<number>(state.duration)
   const [weightVolume, setWeightVolume] = useState<number>(0)
   const [expandedId, setExpandedId] = useState<number>(-1)
+  const [exerciseIdCount, setExerciseIdCount] = useState<Record<number, number>>({})
   //refs
   const appState = useRef<AppStateStatus>(AppState.currentState)
   const flatListRef = useRef<FlatList>(null)
@@ -36,8 +39,20 @@ export default function Workout() {
       let exerciseStartingIndex = state.workoutExercises.length
 
       console.log('parsedExercises: ', parsedExercises)
+      let newCount = 0;
 
-      const formattedWorkoutExercises: NewWorkoutExercise[] = parsedExercises.map((exercise, index) => {
+      //TODO: parse promise correctly
+      const formattedWorkoutExercises: NewWorkoutExercise[] = parsedExercises.map(async (exercise, index) => {
+        newCount = (exerciseIdCount[exercise.id] ?? 0) + 1
+
+        setExerciseIdCount(prev => ({
+          ...prev, [exercise.id]: newCount
+        }))
+
+        const prevSets = await getPreviousWorkoutSets(exercise.id, newCount)
+        console.log('prevSets')
+        console.log(prevSets)
+
         const newWorkoutExercise = {
           positionIndex: exerciseStartingIndex,
           workoutId: -1,
@@ -50,6 +65,7 @@ export default function Workout() {
             reps: -1,
             isCompleted: false
           }],
+          previousExerciseSets: prevSets ?? [],
           exerciseInfo: {
             name: exercise.name,
             imageUrl: exercise.imageUrl,
@@ -58,8 +74,13 @@ export default function Workout() {
         }
         exerciseStartingIndex++
 
+        // const formattedWorkoutExercises: NewWorkoutExercise[] =
+
         return newWorkoutExercise
       })
+
+      // console.log('exerciseIdCount')
+      // console.log(exerciseIdCount)
 
       dispatch({ type: 'ADD_NEWWORKOUTEXERCISE', payload: formattedWorkoutExercises })
     }
@@ -181,7 +202,6 @@ export default function Workout() {
     console.log('state.workoutExercises')
     console.log(state.workoutExercises)
     const { total, completed } = getSetsCompleted()
-    // let errorStringStart = 'Whoopsie doodle, '
     let aErrorStrings = []
 
     if (latestDurationRef.current > 5 && state.workoutExercises.length > 0 && total === completed) {

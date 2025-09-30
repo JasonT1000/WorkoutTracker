@@ -57,8 +57,6 @@ export const insertWorkout = async (routineId: number, datetime: string, duratio
 
 export const insertWorkoutExercises = async (workoutId: number, data: NewWorkoutExercise[]) => {
     data.forEach(async newWorkoutExercise => {
-        console.log('newWorkoutExercise.notes')
-        console.log(newWorkoutExercise.notes)
         try {
             const exerciseId = await db.insert(workoutExercise).values({
                 positionIndex: newWorkoutExercise.positionIndex,
@@ -71,11 +69,9 @@ export const insertWorkoutExercises = async (workoutId: number, data: NewWorkout
             console.log("inserted new workoutExercise into database with exerciseId")
             console.log(exerciseId[0].insertedId)
             if (exerciseId[0].insertedId) {
-                console.log("1111111111111")
                 newWorkoutExercise.workoutExerciseSets.forEach(async exerciseSet => {
                     try {
-                        if (exerciseSet.isCompleted && exerciseHasSomeValues(exerciseSet)) {
-                            console.log("222222222222")
+                        if (setHasSomeValues(exerciseSet)) {
                             await db.insert(workoutExerciseSet).values({
                                 workoutExerciseId: exerciseId[0].insertedId,
                                 exerciseSetTypeId: exerciseSet.exerciseSetTypeId,
@@ -101,12 +97,17 @@ export const insertWorkoutExercises = async (workoutId: number, data: NewWorkout
     return
 }
 
-const exerciseHasSomeValues = (exerciseSet: NewWorkoutExerciseSet): boolean => {
-    if (exerciseSet.reps > 0
+// const exerciseHasSomeValues = (NewWorkoutExercise: NewWorkoutExercise): boolean => {
+//     return NewWorkoutExercise.workoutExerciseSets.some(exerciseSet => setHasSomeValues(exerciseSet))
+// }
+
+const setHasSomeValues = (exerciseSet: NewWorkoutExerciseSet): boolean => {
+    if (exerciseSet.isCompleted && (
+        exerciseSet.reps > 0
         || exerciseSet.weight && exerciseSet.weight > 0
         || exerciseSet.distance && exerciseSet.distance > 0
         || exerciseSet.time && exerciseSet.time > 0
-    ) {
+    )) {
         return true
     }
 
