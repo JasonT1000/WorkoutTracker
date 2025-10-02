@@ -216,6 +216,7 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
                                 exerciseSet={exerciseSet}
                                 workoutExercisePositionIndex={workoutExercise.positionIndex}
                                 exerciseTypeId={workoutExercise.exerciseInfo.exerciseTypeId}
+                                previousExerciseSet={workoutExercise.previousExerciseSets[index] ?? null}
                                 updateSet={updateSet}
                                 removeSet={removeSet}
                             // scrollToInput={scrollToInput}

@@ -15,7 +15,7 @@ export type Action =
     | { type: 'UPDATE_WORKOUTDATE'; }
     | { type: 'UPDATE_WORKOUTDURATION'; payload: number }
     | { type: 'UPDATE_WORKOUTNOTES'; payload: { exerciseIndex: number, notes: string } }
-    | { type: 'ADD_NEWWORKOUTEXERCISE'; payload: NewWorkoutExercise[] }
+    | { type: 'ADD_NEWWORKOUTEXERCISES'; payload: NewWorkoutExercise[] }
     | { type: 'REPLACE_NEWWORKOUTEXERCISES'; payload: NewWorkoutExercise[] }
     | { type: 'REMOVE_NEWWORKOUTEXERCISE'; payload: { exerciseIndex: number } }
     | { type: 'ADD_NEWWORKOUTEXERCISESET'; payload: { newWorkoutExerciseIndex: number, newExerciseSet: NewWorkoutExerciseSet } }
@@ -44,7 +44,7 @@ export const reducer = (state: State, action: Action): State => {
             return { ...state, duration: action.payload }
         case "UPDATE_WORKOUTNOTES":
             return { ...state, workoutExercises: updateExerciseNotes(state, action.payload.exerciseIndex, action.payload.notes) }
-        case "ADD_NEWWORKOUTEXERCISE":
+        case "ADD_NEWWORKOUTEXERCISES":
             return { ...state, workoutExercises: [...state.workoutExercises, ...action.payload] }
         case "REPLACE_NEWWORKOUTEXERCISES":
             return { ...state, workoutExercises: [...action.payload] }

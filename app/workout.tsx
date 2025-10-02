@@ -26,63 +26,13 @@ export default function Workout() {
   const flatListRef = useRef<FlatList>(null)
   const latestDurationRef = useRef(0)
   const isDiscardingWorkoutRef = useRef(false)
+  const exerciseIdCountRef = useRef<Record<number, number>>({})
 
 
   // Add newly added exercises to global workout state
   useEffect(() => {
     if (newExercises) {
-      console.log("useEffect running in routine.tsx")
-      const parsedExercises = typeof newExercises === 'string'
-        ? JSON.parse(newExercises) as Exercise[]
-        : [];
-
-      let exerciseStartingIndex = state.workoutExercises.length
-
-      console.log('parsedExercises: ', parsedExercises)
-      let newCount = 0;
-
-      //TODO: parse promise correctly
-      const formattedWorkoutExercises: NewWorkoutExercise[] = parsedExercises.map(async (exercise, index) => {
-        newCount = (exerciseIdCount[exercise.id] ?? 0) + 1
-
-        setExerciseIdCount(prev => ({
-          ...prev, [exercise.id]: newCount
-        }))
-
-        const prevSets = await getPreviousWorkoutSets(exercise.id, newCount)
-        console.log('prevSets')
-        console.log(prevSets)
-
-        const newWorkoutExercise = {
-          positionIndex: exerciseStartingIndex,
-          workoutId: -1,
-          exerciseId: exercise.id,
-          restTimer: 0,
-          notes: "",
-          workoutExerciseSets: [{
-            workoutExerciseId: exercise.id,
-            exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
-            reps: -1,
-            isCompleted: false
-          }],
-          previousExerciseSets: prevSets ?? [],
-          exerciseInfo: {
-            name: exercise.name,
-            imageUrl: exercise.imageUrl,
-            exerciseTypeId: exercise.exerciseTypeId
-          }
-        }
-        exerciseStartingIndex++
-
-        // const formattedWorkoutExercises: NewWorkoutExercise[] =
-
-        return newWorkoutExercise
-      })
-
-      // console.log('exerciseIdCount')
-      // console.log(exerciseIdCount)
-
-      dispatch({ type: 'ADD_NEWWORKOUTEXERCISE', payload: formattedWorkoutExercises })
+      setNewExercises()
     }
 
   }, [newExercises])
@@ -145,6 +95,63 @@ export default function Workout() {
       };
     }, []),
   );
+
+  const setNewExercises = async () => {
+    console.log("useEffect running in routine.tsx")
+    const parsedExercises = typeof newExercises === 'string'
+      ? JSON.parse(newExercises) as Exercise[]
+      : [];
+
+    let exerciseStartingIndex = state.workoutExercises.length
+
+    let formattedWorkoutExercises: NewWorkoutExercise[] = parsedExercises.map((exercise, index) => {
+      const newWorkoutExercise = {
+        positionIndex: exerciseStartingIndex,
+        workoutId: -1,
+        exerciseId: exercise.id,
+        restTimer: 0,
+        notes: "",
+        workoutExerciseSets: [{
+          workoutExerciseId: exercise.id,
+          exerciseSetTypeId: getExerciseSetTypeId(EXERCISESETTYPE.NORMAL),
+          reps: -1,
+          isCompleted: false
+        }],
+        previousExerciseSets: [],
+        exerciseInfo: {
+          name: exercise.name,
+          imageUrl: exercise.imageUrl,
+          exerciseTypeId: exercise.exerciseTypeId
+        }
+      }
+      exerciseStartingIndex++
+
+      return newWorkoutExercise
+    })
+
+    const updatedExercises = await setPrevSets(formattedWorkoutExercises)
+
+    dispatch({ type: 'ADD_NEWWORKOUTEXERCISES', payload: updatedExercises })
+  }
+
+  const setPrevSets = async (newFormattedWorkoutExercises: NewWorkoutExercise[]): Promise<NewWorkoutExercise[]> => {
+    let exerciseIdCount: Record<number, number> = {}
+    const workoutExercises = [...state.workoutExercises, ...newFormattedWorkoutExercises]
+
+    exerciseIdCount = workoutExercises.reduce((acc, workoutExercise) => {
+      acc[workoutExercise.exerciseId] = (acc[workoutExercise.exerciseId] ?? 0) + 1
+      return acc
+    }, {} as Record<number, number>)
+
+    // loop through and add previous sets to exercise from database
+    await Promise.all(
+      newFormattedWorkoutExercises.map(async exercise => {
+        exercise.previousExerciseSets = await getPreviousWorkoutSets(exercise.exerciseId, exerciseIdCount[exercise.exerciseId])
+      })
+    )
+
+    return newFormattedWorkoutExercises
+  }
 
   // Store current datetime from async storage and store it for when app becomes active again
   const recordCurrentTime = async () => {

@@ -8,6 +8,8 @@ import { desc, eq, sql } from 'drizzle-orm';
 export const getPreviousWorkoutSets = async (exerciseId: number, exerciseIdCount: number): Promise<NewWorkoutExerciseSet[]> => {
     console.log('exerciseId')
     console.log(exerciseId)
+    console.log('exerciseIdCount')
+    console.log(exerciseIdCount)
 
     const lastWorkoutExercise = await db
         .select({ workoutExerciseId: workoutExercise.id })

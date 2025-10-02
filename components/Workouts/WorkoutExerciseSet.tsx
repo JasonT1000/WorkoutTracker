@@ -12,6 +12,7 @@ type WorkoutExerciseSetProps = {
     exerciseSet: NewWorkoutExerciseSet
     workoutExercisePositionIndex: number
     exerciseTypeId: number
+    previousExerciseSet: NewWorkoutExerciseSet | null
     updateSet: (setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float | boolean) => void
     removeSet: (setIndex: number) => void
     // scrollToInput: (index: number) => void
