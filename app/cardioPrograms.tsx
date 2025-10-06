@@ -4,7 +4,7 @@ import { NewWorkoutExerciseSetKey, ROUTES } from '@/helperFiles/helperTypes';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext, useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DispatchContext as RoutineDispatchContext } from '../state/routine/routineExerciseContext';
 import { DispatchContext as WorkoutDispatchContext } from '../state/workout/workoutExerciseContext';
@@ -33,36 +33,36 @@ export default function CardioPrograms() {
 
     const setCardioProgram = () => {
         if (typeof exercisePositionIndex === 'string' && typeof exerciseSetIndex === 'string') {
-            if (selectedCardioProgramId < 0) {
-                Alert.alert('Whoopsie doodle, you need to choose a cardio program')
+            // if (selectedCardioProgramId < 0) {
+            //     Alert.alert('Whoopsie doodle, you need to choose a cardio program')
+            // }
+            // else {
+            if (returnRoute === ROUTES.WORKOUT) {
+                workoutDispatch({
+                    type: 'UPDATE_NEWWORKOUTEXERCISESET',
+                    payload: {
+                        newWorkoutExerciseIndex: parseInt(exercisePositionIndex as string),
+                        setIndex: parseInt(exerciseSetIndex as string),
+                        field: NewWorkoutExerciseSetKey.CARDIOPROGRAMID,
+                        value: selectedCardioProgramId
+                    }
+                })
             }
-            else {
-                if (returnRoute === ROUTES.WORKOUT) {
-                    workoutDispatch({
-                        type: 'UPDATE_NEWWORKOUTEXERCISESET',
-                        payload: {
-                            newWorkoutExerciseIndex: parseInt(exercisePositionIndex as string),
-                            setIndex: parseInt(exerciseSetIndex as string),
-                            field: NewWorkoutExerciseSetKey.CARDIOPROGRAMID,
-                            value: selectedCardioProgramId
-                        }
-                    })
-                }
-                else if (returnRoute === ROUTES.ROUTINE) {
-                    routineDispatch({
-                        type: 'UPDATE_NEWROUTINEEXERCISESET',
-                        payload: {
-                            newRoutineExerciseIndex: parseInt(exercisePositionIndex as string),
-                            setIndex: parseInt(exerciseSetIndex as string),
-                            field: NewWorkoutExerciseSetKey.CARDIOPROGRAMID,
-                            value: selectedCardioProgramId
-                        }
-                    })
-                }
+            else if (returnRoute === ROUTES.ROUTINE) {
+                routineDispatch({
+                    type: 'UPDATE_NEWROUTINEEXERCISESET',
+                    payload: {
+                        newRoutineExerciseIndex: parseInt(exercisePositionIndex as string),
+                        setIndex: parseInt(exerciseSetIndex as string),
+                        field: NewWorkoutExerciseSetKey.CARDIOPROGRAMID,
+                        value: selectedCardioProgramId
+                    }
+                })
+            }
 
-                //route back to return route
-                router.replace({ pathname: returnRoute as ROUTES })
-            }
+            //route back to return route
+            router.replace({ pathname: returnRoute as ROUTES })
+            // }
         }
 
         console.log("passed in exercise index or set index is not a string", returnRoute, exercisePositionIndex)

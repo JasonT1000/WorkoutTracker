@@ -130,6 +130,12 @@ export const formatTime = (seconds: number): string => {
     return '00:00'
 }
 
+/**
+ * Takes in time as seconds and outputs a string in format
+ * #hr #min #s
+ * @param seconds 
+ * @returns Formatted string broken into readable time
+ */
 export const formatTimerTime = (seconds: number): string => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);

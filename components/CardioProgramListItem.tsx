@@ -37,7 +37,7 @@ export default function CardioProgramListItem({ cardioProgramId, programName, se
                 <View style={isSelected ? styles.verticalLine : null}></View>
                 <Image source={require('@/assets/images/react-logo.png')} style={styles.exerciseImage} />
                 <View style={styles.exerciseTextContainer}>
-                    {/* <Text style={styles.exerciseNameText}>{cardioProgramId}</Text> */}
+                    <Text style={styles.exerciseNameText}>Id: {cardioProgramId}</Text>
                     <Text style={styles.exerciseNameText}>{toTitleCase(programName)}</Text>
                 </View>
 
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     exerciseTextContainer: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         flex: 1,
         justifyContent: 'space-between',
         alignItems: 'center',

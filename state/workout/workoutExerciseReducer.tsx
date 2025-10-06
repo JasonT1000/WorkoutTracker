@@ -1,4 +1,4 @@
-import { NewWorkoutExercise, NewWorkoutExerciseSet } from "@/helperFiles/helperTypes";
+import { NewWorkoutExercise, NewWorkoutExerciseSet, NewWorkoutExerciseSetKey } from "@/helperFiles/helperTypes";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 export type State = {
@@ -97,8 +97,18 @@ const addExerciseSet = (state: State, newWorkoutExerciseIndex: number, newExerci
 const updateExerciseSet = (state: State, newWorkoutExerciseIndex: number, setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float | boolean): NewWorkoutExercise[] => {
     const newWorkoutExercises = state.workoutExercises.map(workoutExercise => {
         if (workoutExercise.positionIndex === newWorkoutExerciseIndex) {
-            const newExerciseSets = workoutExercise.workoutExerciseSets.map((exerciseSet, index) =>
-                index === setIndex ? { ...exerciseSet, [field]: value } : exerciseSet
+            const newExerciseSets = workoutExercise.workoutExerciseSets.map((exerciseSet, index) => {
+                if (index === setIndex) {
+                    if (field === NewWorkoutExerciseSetKey.CARDIOPROGRAMID && value as number < 0) {
+                        const { [field]: _, ...filteredExerciseSet } = exerciseSet
+                        return filteredExerciseSet
+                    }
+
+                    return { ...exerciseSet, [field]: value }
+                }
+
+                return exerciseSet
+            }
             );
             return { ...workoutExercise, workoutExerciseSets: newExerciseSets };
         }

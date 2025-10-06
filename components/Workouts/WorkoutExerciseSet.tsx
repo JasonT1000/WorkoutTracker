@@ -6,6 +6,7 @@ import React, { ReactNode, useRef, useState } from 'react'
 import { Alert, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
 import { TimerPickerModal } from 'react-native-timer-picker'
 import { Float } from 'react-native/Libraries/Types/CodegenTypes'
+import PreviousSetText from '../PreviousSetText'
 
 type WorkoutExerciseSetProps = {
     setIndex: number
@@ -18,7 +19,7 @@ type WorkoutExerciseSetProps = {
     // scrollToInput: (index: number) => void
 }
 
-export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExercisePositionIndex, exerciseTypeId, updateSet, removeSet }: WorkoutExerciseSetProps) {
+export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExercisePositionIndex, exerciseTypeId, previousExerciseSet, updateSet, removeSet }: WorkoutExerciseSetProps) {
     // How many TextInput components to make for each exercise type
     const inputCountMap: Record<string, {
         exerciseTypeKeys: (keyof NewWorkoutExerciseSet)[]
@@ -107,6 +108,10 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
         setTempValues((prev) => ({ ...prev, [workoutExerciseSetElementIndexRef.current]: totalSeconds.toString() }))
     };
 
+    const setWorkoutExerciseSetValuesToPrevious = () => {
+
+    }
+
     const getSetElement = (exerciseSetTypeKey: keyof NewWorkoutExerciseSet, index: number): ReactNode => {
 
         switch (exerciseSetTypeKey) {
@@ -131,7 +136,7 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
                             pathname: ROUTES.CARDIOPROGRAMS,
                             params: {
                                 returnRoute: ROUTES.WORKOUT,
-                                existingCardioProgramId: exerciseSet.cardioProgramId ? exerciseSet.cardioProgramId?.toString() : '-1',
+                                existingCardioProgramId: exerciseSet.cardioProgramId?.toString() ?? '-1',
                                 exercisePositionIndex: workoutExercisePositionIndex.toString(),
                                 exerciseSetIndex: setIndex.toString()
                             }
@@ -139,7 +144,7 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
                     }}
                     background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                     <View style={styles.workoutExerciseSetDataText}>
-                        <Text style={styles.workoutExerciseSetDataText}>{exerciseSet.cardioProgramId}</Text>
+                        <Text style={styles.workoutExerciseSetDataText}>{exerciseSet.cardioProgramId ?? '-'}</Text>
                     </View>
                 </TouchableNativeFeedback>
 
@@ -177,7 +182,7 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
                     </View>
                 </TouchableNativeFeedback>
 
-                <Text style={styles.prevWorkoutExerciseSetDataText}>Prev kg</Text>
+                <PreviousSetText exerciseTypeId={exerciseTypeId} previousExerciseSet={previousExerciseSet} usePrevSetVales={setWorkoutExerciseSetValuesToPrevious} />
 
                 {
                     Array.from(workoutExerciseSetElements.exerciseTypeKeys).map((exerciseSetTypeKey, index) => (
@@ -266,16 +271,17 @@ const styles = StyleSheet.create({
         paddingLeft: 6,
         verticalAlign: 'middle',
     },
-    prevWorkoutExerciseSetDataText: {
-        width: 75,
-        height: 40,
-        fontSize: 18,
-        color: '#ffffffff',
-        paddingLeft: 6,
-        verticalAlign: 'middle',
-        padding: 0,
-        margin: 0,
-    },
+    // prevWorkoutExerciseSetDataText: {
+    //     width: 75,
+    //     // height: 40,
+    //     maxHeight: 60,
+    //     fontSize: 18,
+    //     color: '#ffffffff',
+    //     paddingLeft: 6,
+    //     verticalAlign: 'middle',
+    //     padding: 0,
+    //     margin: 0,
+    // },
     workoutExerciseSetDataText: {
         width: 42,
         height: 40,
