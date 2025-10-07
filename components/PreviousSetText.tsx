@@ -50,6 +50,7 @@ export default function PreviousSetText({ exerciseTypeId, previousExerciseSet, u
 const styles = StyleSheet.create({
     prevWorkoutExerciseSetDataText: {
         width: 75,
+        minHeight: 40,
         fontSize: 18,
         color: '#858585ff',
         paddingLeft: 6,

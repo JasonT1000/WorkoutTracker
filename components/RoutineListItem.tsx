@@ -7,9 +7,10 @@ import { Alert, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-na
 type RoutineListItemProps = {
     routine: schema.Routine,
     exercises: { exerciseName: string }[]
+    startRoutine: (routineId: number) => void
 }
 
-export default function RoutineListItem({ routine, exercises }: RoutineListItemProps) {
+export default function RoutineListItem({ routine, exercises, startRoutine }: RoutineListItemProps) {
 
     /**
      * Generates a comma-separated string of exercise names with each name in title case.
@@ -39,7 +40,7 @@ export default function RoutineListItem({ routine, exercises }: RoutineListItemP
             </View>
             <Text style={styles.routineText}>{createExercisesString()}</Text>
             <TouchableNativeFeedback
-                onPress={() => { Alert.alert('Touchable pressed') }}
+                onPress={() => startRoutine(routine.id)}
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View style={styles.addExercisesButton}>
                     <Text style={styles.addExercisesButtonText}>Start Routine</Text>

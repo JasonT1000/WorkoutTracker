@@ -46,6 +46,18 @@ export default function RoutineList() {
 
     }, []);
 
+    const startRoutine = (routineId: number) => {
+        // Check if a workout is currently in progress
+        // Check workoutexerciseReducer state
+        // Get all routine exercises with passed in routineId
+        // Get all routine exercise sets for each routine exercise
+
+        // Reset workout state
+        // set workout state routine id to passed in routineId
+        // Set workout exercises with exerciseSets
+        // Navigate to the workout page
+    }
+
     if (isLoading) return <ActivityIndicator />
 
     return (
@@ -55,7 +67,7 @@ export default function RoutineList() {
             <FlatList
                 data={routines}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <RoutineListItem routine={item} exercises={routineExercises[item.id]} />}
+                renderItem={({ item }) => <RoutineListItem routine={item} exercises={routineExercises[item.id]} startRoutine={startRoutine} />}
             />
 
         </View>

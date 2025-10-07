@@ -123,11 +123,14 @@ export const formatTime = (seconds: number): string => {
     // if only seconds return 59s
     // if hours return 1h
     // if all return 1h 1min 1s
-    if (seconds) {
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
+    // if (seconds < 60) {
+    //     return `${secs.toString()}s`
+    // }
+    // else if (seconds < 3600) {
+    //     return `${mins.toString().padStart(2, '0')}: ${secs.toString()}s`;
+    // }
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 
-    return '00:00'
 }
 
 /**

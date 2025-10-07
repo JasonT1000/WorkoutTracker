@@ -35,9 +35,9 @@ export default function WorkoutExerciseSetHeader({ exerciseTypeId }: WorkoutExer
                     <>
                         <Text style={styles.workoutExerciseSetTitleText}>KM</Text>
                         <Text style={styles.workoutExerciseSetTitleText}>TIME</Text>
-                        <Text style={styles.workoutExerciseSetTitleText}>AvgHR</Text>
-                        <Text style={styles.workoutExerciseSetTitleText}>MaxHR</Text>
-                        <Text style={styles.workoutExerciseSetTitleText}>CPrgm</Text>
+                        <Text style={styles.workoutExerciseSetTitleText}>Avg HR</Text>
+                        <Text style={styles.workoutExerciseSetTitleText}>Max HR</Text>
+                        <Text style={styles.workoutExerciseSetTitleText}>C Prgm</Text>
                     </>
                 )
             }

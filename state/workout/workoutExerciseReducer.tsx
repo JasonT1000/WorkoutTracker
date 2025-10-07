@@ -19,6 +19,7 @@ export type Action =
     | { type: 'REPLACE_NEWWORKOUTEXERCISES'; payload: NewWorkoutExercise[] }
     | { type: 'REMOVE_NEWWORKOUTEXERCISE'; payload: { exerciseIndex: number } }
     | { type: 'ADD_NEWWORKOUTEXERCISESET'; payload: { newWorkoutExerciseIndex: number, newExerciseSet: NewWorkoutExerciseSet } }
+    | { type: 'SET_NEWWORKOUTEXERCISESET'; payload: { newWorkoutExerciseIndex: number, setIndex: number, exerciseSet: NewWorkoutExerciseSet } }
     | { type: 'UPDATE_NEWWORKOUTEXERCISESET'; payload: { newWorkoutExerciseIndex: number, setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float | boolean } }
     | { type: 'REMOVE_NEWWORKOUTEXERCISESET'; payload: { newWorkoutExerciseIndex: number, setIndex: number } }
     | { type: 'CLEAR_NEWWORKOUTEXERCISES' }
@@ -52,6 +53,8 @@ export const reducer = (state: State, action: Action): State => {
             return { ...state, workoutExercises: removeExercise(state, action.payload.exerciseIndex) }
         case "ADD_NEWWORKOUTEXERCISESET":
             return { ...state, workoutExercises: addExerciseSet(state, action.payload.newWorkoutExerciseIndex, action.payload.newExerciseSet) }
+        case "SET_NEWWORKOUTEXERCISESET":
+            return { ...state, workoutExercises: setExerciseSet(state, action.payload.newWorkoutExerciseIndex, action.payload.setIndex, action.payload.exerciseSet) }
         case "UPDATE_NEWWORKOUTEXERCISESET":
             return { ...state, workoutExercises: updateExerciseSet(state, action.payload.newWorkoutExerciseIndex, action.payload.setIndex, action.payload.field, action.payload.value) }
         case "REMOVE_NEWWORKOUTEXERCISESET":
@@ -92,6 +95,28 @@ const addExerciseSet = (state: State, newWorkoutExerciseIndex: number, newExerci
     // }
 
     // return state.workoutExercises
+}
+
+const setExerciseSet = (state: State, newWorkoutExerciseIndex: number, setIndex: number, newExerciseSet: NewWorkoutExerciseSet): NewWorkoutExercise[] => {
+    console.log('newExerciseSet')
+    console.log(newExerciseSet)
+    const newWorkoutExercises = state.workoutExercises.map(workoutExercise => {
+        if (workoutExercise.positionIndex === newWorkoutExerciseIndex) {
+            const newExerciseSets = workoutExercise.workoutExerciseSets.map((exerciseSet, index) => {
+                if (index === setIndex) {
+                    return { ...newExerciseSet }
+                }
+
+                return exerciseSet
+            });
+
+            return { ...workoutExercise, workoutExerciseSets: newExerciseSets };
+        }
+
+        return workoutExercise;
+    });
+
+    return newWorkoutExercises;
 }
 
 const updateExerciseSet = (state: State, newWorkoutExerciseIndex: number, setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float | boolean): NewWorkoutExercise[] => {

@@ -2,8 +2,8 @@ import { formatTime } from '@/helperFiles/helperFunctions'
 import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewWorkoutExerciseSet, NewWorkoutExerciseSetKey, ROUTES } from '@/helperFiles/helperTypes'
 import Checkbox from 'expo-checkbox'
 import { router } from 'expo-router'
-import React, { ReactNode, useRef, useState } from 'react'
-import { Alert, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
+import { Alert, StyleProp, StyleSheet, Text, TextInput, TextStyle, TouchableNativeFeedback, View } from 'react-native'
 import { TimerPickerModal } from 'react-native-timer-picker'
 import { Float } from 'react-native/Libraries/Types/CodegenTypes'
 import PreviousSetText from '../PreviousSetText'
@@ -14,12 +14,13 @@ type WorkoutExerciseSetProps = {
     workoutExercisePositionIndex: number
     exerciseTypeId: number
     previousExerciseSet: NewWorkoutExerciseSet | null
+    setSetToPrevious: (setIndex: number) => void
     updateSet: (setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float | boolean) => void
-    removeSet: (setIndex: number) => void
+    // removeSet: (setIndex: number) => void
     // scrollToInput: (index: number) => void
 }
 
-export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExercisePositionIndex, exerciseTypeId, previousExerciseSet, updateSet, removeSet }: WorkoutExerciseSetProps) {
+export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExercisePositionIndex, exerciseTypeId, previousExerciseSet, setSetToPrevious, updateSet }: WorkoutExerciseSetProps) {
     // How many TextInput components to make for each exercise type
     const inputCountMap: Record<string, {
         exerciseTypeKeys: (keyof NewWorkoutExerciseSet)[]
@@ -31,8 +32,9 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
     }
 
     // set default values when populating text inputs
+    // TODO: should the else statement be checking to set number, floats etc not setting everything to string??
     const initTempValues = (): Record<number, string> => {
-        const updateTempValues = inputCountMap[ExerciseTypes[exerciseTypeId]].exerciseTypeKeys.reduce((acc, key, index) => {
+        const updatedTempValues = inputCountMap[ExerciseTypes[exerciseTypeId]].exerciseTypeKeys.reduce((acc, key, index) => {
             if (key === NewWorkoutExerciseSetKey.ISCOMPLETED) {
                 acc[index] = exerciseSet[key]?.toString() ?? false
             }
@@ -47,18 +49,31 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
 
         }, {} as Record<number, string>);
 
-        return updateTempValues
+        return updatedTempValues
     }
 
     // State
-    const [workoutExerciseSetElements] = useState(inputCountMap[ExerciseTypes[exerciseTypeId]])
-    const [tempValues, setTempValues] = useState<Record<number, string>>(initTempValues())
+    const [workoutExerciseSetElements, setWorkoutExerciseSetElements] = useState(inputCountMap[ExerciseTypes[exerciseTypeId]])
+    const [tempValues, setTempValues] = useState<Record<number, string>>({})
     const [isChecked, setIsChecked] = useState<boolean>(exerciseSet.isCompleted)
     const [showPicker, setShowPicker] = useState<boolean>(false)
-    const [timeString, setTimeString] = useState<string | null>(null)
+    // const [timeString, setTimeString] = useState<string | null>(null)
 
     // Refs
     const workoutExerciseSetElementIndexRef = useRef(-1)
+
+    useEffect(() => {
+        // only update tempValues if there is a difference between them and exerciseSet
+        if (hasExerciseSetChanged()) {
+            setTempValues(initTempValues())
+        }
+    }, [exerciseSet])
+
+    const hasExerciseSetChanged = () => {
+        return inputCountMap[ExerciseTypes[exerciseTypeId]].exerciseTypeKeys.some((element, index) => {
+            return exerciseSet[element] && exerciseSet[element].toString() !== tempValues[index]
+        });
+    }
 
     const onHandleChange = (index: number, text: string) => {
         setTempValues((prev) => ({ ...prev, [index]: text }))
@@ -109,7 +124,7 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
     };
 
     const setWorkoutExerciseSetValuesToPrevious = () => {
-
+        setSetToPrevious(setIndex)
     }
 
     const getSetElement = (exerciseSetTypeKey: keyof NewWorkoutExerciseSet, index: number): ReactNode => {
@@ -123,8 +138,8 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
                         setShowPicker(true)
                     }}
                     background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                    <View style={styles.workoutExerciseSetDataText}>
-                        <Text style={styles.workoutExerciseSetDataText}>{formatTime(parseInt(tempValues[index]))}</Text>
+                    <View>
+                        <Text style={getStyleElement(parseInt(tempValues[index]))}>{tempValues[index] ? formatTime(parseInt(tempValues[index])) : '-'}</Text>
                     </View>
                 </TouchableNativeFeedback>
 
@@ -144,7 +159,7 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
                     }}
                     background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                     <View style={styles.workoutExerciseSetDataText}>
-                        <Text style={styles.workoutExerciseSetDataText}>{exerciseSet.cardioProgramId ?? '-'}</Text>
+                        <Text style={getStyleElement(exerciseSet.cardioProgramId)}>{exerciseSet.cardioProgramId ?? '-'}</Text>
                     </View>
                 </TouchableNativeFeedback>
 
@@ -163,11 +178,35 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
         }
     }
 
+    // changes style to either white text or grey when no value found
+    const getStyleElement = (exerciseSetValue: number | undefined): StyleProp<TextStyle> => {
+        if (exerciseSetValue) {
+            return styles.workoutExerciseSetDataText
+        }
+
+        return styles.workoutExerciseSetDataTextEmpty
+    }
+
+    const initDatePicker = (): { hours: number, minutes: number, seconds: number } => {
+        let tempTimeValueIndex = 0
+        let tempValueTime = 0
+
+        inputCountMap[ExerciseTypes[exerciseTypeId]].exerciseTypeKeys.forEach((element, index) => {
+            if (element === NewWorkoutExerciseSetKey.TIME) { tempTimeValueIndex = index }
+        });
+
+        tempValueTime = parseInt(tempValues[tempTimeValueIndex])
+
+        const hrs = Math.floor(tempValueTime / 3600);
+        const mins = Math.floor((tempValueTime % 3600) / 60);
+        const secs = tempValueTime % 60;
+
+        return { hours: hrs, minutes: mins, seconds: secs }
+    }
+
     return (
         <View style={[styles.workoutExerciseSetRowContainer, highlightStyle]}>
             <View style={[styles.workoutExerciseSetDataRowContainer]}>
-
-
 
                 <TouchableNativeFeedback
                     onPress={() => router.navigate({
@@ -189,32 +228,6 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
 
                         getSetElement(exerciseSetTypeKey, index)
 
-                        // exerciseSetTypeKey === NewWorkoutExerciseSetKey.TIME ?
-                        //     <TouchableNativeFeedback
-                        //         key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
-                        //         onPress={() => {
-                        //             workoutExerciseSetElementIndexRef.current = index
-                        //             setShowPicker(true)
-                        //         }}
-                        //         background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                        //         <View style={styles.workoutExerciseSetDataText}>
-                        //             <Text style={styles.workoutExerciseSetDataText}>{formatTime(parseInt(tempValues[index]))}</Text>
-                        //         </View>
-                        //     </TouchableNativeFeedback>
-
-                        //     :
-
-                        //     <TextInput
-                        //         key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
-                        //         style={styles.workoutExerciseSetDataText}
-                        //         value={tempValues[index]}
-                        //         onChangeText={(text) => { onHandleChange(index, text) }}
-                        //         onSubmitEditing={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(e.nativeEvent.text)) }}
-                        //         onBlur={(e) => { updateSet(setIndex, exerciseSetTypeKey, parseFloat(tempValues[index])) }}
-                        //         placeholder='-'
-                        //         placeholderTextColor={'#858585ff'}
-                        //         keyboardType='number-pad'
-                        //     />
                     ))
                 }
 
@@ -232,9 +245,9 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
             <TimerPickerModal
                 visible={showPicker}
                 setIsVisible={setShowPicker}
+                initialValue={initDatePicker()}
                 onConfirm={(pickedDuration) => {
                     updateSetTime(pickedDuration)
-                    // setTimeString(formatTime(pickedDuration));
                     setShowPicker(false);
                 }}
                 modalTitle="Set Alarm"
@@ -287,6 +300,16 @@ const styles = StyleSheet.create({
         height: 40,
         fontSize: 15,
         color: '#ffffffff',
+        textAlign: 'center',
+        verticalAlign: 'middle',
+        padding: 0,
+        margin: 0,
+    },
+    workoutExerciseSetDataTextEmpty: {
+        width: 42,
+        height: 40,
+        fontSize: 15,
+        color: '#858585ff',
         textAlign: 'center',
         verticalAlign: 'middle',
         padding: 0,

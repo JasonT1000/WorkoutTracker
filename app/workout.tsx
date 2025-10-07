@@ -13,6 +13,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DispatchContext, StateContext } from '../state/workout/workoutExerciseContext';
 
 export default function Workout() {
+  //search params
   const { newExercises } = useLocalSearchParams()
   //state
   const state = useContext(StateContext)

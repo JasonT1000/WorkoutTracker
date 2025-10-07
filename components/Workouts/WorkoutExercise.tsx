@@ -5,7 +5,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useContext, useRef, useState } from 'react';
 import { Alert, FlatList, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
-import { DispatchContext, StateContext } from '../../state/workout/workoutExerciseContext';
+import { DispatchContext } from '../../state/workout/workoutExerciseContext';
 import WorkoutExerciseSet from './WorkoutExerciseSet';
 import WorkoutExerciseSetHeader from './WorkoutExerciseSetHeader';
 
@@ -21,7 +21,7 @@ type WorkoutExerciseProps = {
 
 export default function WorkoutExercise({ workoutExercise, flatListRef, expandedId, updateExpandedId, removeExercise }: WorkoutExerciseProps) {
     const dispatch = useContext(DispatchContext)
-    const state = useContext(StateContext)
+    // const state = useContext(StateContext)
     const [notes, setNotes] = useState<string>(workoutExercise.notes)
     // Refs
     const workoutExerciseRef = useRef<View>(null)
@@ -77,6 +77,21 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
         })
     }
 
+    const setSetToPrevious = (setIndex: number) => {
+        console.log('setIndex')
+        console.log(setIndex)
+        if (workoutExercise.previousExerciseSets.length > 0 && workoutExercise.previousExerciseSets[setIndex]) {
+            console.log("@@@@@@@@@@@@@@@")
+            dispatch({
+                type: 'SET_NEWWORKOUTEXERCISESET', payload: {
+                    newWorkoutExerciseIndex: workoutExercise.positionIndex,
+                    setIndex: setIndex,
+                    exerciseSet: { ...workoutExercise.previousExerciseSets[setIndex], isCompleted: false }
+                }
+            })
+        }
+    }
+
     const updateSet = (setIndex: number, field: keyof NewWorkoutExerciseSet, value: number | Float | boolean) => {
         dispatch({
             type: 'UPDATE_NEWWORKOUTEXERCISESET', payload: {
@@ -88,12 +103,12 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
         })
     }
 
-    const removeSet = (setIndex: number) => {
-        console.log("@@@@@@@@@@@@@@@@@@@")
-        console.log("removing set")
-        console.log("setIndex = " + setIndex)
-        // setExerciseSets((prev) => prev.filter((exerciseSet, index) => index !== setIndex))
-    }
+    // const removeSet = (setIndex: number) => {
+    //     console.log("@@@@@@@@@@@@@@@@@@@")
+    //     console.log("removing set")
+    //     console.log("setIndex = " + setIndex)
+    //     // setExerciseSets((prev) => prev.filter((exerciseSet, index) => index !== setIndex))
+    // }
 
     const getSetTypeComponent = (exerciseSet: NewWorkoutExerciseSet, setIndex: number) => {
         const exerciseSetTypeInfo = ExerciseSetTypes[exerciseSet.exerciseSetTypeId]
@@ -217,8 +232,8 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
                                 workoutExercisePositionIndex={workoutExercise.positionIndex}
                                 exerciseTypeId={workoutExercise.exerciseInfo.exerciseTypeId}
                                 previousExerciseSet={workoutExercise.previousExerciseSets[index] ?? null}
+                                setSetToPrevious={setSetToPrevious}
                                 updateSet={updateSet}
-                                removeSet={removeSet}
                             // scrollToInput={scrollToInput}
                             />
                         ))
