@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "458b3980-5267-43d8-80bf-587d0070fa9c",
+  "id": "8a4676ea-af97-4dcf-9448-b1cdb8d70b70",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "bodyarea": {
@@ -547,6 +547,13 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "cardio_program_id": {
+          "name": "cardio_program_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
@@ -570,6 +577,19 @@
           "tableTo": "exercise_set_type",
           "columnsFrom": [
             "exercise_set_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "routine_exercise_set_cardio_program_id_cardio_program_id_fk": {
+          "name": "routine_exercise_set_cardio_program_id_cardio_program_id_fk",
+          "tableFrom": "routine_exercise_set",
+          "tableTo": "cardio_program",
+          "columnsFrom": [
+            "cardio_program_id"
           ],
           "columnsTo": [
             "id"

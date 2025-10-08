@@ -6,7 +6,7 @@ import { Alert, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-na
 
 type RoutineListItemProps = {
     routine: schema.Routine,
-    exercises: { exerciseName: string }[]
+    exercises: { routineExerciseId: number, positionIndex: number, routineId: number, exerciseId: number, restTimer: number, notes: string | null, exerciseName: string }[]
     startRoutine: (routineId: number) => void
 }
 

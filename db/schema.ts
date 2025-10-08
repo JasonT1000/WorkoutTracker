@@ -67,6 +67,8 @@ export const routineExerciseSet = sqliteTable("routine_exercise_set", {
     weight: real(),
     distance: real(),
     time: int(),
+    cardioProgramId: int('cardio_program_id')
+        .references(() => cardioProgram.id)
 });
 
 export const workoutExerciseSet = sqliteTable("workout_exercise_set", {
@@ -140,7 +142,8 @@ export const exerciseBodyArea = sqliteTable("exercise_bodyarea", {
 export type Routine = typeof routine.$inferSelect;
 export type Exercise = typeof exercise.$inferSelect;
 export type RoutineExercise = typeof routineExercise.$inferSelect;
-export type WorkoutExerciseSet = typeof workoutExerciseSet.$inferSelect
+export type RoutineExerciseSet = typeof routineExerciseSet.$inferSelect;
+export type WorkoutExerciseSet = typeof workoutExerciseSet.$inferSelect;
 
 
 // ----------------------------------------- VIEWS -----------------------------------------

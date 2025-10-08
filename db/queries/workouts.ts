@@ -1,30 +1,51 @@
 import { db } from '@/db/dbConnection';
 import * as schema from '@/db/schema';
-import { workoutExercise, workoutExerciseSet } from '@/db/schema';
+import { routineExerciseSet, workoutExercise, workoutExerciseSet } from '@/db/schema';
 import { NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
 import { desc, eq, sql } from 'drizzle-orm';
 
+export const getRoutineExerciseSets = async (routineExerciseId: number): Promise<schema.RoutineExerciseSet[]> => {
+    console.log('routineExerciseId')
+    console.log(routineExerciseId)
 
+    const routineExerciseSets = await db
+        .select()
+        .from(routineExerciseSet)
+        .where(sql`${routineExerciseSet.routineExerciseId} = ${routineExerciseId}`)
+
+
+    return routineExerciseSets
+}
+
+/**
+ * Gets last 6 exercises with passed in id from database. Can have same exercise added multiple times to a single workout.
+ * Then returns all sets for exercise based on the count. So if exercise is pullups, we first find all exercises added to latest workout that are pullups.
+ * Will return the pullups sets information based on the count so if its for the second set of pullups we take the count which would be 2
+ * and return the sets info from the lastWorkoutExercises at the second index.
+ * @param exerciseId exercise id to search for
+ * @param exerciseIdCount to find which exercise we want to get sets from when we have same exercise used multiple times in a single workout
+ * @returns 
+ */
 export const getPreviousWorkoutSets = async (exerciseId: number, exerciseIdCount: number): Promise<NewWorkoutExerciseSet[]> => {
     console.log('exerciseId')
     console.log(exerciseId)
     console.log('exerciseIdCount')
     console.log(exerciseIdCount)
 
-    const lastWorkoutExercise = await db
+    const lastWorkoutExercises = await db
         .select({ workoutExerciseId: workoutExercise.id })
         .from(workoutExercise)
         .where(sql`${workoutExercise.exerciseId} = ${exerciseId}`)
         .orderBy(desc(workoutExercise.id))
         .limit(6)
 
-    console.log('lastWorkoutExercise')
-    console.log(lastWorkoutExercise)
+    console.log('lastWorkoutExercises')
+    console.log(lastWorkoutExercises)
 
     const sets = await db
         .select()
         .from(workoutExerciseSet)
-        .where(eq(workoutExerciseSet.workoutExerciseId, lastWorkoutExercise[exerciseIdCount - 1].workoutExerciseId))
+        .where(eq(workoutExerciseSet.workoutExerciseId, lastWorkoutExercises[exerciseIdCount - 1].workoutExerciseId))
 
     console.log('sets')
     console.log(sets)

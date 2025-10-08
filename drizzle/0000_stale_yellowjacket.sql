@@ -85,8 +85,10 @@ CREATE TABLE `routine_exercise_set` (
 	`weight` real,
 	`distance` real,
 	`time` integer,
+	`cardio_program_id` integer,
 	FOREIGN KEY (`routine_exercise_id`) REFERENCES `routine_exercise`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`exercise_set_type_id`) REFERENCES `exercise_set_type`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`exercise_set_type_id`) REFERENCES `exercise_set_type`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`cardio_program_id`) REFERENCES `cardio_program`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `workout` (
