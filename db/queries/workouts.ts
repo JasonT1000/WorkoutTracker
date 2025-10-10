@@ -5,9 +5,6 @@ import { NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
 import { desc, eq, sql } from 'drizzle-orm';
 
 export const getRoutineExerciseSets = async (routineExerciseId: number): Promise<schema.RoutineExerciseSet[]> => {
-    console.log('routineExerciseId')
-    console.log(routineExerciseId)
-
     const routineExerciseSets = await db
         .select()
         .from(routineExerciseSet)
@@ -27,11 +24,6 @@ export const getRoutineExerciseSets = async (routineExerciseId: number): Promise
  * @returns 
  */
 export const getPreviousWorkoutSets = async (exerciseId: number, exerciseIdCount: number): Promise<NewWorkoutExerciseSet[]> => {
-    console.log('exerciseId')
-    console.log(exerciseId)
-    console.log('exerciseIdCount')
-    console.log(exerciseIdCount)
-
     const lastWorkoutExercises = await db
         .select({ workoutExerciseId: workoutExercise.id })
         .from(workoutExercise)
@@ -39,18 +31,16 @@ export const getPreviousWorkoutSets = async (exerciseId: number, exerciseIdCount
         .orderBy(desc(workoutExercise.id))
         .limit(6)
 
-    console.log('lastWorkoutExercises')
-    console.log(lastWorkoutExercises)
+    if (lastWorkoutExercises.length > 0 && lastWorkoutExercises[exerciseIdCount - 1]) {
+        const sets = await db
+            .select()
+            .from(workoutExerciseSet)
+            .where(eq(workoutExerciseSet.workoutExerciseId, lastWorkoutExercises[exerciseIdCount - 1].workoutExerciseId))
 
-    const sets = await db
-        .select()
-        .from(workoutExerciseSet)
-        .where(eq(workoutExerciseSet.workoutExerciseId, lastWorkoutExercises[exerciseIdCount - 1].workoutExerciseId))
+        return formatExerciseSetData(sets)
+    }
 
-    console.log('sets')
-    console.log(sets)
-
-    return formatExerciseSetData(sets)
+    return []
 }
 
 const formatExerciseSetData = (setData: schema.WorkoutExerciseSet[]): NewWorkoutExerciseSet[] => {

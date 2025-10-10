@@ -132,7 +132,7 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
         switch (exerciseSetTypeKey) {
             case NewWorkoutExerciseSetKey.TIME:
                 return <TouchableNativeFeedback
-                    key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
+                    key={'we' + workoutExercisePositionIndex.toString() + 'wes' + setIndex + 'i' + index.toString()}
                     onPress={() => {
                         workoutExerciseSetElementIndexRef.current = index
                         setShowPicker(true)
@@ -145,7 +145,7 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
 
             case NewWorkoutExerciseSetKey.CARDIOPROGRAMID:
                 return <TouchableNativeFeedback
-                    key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
+                    key={'we' + workoutExercisePositionIndex.toString() + 'wes' + setIndex + 'i' + index.toString()}
                     onPress={() => {
                         router.navigate({
                             pathname: ROUTES.CARDIOPROGRAMS,
@@ -165,7 +165,7 @@ export default function WorkoutExerciseSet({ setIndex, exerciseSet, workoutExerc
 
             default:
                 return <TextInput
-                    key={workoutExercisePositionIndex.toString() + 'res' + index.toString()}
+                    key={'we' + workoutExercisePositionIndex.toString() + 'wes' + setIndex + 'i' + index.toString()}
                     style={styles.workoutExerciseSetDataText}
                     value={tempValues[index]}
                     onChangeText={(text) => { onHandleChange(index, text) }}

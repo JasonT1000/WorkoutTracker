@@ -226,7 +226,7 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
                     {
                         workoutExercise.workoutExerciseSets.map((exerciseSet, index) => (
                             <WorkoutExerciseSet
-                                key={'re' + index.toString()}
+                                key={'es' + workoutExercise.positionIndex + ' ' + index.toString()}
                                 setIndex={index}
                                 exerciseSet={exerciseSet}
                                 workoutExercisePositionIndex={workoutExercise.positionIndex}
@@ -266,7 +266,7 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
                             <View style={styles.workoutExerciseSetInfoContainer}>
                                 {
                                     workoutExercise.workoutExerciseSets.map((exerciseSet, index) => (
-                                        <View key={'re' + index.toString()} style={{ flexDirection: 'row' }}>
+                                        <View key={'es' + workoutExercise.positionIndex + ' ' + index.toString()} style={{ flexDirection: 'row' }}>
                                             {
                                                 getSetTypeComponent(exerciseSet, index)
                                             }

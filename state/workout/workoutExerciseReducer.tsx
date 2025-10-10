@@ -16,6 +16,7 @@ export type Action =
     | { type: 'UPDATE_WORKOUTDURATION'; payload: number }
     | { type: 'UPDATE_WORKOUTNOTES'; payload: { exerciseIndex: number, notes: string } }
     | { type: 'ADD_NEWWORKOUTEXERCISES'; payload: NewWorkoutExercise[] }
+    | { type: 'SET_NEWWORKOUTEXERCISESFROMROUTINE'; payload: { routineId: number, workoutExercises: NewWorkoutExercise[] } }
     | { type: 'REPLACE_NEWWORKOUTEXERCISES'; payload: NewWorkoutExercise[] }
     | { type: 'REMOVE_NEWWORKOUTEXERCISE'; payload: { exerciseIndex: number } }
     | { type: 'ADD_NEWWORKOUTEXERCISESET'; payload: { newWorkoutExerciseIndex: number, newExerciseSet: NewWorkoutExerciseSet } }
@@ -47,6 +48,8 @@ export const reducer = (state: State, action: Action): State => {
             return { ...state, workoutExercises: updateExerciseNotes(state, action.payload.exerciseIndex, action.payload.notes) }
         case "ADD_NEWWORKOUTEXERCISES":
             return { ...state, workoutExercises: [...state.workoutExercises, ...action.payload] }
+        case "SET_NEWWORKOUTEXERCISESFROMROUTINE":
+            return initNewWorkout(state, action.payload.routineId, action.payload.workoutExercises)
         case "REPLACE_NEWWORKOUTEXERCISES":
             return { ...state, workoutExercises: [...action.payload] }
         case "REMOVE_NEWWORKOUTEXERCISE":
@@ -75,6 +78,11 @@ const updateExerciseNotes = (state: State, exerciseIndex: number, newNotes: stri
     newStateWorkoutExercises[exerciseIndex].notes = newNotes
 
     return newStateWorkoutExercises
+}
+
+const initNewWorkout = (state: State, routineId: number, workoutExercises: NewWorkoutExercise[]): State => {
+
+    return { routineId: routineId, datetime: new Date().toISOString(), duration: 0, notes: '', workoutExercises: workoutExercises, startDatetime: -1 }
 }
 
 const removeExercise = (state: State, exerciseIndex: number): NewWorkoutExercise[] => {
