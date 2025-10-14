@@ -14,7 +14,7 @@ import { DispatchContext, StateContext } from '../state/workout/workoutExerciseC
 
 export default function Workout() {
   //search params
-  const { newExercises } = useLocalSearchParams()
+  const { newExercises, isFromRoutine } = useLocalSearchParams()
   //state
   const state = useContext(StateContext)
   const dispatch = useContext(DispatchContext)
@@ -35,8 +35,13 @@ export default function Workout() {
     if (newExercises) {
       setNewExercises()
     }
+    else if (isFromRoutine === '1') {
+      console.log('isFromRoutine')
+      console.log(isFromRoutine)
+      addPrevSetsToStateExercises()
+    }
 
-  }, [newExercises])
+  }, [newExercises, isFromRoutine])
 
   // Start timer
   useEffect(() => {
@@ -72,7 +77,7 @@ export default function Workout() {
     }
   }, [])
 
-  // Store current duration and set a start datetime when we navigate away from this page
+  // When navigating away from this page store current duration and set a start datetime when we navigate away from this page
   // Timestamp based so dont have to keep a timer going in the background when page loses focus
   useFocusEffect(
     useCallback(() => {
@@ -136,7 +141,6 @@ export default function Workout() {
     console.log('workout.tsx updatedExercises after')
     console.log(updatedExercises)
 
-    // dispatch({ type: 'ADD_NEWWORKOUTEXERCISES', payload: formattedWorkoutExercises })
     dispatch({ type: 'ADD_NEWWORKOUTEXERCISES', payload: updatedExercises })
   }
 
@@ -144,16 +148,24 @@ export default function Workout() {
     let exerciseIdCount: Record<number, number> = {}
     console.log('workout.tsx setPrevSets 1111')
     console.log(newFormattedWorkoutExercises)
-    const workoutExercises = [...state.workoutExercises, ...newFormattedWorkoutExercises]
-    console.log('workout.tsx setPrevSets 2222')
-    console.log(newFormattedWorkoutExercises)
+    let workoutExercises;
+
+    if (isFromRoutine === '1') {
+      console.log('222222222aaa')
+      console.log(isFromRoutine)
+      workoutExercises = newFormattedWorkoutExercises
+    }
+    else {
+      console.log('22222222bbb')
+      workoutExercises = [...state.workoutExercises, ...newFormattedWorkoutExercises]
+    }
 
     exerciseIdCount = workoutExercises.reduce((acc, workoutExercise) => {
       acc[workoutExercise.exerciseId] = (acc[workoutExercise.exerciseId] ?? 0) + 1
       return acc
     }, {} as Record<number, number>)
 
-    console.log('workout.tsx setPrevSets 3333')
+    console.log('workout.tsx setPrevSets 33333333')
     console.log('exerciseIdCount')
     console.log(exerciseIdCount)
 
@@ -165,12 +177,26 @@ export default function Workout() {
       )
     )
 
-    console.log('workout.tsx setPrevSets 4444')
-    console.log(console.log('333333333c'))
+    console.log('workout.tsx setPrevSets 55555')
 
     return newFormattedWorkoutExercises.map((exercise, index) => {
       return { ...exercise, previousExerciseSets: prevSets[index] }
     })
+  }
+
+  const addPrevSetsToStateExercises = async () => {
+    let stateExercises = [...state.workoutExercises]
+    stateExercises.forEach((exercise, index) => {
+      exercise.workoutExerciseSets = [...state.workoutExercises[index].workoutExerciseSets]
+      exercise.previousExerciseSets = []
+    });
+    // Will have to change setPrevSets function to slightly change when we are setting previous sets for current state exercises
+    console.log('workout.tsx addPrevSetsToStateExercises before ***************')
+    const updatedExercises = await setPrevSets(stateExercises)
+    console.log('workout.tsx addPrevSetsToStateExercises after ***************')
+    console.log(updatedExercises)
+
+    dispatch({ type: 'REPLACE_NEWWORKOUTEXERCISES', payload: updatedExercises })
   }
 
   // Store current datetime from async storage and store it for when app becomes active again

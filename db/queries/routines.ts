@@ -1,10 +1,14 @@
 import { db } from '@/db/dbConnection';
 import * as schema from '@/db/schema';
-import { routineExerciseSet, workoutExercise, workoutExerciseSet } from '@/db/schema';
+import { routine, routineExerciseSet, workoutExercise, workoutExerciseSet } from '@/db/schema';
 import { NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
 import { desc, eq, sql } from 'drizzle-orm';
 
-export const getRoutineExerciseSets = async (routineExerciseId: number): Promise<schema.RoutineExerciseSet[]> => {
+export const dbDeleteRoutine = async (routineId: number) => {
+    await db.delete(routine).where(eq(routine.id, routineId))
+}
+
+const getRoutineExerciseSets = async (routineExerciseId: number): Promise<schema.RoutineExerciseSet[]> => {
     const routineExerciseSets = await db
         .select()
         .from(routineExerciseSet)
@@ -23,7 +27,7 @@ export const getRoutineExerciseSets = async (routineExerciseId: number): Promise
  * @param exerciseIdCount to find which exercise we want to get sets from when we have same exercise used multiple times in a single workout
  * @returns 
  */
-export const getPreviousWorkoutSets = async (exerciseId: number, exerciseIdCount: number): Promise<NewWorkoutExerciseSet[]> => {
+const getPreviousWorkoutSets = async (exerciseId: number, exerciseIdCount: number): Promise<NewWorkoutExerciseSet[]> => {
     console.log('exerciseId')
     console.log(exerciseId)
     console.log('exerciseIdCount')

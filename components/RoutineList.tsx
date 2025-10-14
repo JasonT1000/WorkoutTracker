@@ -1,12 +1,14 @@
+import { dbDeleteRoutine } from '@/db/queries/routines';
 import { getRoutineExerciseSets } from '@/db/queries/workouts';
 import * as schema from '@/db/schema';
+import { toTitleCase } from '@/helperFiles/helperFunctions';
 import { NewWorkoutExercise, NewWorkoutExerciseSet, ROUTES } from '@/helperFiles/helperTypes';
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { router } from 'expo-router';
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useContext, useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import { DispatchContext, StateContext } from '../state/workout/workoutExerciseContext';
 import RoutineListItem from './RoutineListItem';
 
@@ -89,6 +91,14 @@ export default function RoutineList() {
 
     const startRoutine = async (routineId: number) => {
         // Check if a workout is currently in progress
+        if (state.duration !== 0) {
+            // set routineId as ref
+            // show an alert with buttons to
+            // resume current workout
+            // start the new workout
+            // cancel
+            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$ A workout is already in progress $$$$$$$$$$$$$$$$$$$$$")
+        }
         // Check workoutexerciseReducer state
         // Get all routine exercise sets for each routine exercise
         const formattedExercises = getFormattedRoutineExercises(routineId)
@@ -106,7 +116,7 @@ export default function RoutineList() {
             }
         })
         // Navigate to the workout page
-        router.replace(ROUTES.WORKOUT)
+        router.replace({ pathname: ROUTES.WORKOUT, params: { isFromRoutine: 1 } })
     }
 
     // Convert formatted routine exercises and sets to new workout exercises ready to be stored in workout state
@@ -190,6 +200,31 @@ export default function RoutineList() {
         return exerciseSetRecord
     }
 
+    const showListItemMenu = (routineId: number, routineName: string) => {
+        Alert.alert(toTitleCase(routineName), '', [
+            { text: 'Cancel', style: 'default' },
+            {
+                text: 'Delete', style: 'default', onPress: () => {
+                    deleteRoutine(routineId)
+                }
+            },
+            {
+                text: 'Edit', style: 'default', onPress: () => {
+                    editRoutine(routineId)
+                }
+            }
+        ])
+    }
+
+    const deleteRoutine = (routineId: number) => {
+        console.log('delete routine')
+        dbDeleteRoutine(routineId)
+    }
+
+    const editRoutine = (routineId: number) => {
+        console.log('edit routine')
+    }
+
 
     if (isLoading) return <ActivityIndicator />
 
@@ -200,7 +235,7 @@ export default function RoutineList() {
             <FlatList
                 data={routines}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <RoutineListItem routine={item} exercises={routineExercises[item.id]} startRoutine={startRoutine} />}
+                renderItem={({ item }) => <RoutineListItem routine={item} exercises={routineExercises[item.id]} startRoutine={startRoutine} showListItemMenu={showListItemMenu} />}
             />
 
         </View>

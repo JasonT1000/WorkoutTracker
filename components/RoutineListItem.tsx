@@ -2,15 +2,16 @@ import * as schema from '@/db/schema';
 import { createTitleCaseString, toTitleCase } from '@/helperFiles/helperFunctions';
 import Entypo from '@expo/vector-icons/Entypo';
 import React from 'react';
-import { Alert, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 
 type RoutineListItemProps = {
     routine: schema.Routine,
     exercises: { routineExerciseId: number, positionIndex: number, routineId: number, exerciseId: number, restTimer: number, notes: string | null, exerciseName: string }[]
     startRoutine: (routineId: number) => void
+    showListItemMenu: (routineId: number, routineName: string) => void
 }
 
-export default function RoutineListItem({ routine, exercises, startRoutine }: RoutineListItemProps) {
+export default function RoutineListItem({ routine, exercises, startRoutine, showListItemMenu }: RoutineListItemProps) {
 
     /**
      * Generates a comma-separated string of exercise names with each name in title case.
@@ -31,9 +32,9 @@ export default function RoutineListItem({ routine, exercises, startRoutine }: Ro
             <View style={styles.routineHeadingContainer}>
                 <Text style={styles.routineTextHeading}>{toTitleCase(routine.name)}</Text>
                 <TouchableNativeFeedback
-                    onPress={() => { Alert.alert('Touchable pressed') }}
+                    onPress={() => showListItemMenu(routine.id, routine.name)}
                     background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
-                    <View>
+                    <View style={styles.threeDots}>
                         <Entypo name="dots-three-horizontal" size={24} color="white" />
                     </View>
                 </TouchableNativeFeedback>
@@ -72,6 +73,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
+    },
+    threeDots: {
+        height: 30,
+        width: 30,
+        alignItems: 'center',
     },
 
     addExercisesButton: {
