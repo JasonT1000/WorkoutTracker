@@ -1,6 +1,6 @@
 import OptionsHeader from '@/components/OptionsHeader';
 import RoutineExercise from '@/components/Routines/RoutineExercise';
-import { insertRoutine, insertRoutineExercises } from '@/db/inserts';
+import { dbInsertRoutine, dbInsertRoutineExercises, dbUpdateRoutine, dbUpdateRoutineExercises } from '@/db/inserts';
 import { getExerciseSetTypeId } from '@/helperFiles/helperFunctions';
 import { Exercise, EXERCISESETTYPE, NewRoutineExercise, ROUTES } from '@/helperFiles/helperTypes';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -72,19 +72,31 @@ export default function Routine() {
     dispatch({ type: 'UPDATE_ROUTINENAME', payload: title })
   }
 
-  const saveNewRoutine = async () => {
+  const saveRoutine = async () => {
     if (state.routineName !== '' && state.routineExercises.length > 0) {
-      console.log("$$$$$$$$$ saving new routine to database")
-      const routineId = await insertRoutine(state.routineName)
-      console.log("inserted new routine into database with routineId")
-      console.log(routineId[0].insertedId)
-      if (routineId[0].insertedId) {
-        try {
-          await insertRoutineExercises(routineId[0].insertedId, state.routineExercises)
-          dispatch({ type: 'RESET_NEWROUTINE' })
-          router.replace(ROUTES.HOME)
-        } catch (error) {
-          console.warn('failled to save new routine', error)
+      if (state.routineId > 0) {
+        const isvalidRoutine = await dbUpdateRoutine(state.routineId, title)
+
+        if (isvalidRoutine) {
+          dbUpdateRoutineExercises(state.routineId, state.routineExercises)
+        }
+        else {
+          Alert.alert('Something went wrong', 'Could not find existing routine to update')
+        }
+      }
+      else {
+        console.log("$$$$$$$$$ saving new routine to database")
+        const routineId = await dbInsertRoutine(state.routineName)
+        console.log("inserted new routine into database with routineId")
+        console.log(routineId[0].insertedId)
+        if (routineId[0].insertedId) {
+          try {
+            await dbInsertRoutineExercises(routineId[0].insertedId, state.routineExercises)
+            dispatch({ type: 'RESET_NEWROUTINE' })
+            router.replace(ROUTES.HOME)
+          } catch (error) {
+            console.warn('failled to save new routine', error)
+          }
         }
       }
     }
@@ -101,11 +113,24 @@ export default function Routine() {
     }
   }
 
+  const onHandleDiscardRoutine = () => {
+    Alert.alert('', 'Are you sure you want to discard this routine?', [
+      {
+        text: 'Discard Routine', style: 'cancel', onPress: () => {
+          dispatch({ type: 'RESET_NEWROUTINE' })
+          // isDiscardingWorkoutRef.current = true
+          router.replace(ROUTES.HOME)
+        }
+      },
+      { text: 'Cancel', style: 'default' }
+    ])
+  }
+
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView>
         <SafeAreaView style={styles.main}>
-          <OptionsHeader title='Create Routine' cancelButtonRoute={ROUTES.HOME} save={saveNewRoutine} />
+          <OptionsHeader title='Create Routine' cancelButtonRoute={ROUTES.HOME} save={saveRoutine} />
 
           <View style={styles.body}>
 
@@ -140,6 +165,14 @@ export default function Routine() {
                 background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                 <View style={styles.addExercisesButton}>
                   <Text style={styles.addExercisesButtonText}>Add exercises</Text>
+                </View>
+              </TouchableNativeFeedback>
+
+              <TouchableNativeFeedback
+                onPress={() => onHandleDiscardRoutine()}
+                background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
+                <View style={styles.discardRoutineButton}>
+                  <Text style={styles.discardRoutineButtonText}>Discard Routine</Text>
                 </View>
               </TouchableNativeFeedback>
             </View>
@@ -179,5 +212,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     color: '#ffffffff'
+  },
+
+  discardRoutineButton: {
+    width: '100%',
+    backgroundColor: '#272727ff',
+    padding: 8,
+    borderRadius: 10,
+    marginTop: 15,
+  },
+  discardRoutineButtonText: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#da423cff'
   },
 });

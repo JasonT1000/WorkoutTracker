@@ -1,13 +1,95 @@
+import * as schema from '@/db/schema';
 import { NewRoutineExercise, NewWorkoutExercise, NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
+import { eq } from 'drizzle-orm';
 import { db } from './dbConnection';
 import { routine, routineExercise, routineExerciseSet, workout, workoutExercise, workoutExerciseSet } from './schema';
 
 // --------------------------- Routines ---------------------------
-export const insertRoutine = async (data: string) => {
+export const dbUpdateRoutine = async (routineId: number, routineName: string): Promise<boolean> => {
+    const existingRoutine = await db.select().from(routine).where(eq(routine.id, routineId)).limit(1)
+
+    if (existingRoutine) {
+        if (existingRoutine[0].name !== routineName) {
+            console.log('Existing routine found')
+            console.log(existingRoutine)
+            await db.update(routine).set({ name: routineName }).where(eq(routine.id, routineId))
+        }
+
+        return true
+    }
+
+    return false
+}
+
+export const dbUpdateRoutineExercises = async (routineId: number, data: NewRoutineExercise[]) => {
+    // Get the db routine exercises
+    let dbRoutineExercises: schema.RoutineExercise[] = await db.select().from(routineExercise).where(eq(routineExercise.routineId, routineId))
+    console.log('dbRoutineExercises')
+    console.log(dbRoutineExercises)
+
+    // Get their exercise sets
+    let dbRoutineExerciseSets: schema.RoutineExerciseSet[][] = []
+
+    dbRoutineExerciseSets = await Promise.all(
+        dbRoutineExercises.map(async exercise => {
+            return await db.select().from(routineExerciseSet).where(eq(routineExerciseSet.routineExerciseId, exercise.id))
+        })
+    )
+
+    console.log('dbRoutineExerciseSets')
+    console.log(dbRoutineExerciseSets)
+
+    // loop through each db routine exercise
+    //TODO: how to handle when db exercises are longer than newRoutineExercises eg have delete some
+    await Promise.all(
+        data.map(async (exercise, index) => {
+            if (dbRoutineExercises.length > index) { // updating existing exercise
+                let updatedExercise = {
+                    ...dbRoutineExercises[index],
+                    exerciseId: exercise.exerciseId,
+                    restTimer: exercise.restTimer,
+                    notes: exercise.notes
+                }
+                // Check if objects are equivalent first before updateing db??
+
+                dbRoutineExercises[index] = updatedExercise
+
+                await db.update(routineExercise)
+                    .set({
+                        exerciseId: exercise.exerciseId,
+                        restTimer: exercise.restTimer,
+                        notes: exercise.notes
+                    })
+                    .where(eq(routineExercise.id, dbRoutineExercises[index].id))
+            }
+            else { // adding new exercises to routine
+                const newExercise = await db.insert(routineExercise).values({
+                    positionIndex: index,
+                    routineId: routineId,
+                    exerciseId: exercise.exerciseId,
+                    restTimer: exercise.restTimer,
+                    notes: exercise.notes
+                }).returning()
+
+                if (newExercise.length > 0) { dbRoutineExercises.push(newExercise[0]) }
+            }
+        })
+    )
+
+    //  find newRoutineExercise with matching positionIndex
+    //  update exerciseId, restTime, notes if needed
+    // loop through db exerciseSets
+    // update with data from newRoutineExerciseSet
+
+    // delete/add remaining db exercise sets left over
+
+}
+
+export const dbInsertRoutine = async (data: string) => {
     return await db.insert(routine).values({ name: data }).returning({ insertedId: routine.id })
 }
 
-export const insertRoutineExercises = async (routineId: number, data: NewRoutineExercise[]) => {
+export const dbInsertRoutineExercises = async (routineId: number, data: NewRoutineExercise[]) => {
     data.forEach(async newRoutineExercise => {
         try {
             const exerciseId = await db.insert(routineExercise).values({

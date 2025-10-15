@@ -2,6 +2,7 @@ import { NewRoutineExercise, NewRoutineExerciseSet } from "@/helperFiles/helperT
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 export type State = {
+    routineId: number,
     routineName: string,
     routineExercises: NewRoutineExercise[]
 }
@@ -10,6 +11,7 @@ export type Action =
     | { type: 'UPDATE_ROUTINENAME'; payload: string }
     | { type: 'ADD_NEWROUTINEEXERCISE'; payload: NewRoutineExercise[] }
     | { type: 'REPLACE_NEWROUTINEEXERCISES'; payload: NewRoutineExercise[] }
+    | { type: 'SET_NEWROUTINE'; payload: { id: number, name: string, exercises: NewRoutineExercise[] } }
     | { type: 'REMOVE_NEWROUTINEEXERCISE'; payload: number }
     | { type: 'ADD_NEWROUTINEEXERCISESET'; payload: { newRoutineExerciseIndex: number, newExerciseSet: NewRoutineExerciseSet } }
     | { type: 'UPDATE_NEWROUTINEEXERCISESET'; payload: { newRoutineExerciseIndex: number, setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float } }
@@ -18,6 +20,7 @@ export type Action =
     | { type: 'RESET_NEWROUTINE' };
 
 export const initialState: State = {
+    routineId: -1,
     routineName: '',
     routineExercises: [],
 }
@@ -30,6 +33,8 @@ export const reducer = (state: State, action: Action): State => {
             return { ...state, routineExercises: [...state.routineExercises, ...action.payload] }
         case "REPLACE_NEWROUTINEEXERCISES":
             return { ...state, routineExercises: [...action.payload] }
+        case "SET_NEWROUTINE":
+            return { routineId: action.payload.id, routineName: action.payload.name, routineExercises: [...action.payload.exercises] }
         case "REMOVE_NEWROUTINEEXERCISE":
             // Add functionality
             return state
@@ -45,7 +50,7 @@ export const reducer = (state: State, action: Action): State => {
         case "CLEAR_NEWROUTINEEXERCISES":
             return { ...state, routineExercises: [] }
         case "RESET_NEWROUTINE":
-            return { routineName: '', routineExercises: [] }
+            return { routineId: -1, routineName: '', routineExercises: [] }
         default:
             return state;
     }

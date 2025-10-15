@@ -488,19 +488,19 @@ export const addData = async (db: ExpoSQLiteDatabase) => {
 
     await db.insert(routineExercise).values([
         // rest routine 1
-        { positionIndex: 1, routineId: 1, exerciseId: 3, restTimer: 60 },
-        { positionIndex: 2, routineId: 1, exerciseId: 7 },
-        { positionIndex: 3, routineId: 1, exerciseId: 18, restTimer: 60 },
-        { positionIndex: 4, routineId: 1, exerciseId: 40, restTimer: 60 },
-        { positionIndex: 5, routineId: 1, exerciseId: 52 },
-        { positionIndex: 6, routineId: 1, exerciseId: 38 },
+        { positionIndex: 0, routineId: 1, exerciseId: 3, restTimer: 60 },
+        { positionIndex: 1, routineId: 1, exerciseId: 7 },
+        { positionIndex: 2, routineId: 1, exerciseId: 18, restTimer: 60 },
+        { positionIndex: 3, routineId: 1, exerciseId: 40, restTimer: 60 },
+        { positionIndex: 4, routineId: 1, exerciseId: 52 },
+        { positionIndex: 5, routineId: 1, exerciseId: 38 },
         // test routine 2
-        { positionIndex: 1, routineId: 2, exerciseId: 10, restTimer: 120 },
-        { positionIndex: 2, routineId: 2, exerciseId: 13 },
-        { positionIndex: 3, routineId: 2, exerciseId: 26 },
-        { positionIndex: 4, routineId: 2, exerciseId: 24, restTimer: 120 },
-        { positionIndex: 5, routineId: 2, exerciseId: 50 },
-        { positionIndex: 6, routineId: 2, exerciseId: 88, restTimer: 120 },
+        { positionIndex: 0, routineId: 2, exerciseId: 10, restTimer: 120 },
+        { positionIndex: 1, routineId: 2, exerciseId: 13 },
+        { positionIndex: 2, routineId: 2, exerciseId: 26 },
+        { positionIndex: 3, routineId: 2, exerciseId: 24, restTimer: 120 },
+        { positionIndex: 4, routineId: 2, exerciseId: 50 },
+        { positionIndex: 5, routineId: 2, exerciseId: 88, restTimer: 120 },
     ])
 
     await db.insert(exerciseSetType).values([
@@ -561,22 +561,22 @@ export const addData = async (db: ExpoSQLiteDatabase) => {
 
     await db.insert(workoutExercise).values([
         //second from top in txt file
-        { positionIndex: 1, workoutId: 1, exerciseId: 9 },
-        { positionIndex: 2, workoutId: 1, exerciseId: 28 },
-        { positionIndex: 3, workoutId: 1, exerciseId: 15 },
-        { positionIndex: 4, workoutId: 1, exerciseId: 42 },
-        { positionIndex: 5, workoutId: 1, exerciseId: 43 },
-        { positionIndex: 6, workoutId: 1, exerciseId: 44 },
-        { positionIndex: 7, workoutId: 1, exerciseId: 45 },
-        { positionIndex: 8, workoutId: 1, exerciseId: 46 },
-        { positionIndex: 9, workoutId: 1, exerciseId: 59 },
+        { positionIndex: 0, workoutId: 1, exerciseId: 9 },
+        { positionIndex: 1, workoutId: 1, exerciseId: 28 },
+        { positionIndex: 2, workoutId: 1, exerciseId: 15 },
+        { positionIndex: 3, workoutId: 1, exerciseId: 42 },
+        { positionIndex: 4, workoutId: 1, exerciseId: 43 },
+        { positionIndex: 5, workoutId: 1, exerciseId: 44 },
+        { positionIndex: 6, workoutId: 1, exerciseId: 45 },
+        { positionIndex: 7, workoutId: 1, exerciseId: 46 },
+        { positionIndex: 8, workoutId: 1, exerciseId: 59 },
         //first from top in txt file
-        { positionIndex: 1, workoutId: 2, exerciseId: 1 },
-        { positionIndex: 2, workoutId: 2, exerciseId: 5 },
-        { positionIndex: 3, workoutId: 2, exerciseId: 19 },
-        { positionIndex: 4, workoutId: 2, exerciseId: 40 },
-        { positionIndex: 5, workoutId: 2, exerciseId: 52 },
-        { positionIndex: 6, workoutId: 2, exerciseId: 59 },
+        { positionIndex: 0, workoutId: 2, exerciseId: 1 },
+        { positionIndex: 1, workoutId: 2, exerciseId: 5 },
+        { positionIndex: 2, workoutId: 2, exerciseId: 19 },
+        { positionIndex: 3, workoutId: 2, exerciseId: 40 },
+        { positionIndex: 4, workoutId: 2, exerciseId: 52 },
+        { positionIndex: 5, workoutId: 2, exerciseId: 59 },
     ])
 
     await db.insert(workoutExerciseSet).values([
