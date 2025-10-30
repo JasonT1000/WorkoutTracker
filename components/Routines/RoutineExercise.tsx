@@ -14,10 +14,11 @@ type RoutineExerciseProps = {
     flatListRef: React.RefObject<FlatList<any> | null>
     expandedId: number
     updateExpandedId: (routineExerciseId: number) => void
+    showRoutineExerciseMenu: (routineExerciseIndex: number, routineExerciseId: number) => void
     // scrollToInput: (yOffset: number) => void
 }
 
-export default function RoutineExercise({ routineExercise, flatListRef, expandedId, updateExpandedId }: RoutineExerciseProps) {
+export default function RoutineExercise({ routineExercise, flatListRef, expandedId, updateExpandedId, showRoutineExerciseMenu }: RoutineExerciseProps) {
     const dispatch = useContext(DispatchContext)
     const routineExerciseRef = useRef<View>(null)
     // const [tempIndex, setTempIndex] = useState<number>(routineExercise.routineExerciseSets.length - 1)
@@ -233,7 +234,7 @@ export default function RoutineExercise({ routineExercise, flatListRef, expanded
                             </View>
                         </View>
                         <TouchableNativeFeedback
-                            onPress={() => { Alert.alert('Edit exercise dots pressed') }}
+                            onPress={() => { showRoutineExerciseMenu(routineExercise.positionIndex, routineExercise.exerciseId) }}
                             background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                             <View style={styles.exerciseEditButtonContainer}>
                                 <Entypo name="dots-three-vertical" size={24} color="white" />

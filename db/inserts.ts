@@ -1,5 +1,5 @@
 import * as schema from '@/db/schema';
-import { NewRoutineExercise, NewWorkoutExercise, NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
+import { NewRoutineExercise, NewRoutineExerciseSet, NewWorkoutExercise, NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
 import { eq } from 'drizzle-orm';
 import { db } from './dbConnection';
 import { routine, routineExercise, routineExerciseSet, workout, workoutExercise, workoutExerciseSet } from './schema';
@@ -22,59 +22,146 @@ export const dbUpdateRoutine = async (routineId: number, routineName: string): P
 }
 
 export const dbUpdateRoutineExercises = async (routineId: number, data: NewRoutineExercise[]) => {
+    console.log('********************* updating existing routine *********************')
+    await db.run('PRAGMA foreign_keys = ON;');
+
     // Get the db routine exercises
     let dbRoutineExercises: schema.RoutineExercise[] = await db.select().from(routineExercise).where(eq(routineExercise.routineId, routineId))
     console.log('dbRoutineExercises')
     console.log(dbRoutineExercises)
 
-    // Get their exercise sets
-    let dbRoutineExerciseSets: schema.RoutineExerciseSet[][] = []
+    const changedExercises = dbRoutineExercises.filter(exercise => !data.some((dataExercise) => dataExercise.positionIndex === exercise.positionIndex && dataExercise.exerciseId === exercise.exerciseId))
 
-    dbRoutineExerciseSets = await Promise.all(
-        dbRoutineExercises.map(async exercise => {
-            return await db.select().from(routineExerciseSet).where(eq(routineExerciseSet.routineExerciseId, exercise.id))
-        })
-    )
+    console.log('changedExercises')
+    console.log(changedExercises)
+    if (changedExercises.length > 0 || dbRoutineExercises.length !== data.length) { // Exercises HAVE changed
+        await db.delete(routineExercise).where(eq(routineExercise.id, routineId))
 
-    console.log('dbRoutineExerciseSets')
-    console.log(dbRoutineExerciseSets)
-
-    // loop through each db routine exercise
-    //TODO: how to handle when db exercises are longer than newRoutineExercises eg have delete some
-    await Promise.all(
-        data.map(async (exercise, index) => {
-            if (dbRoutineExercises.length > index) { // updating existing exercise
-                let updatedExercise = {
-                    ...dbRoutineExercises[index],
+        dbInsertRoutineExercises(routineId, data)
+    }
+    else if (dbRoutineExercises.length === data.length) { // Exercises HAVE NOT changed
+        // Get their exercise sets
+        let dbRoutineExercisesWithSets = []
+        dbRoutineExercisesWithSets = await Promise.all(
+            dbRoutineExercises.map(async exercise => {
+                return {
+                    routineExerciseId: exercise.id,
                     exerciseId: exercise.exerciseId,
-                    restTimer: exercise.restTimer,
-                    notes: exercise.notes
+                    positionIndex: exercise.positionIndex,
+                    exerciseSets: await db.select().from(routineExerciseSet).where(eq(routineExerciseSet.routineExerciseId, exercise.id))
                 }
-                // Check if objects are equivalent first before updateing db??
+            })
+        )
 
-                dbRoutineExercises[index] = updatedExercise
+        console.log('dbRoutineExerciseSets')
+        console.log(dbRoutineExercisesWithSets)
 
-                await db.update(routineExercise)
-                    .set({
-                        exerciseId: exercise.exerciseId,
-                        restTimer: exercise.restTimer,
-                        notes: exercise.notes
-                    })
-                    .where(eq(routineExercise.id, dbRoutineExercises[index].id))
+        // compare dbSets with dataSets
+        // dbRoutineExercisesWithSets.forEach(exercise => {
+
+        // });
+
+        // store position indexes of exercises where sets have changed
+        const exercisePositionsToChange = dbRoutineExercisesWithSets.filter(exercise => {
+            const exerciseData = data.find(dataExercise => dataExercise.positionIndex === exercise.positionIndex)
+            if (exerciseData) {
+                if (isSetChanged(exercise.exerciseSets, exerciseData?.routineExerciseSets)) {
+                    console.log("found set difference")
+                    return exercise.positionIndex
+                }
+
             }
-            else { // adding new exercises to routine
-                const newExercise = await db.insert(routineExercise).values({
-                    positionIndex: index,
-                    routineId: routineId,
-                    exerciseId: exercise.exerciseId,
-                    restTimer: exercise.restTimer,
-                    notes: exercise.notes
-                }).returning()
-
-                if (newExercise.length > 0) { dbRoutineExercises.push(newExercise[0]) }
+            else {
+                return exercise.positionIndex
             }
+
         })
-    )
+
+        console.log('exercisePositionsToChange')
+        console.log(exercisePositionsToChange)
+
+        // delete all dbExerciseSets with different sets
+
+        // add dataSets to dbExercise
+    }
+
+
+    // delete excess routine exercises if have removed some
+    // if (data.length < dbRoutineExercises.length) {
+    //     const excess = dbRoutineExercises.filter(exercise => !data.some((dataExercise) => dataExercise.exerciseId === exercise.exerciseId))
+    //     // delete from database the excess exercises. Should cascade and delete corresponding exercise sets
+    //     console.log('deleting excess exercises')
+    //     console.log(excess)
+
+    //     await Promise.all(
+    //         excess.map(async excessExercise => {
+    //             await db.delete(routineExercise).where(eq(routineExercise.positionIndex, excessExercise.positionIndex))
+    //             console.log('33333333333333')
+    //         })
+    //     )
+
+    //     console.log('4444444444444444444444')
+    // }
+
+    // // Get their exercise sets
+    // let dbRoutineExerciseSets: schema.RoutineExerciseSet[][] = []
+
+    // dbRoutineExerciseSets = await Promise.all(
+    //     dbRoutineExercises.map(async exercise => {
+    //         return await db.select().from(routineExerciseSet).where(eq(routineExerciseSet.routineExerciseId, exercise.id))
+    //     })
+    // )
+
+    // console.log('dbRoutineExerciseSets')
+    // console.log(dbRoutineExerciseSets)
+
+    // // loop through each db routine exercise
+    // //TODO: how to handle when db exercises are longer than newRoutineExercises eg have delete some
+    // await Promise.all(
+    //     data.map(async (exercise, index) => {
+    //         if (dbRoutineExercises.length > index) { // updating existing exercise
+    //             let updatedExercise = {
+    //                 ...dbRoutineExercises[index],
+    //                 exerciseId: exercise.exerciseId,
+    //                 restTimer: exercise.restTimer,
+    //                 notes: exercise.notes
+    //             }
+    //             // Check if objects are equivalent first before updating db??
+
+    //             dbRoutineExercises[index] = updatedExercise
+
+    //             await db.update(routineExercise)
+    //                 .set({
+    //                     exerciseId: exercise.exerciseId,
+    //                     restTimer: exercise.restTimer,
+    //                     notes: exercise.notes
+    //                 })
+    //                 .where(eq(routineExercise.id, dbRoutineExercises[index].id))
+
+    //             // update sets in database with new exerciseId
+    //             const sets = dbRoutineExerciseSets.filter((setArray, index) =>
+    //                 setArray[index].routineExerciseId === exercise.exerciseId
+    //             )
+
+    //             // promise.all on data sets
+    //             // if sets.length is greater than index update existing set
+    //             // else insert new set for exercise
+    //         }
+    //         else { // adding new exercises to routine
+    //             const newExercise = await db.insert(routineExercise).values({
+    //                 positionIndex: index,
+    //                 routineId: routineId,
+    //                 exerciseId: exercise.exerciseId,
+    //                 restTimer: exercise.restTimer,
+    //                 notes: exercise.notes
+    //             }).returning()
+
+    //             if (newExercise.length > 0) { dbRoutineExercises.push(newExercise[0]) }
+
+    //             // add exercise sets for this exercise into database
+    //         }
+    //     })
+    // )
 
     //  find newRoutineExercise with matching positionIndex
     //  update exerciseId, restTime, notes if needed
@@ -82,7 +169,7 @@ export const dbUpdateRoutineExercises = async (routineId: number, data: NewRouti
     // update with data from newRoutineExerciseSet
 
     // delete/add remaining db exercise sets left over
-
+    console.log('********************* updating existing routine *********************')
 }
 
 export const dbInsertRoutine = async (data: string) => {
@@ -194,4 +281,32 @@ const setHasSomeValues = (exerciseSet: NewWorkoutExerciseSet): boolean => {
     }
 
     return false
+}
+
+const isSetChanged = (existing: schema.RoutineExerciseSet[], incoming: NewRoutineExerciseSet[]): boolean => {
+
+    for (let i = 0; i < existing.length; i++) {
+        if (hasSetChanged(existing[i], incoming[i])) {
+            return true
+        }
+    }
+    // existing.forEach((exerciseInfo, index) => {
+    //     if(hasSetChanged(exerciseInfo, incoming[index])){
+    //         return true
+    //     }
+    // });
+
+    return existing.length !== incoming.length
+}
+
+const hasSetChanged = (existing: schema.RoutineExerciseSet, incoming: NewRoutineExerciseSet): boolean => {
+    return (
+        existing.routineExerciseId !== incoming.routineExerciseId &&
+        existing.exerciseSetTypeId !== incoming.exerciseSetTypeId &&
+        existing.reps !== incoming.reps &&
+        (existing.weight ?? null) !== (incoming.weight ?? null) &&
+        (existing.distance ?? null) !== (incoming.distance ?? null) &&
+        (existing.time ?? null) !== (incoming.time ?? null) &&
+        (existing.cardioProgramId ?? null) !== (incoming.cardioProgramId ?? null)
+    );
 }

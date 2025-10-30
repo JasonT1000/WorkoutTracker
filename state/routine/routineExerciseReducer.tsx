@@ -12,7 +12,7 @@ export type Action =
     | { type: 'ADD_NEWROUTINEEXERCISE'; payload: NewRoutineExercise[] }
     | { type: 'REPLACE_NEWROUTINEEXERCISES'; payload: NewRoutineExercise[] }
     | { type: 'SET_NEWROUTINE'; payload: { id: number, name: string, exercises: NewRoutineExercise[] } }
-    | { type: 'REMOVE_NEWROUTINEEXERCISE'; payload: number }
+    | { type: 'REMOVE_NEWROUTINEEXERCISE'; payload: { routineExerciseIndex: number, routineExerciseId: number } }
     | { type: 'ADD_NEWROUTINEEXERCISESET'; payload: { newRoutineExerciseIndex: number, newExerciseSet: NewRoutineExerciseSet } }
     | { type: 'UPDATE_NEWROUTINEEXERCISESET'; payload: { newRoutineExerciseIndex: number, setIndex: number, field: keyof NewRoutineExerciseSet, value: number | Float } }
     | { type: 'REMOVE_NEWROUTINEEXERCISESET'; payload: { newRoutineExerciseIndex: number, setIndex: number } }
@@ -37,7 +37,7 @@ export const reducer = (state: State, action: Action): State => {
             return { routineId: action.payload.id, routineName: action.payload.name, routineExercises: [...action.payload.exercises] }
         case "REMOVE_NEWROUTINEEXERCISE":
             // Add functionality
-            return state
+            return { ...state, routineExercises: deleteExercise(state, action.payload.routineExerciseIndex, action.payload.routineExerciseId) }
         case "ADD_NEWROUTINEEXERCISESET":
             // Add functionality
             return { ...state, routineExercises: addExerciseSet(state, action.payload.newRoutineExerciseIndex, action.payload.newExerciseSet) }
@@ -54,6 +54,13 @@ export const reducer = (state: State, action: Action): State => {
         default:
             return state;
     }
+}
+
+const deleteExercise = (state: State, routineExerciseIndex: number, routineExerciseId: number) => {
+    const routineExercises = [...state.routineExercises]
+    const newRoutineExercises = routineExercises.filter(exercise => exercise.positionIndex !== routineExerciseIndex)
+
+    return newRoutineExercises
 }
 
 const addExerciseSet = (state: State, newRoutineExerciseIndex: number, newExerciseSet: NewRoutineExerciseSet): NewRoutineExercise[] => {

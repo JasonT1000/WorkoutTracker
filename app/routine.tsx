@@ -126,6 +126,17 @@ export default function Routine() {
     ])
   }
 
+  const showRoutineExerciseMenu = (routineExerciseIndex: number, routineExerciseId: number) => {
+    Alert.alert('', 'Are you sure you want to delete this exercise?', [
+      {
+        text: 'Delete Exercise', style: 'cancel', onPress: () => {
+          dispatch({ type: 'REMOVE_NEWROUTINEEXERCISE', payload: { routineExerciseIndex, routineExerciseId } })
+        }
+      },
+      { text: 'Cancel', style: 'default' }
+    ])
+  }
+
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView>
@@ -155,7 +166,7 @@ export default function Routine() {
                   keyboardShouldPersistTaps='never'
                   data={state.routineExercises}
                   keyExtractor={(item) => item.positionIndex.toString()}
-                  renderItem={({ item }) => <RoutineExercise routineExercise={item} flatListRef={flatListRef} expandedId={expandedId} updateExpandedId={updateExpandedId} />}
+                  renderItem={({ item }) => <RoutineExercise routineExercise={item} flatListRef={flatListRef} expandedId={expandedId} updateExpandedId={updateExpandedId} showRoutineExerciseMenu={showRoutineExerciseMenu} />}
                 />
                 {/* </KeyboardAvoidingView> */}
               </View>
