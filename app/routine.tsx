@@ -78,7 +78,9 @@ export default function Routine() {
         const isvalidRoutine = await dbUpdateRoutine(state.routineId, title)
 
         if (isvalidRoutine) {
-          dbUpdateRoutineExercises(state.routineId, state.routineExercises)
+          await dbUpdateRoutineExercises(state.routineId, state.routineExercises)
+          dispatch({ type: 'RESET_NEWROUTINE' })
+          router.replace(ROUTES.HOME)
         }
         else {
           Alert.alert('Something went wrong', 'Could not find existing routine to update')
