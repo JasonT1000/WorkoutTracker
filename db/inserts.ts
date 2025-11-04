@@ -2,7 +2,7 @@ import * as schema from '@/db/schema';
 import { NewRoutineExercise, NewRoutineExerciseSet, NewWorkoutExercise, NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
 import { eq } from 'drizzle-orm';
 import { db } from './dbConnection';
-import { routine, routineExercise, routineExerciseSet, workout, workoutExercise, workoutExerciseSet } from './schema';
+import { cardioProgram, routine, routineExercise, routineExerciseSet, workout, workoutExercise, workoutExerciseSet } from './schema';
 
 // --------------------------- Routines ---------------------------
 export const dbUpdateRoutine = async (routineId: number, routineName: string): Promise<boolean> => {
@@ -107,6 +107,10 @@ export const dbUpdateRoutineExercises = async (routineId: number, data: NewRouti
     }
 
     console.log('********************* updating existing routine *********************')
+}
+
+export const dbInsertCardioProgram = async (cProgramName: string) => {
+    return await db.insert(cardioProgram).values({ name: cProgramName }).returning({ cProgramId: cardioProgram.id })
 }
 
 export const dbInsertRoutine = async (data: string) => {

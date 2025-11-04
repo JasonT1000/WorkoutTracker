@@ -144,6 +144,7 @@ export type Exercise = typeof exercise.$inferSelect;
 export type RoutineExercise = typeof routineExercise.$inferSelect;
 export type RoutineExerciseSet = typeof routineExerciseSet.$inferSelect;
 export type WorkoutExerciseSet = typeof workoutExerciseSet.$inferSelect;
+export type CardioProgram = typeof cardioProgram.$inferSelect;
 
 
 // ----------------------------------------- VIEWS -----------------------------------------

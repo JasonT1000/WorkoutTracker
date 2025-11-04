@@ -1,9 +1,10 @@
 import * as schema from '@/db/schema';
-import { CardioProgram } from '@/helperFiles/helperTypes';
+import { CardioProgram, ROUTES } from '@/helperFiles/helperTypes';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { drizzle } from "drizzle-orm/expo-sqlite";
+import { router, useFocusEffect } from 'expo-router';
 import { useSQLiteContext } from "expo-sqlite";
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import CardioProgramListItem from './CardioProgramListItem';
 
@@ -23,9 +24,14 @@ export default function CardioProgramList({ searchTerm, selectedCardioProgramId,
     const [cardioPrograms, setCardioPrograms] = useState<CardioProgram[]>([])
     const [isLoading, setIsLoading] = useState(true)
 
-    useEffect(() => {
-        getDbCardioPrograms()
-    }, []);
+    // When navigating away from this page store current duration and set a start datetime when we navigate away from this page
+    // Timestamp based so dont have to keep a timer going in the background when page loses focus
+    useFocusEffect(
+        useCallback(() => {
+            // Invoked whenever the route is focused.
+            getDbCardioPrograms()
+        }, []),
+    );
 
     const getDbCardioPrograms = async () => {
         const cPrograms = await drizzleDb.query.cardioProgram.findMany();
@@ -33,10 +39,6 @@ export default function CardioProgramList({ searchTerm, selectedCardioProgramId,
             setCardioPrograms(cPrograms)
             setIsLoading(false)
         }
-    }
-
-    const addNewCardioProgramToDb = () => {
-        //TODO: add functionality. Show input box for cardio program name
     }
 
     const getFilteredExercises = () => {
@@ -47,11 +49,14 @@ export default function CardioProgramList({ searchTerm, selectedCardioProgramId,
     if (isLoading) return <ActivityIndicator />
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginBottom: 40 }}>
             <View style={styles.ListHeadingContainer}>
                 <Text style={styles.containerHeadingtext}>Cardio Programs</Text>
                 <TouchableNativeFeedback
-                    onPress={() => { addNewCardioProgramToDb() }}
+                    onPress={() => router.navigate({
+                        pathname: ROUTES.NEWCARDIOPROGRAM,
+                        params: {}
+                    })}
                     background={TouchableNativeFeedback.Ripple('#2c2c2cff', false)}>
                     <View style={styles.AddCardioProgramButtonContainer}>
                         <Ionicons name="add" size={28} color="rgba(204, 201, 34, 1)" />

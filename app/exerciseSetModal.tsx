@@ -59,7 +59,6 @@ export default function ExerciseSetModal() {
     const UpdateExerciseSetType = (exerciseType: EXERCISESETTYPE) => {
         console.log("updateExerciseSEtType 1")
 
-
         if (currentRoute === ROUTES.ROUTINE) {
             console.log("updateExerciseSEtType 2")
             routineDispatch({

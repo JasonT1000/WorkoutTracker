@@ -156,4 +156,5 @@ export enum ROUTES {
     EXERCISE = '/exercises',
     CARDIOPROGRAMS = '/cardioPrograms',
     EXERCISESETMODAL = '/exerciseSetModal',
+    NEWCARDIOPROGRAM = '/cardioProgramModal',
 }
