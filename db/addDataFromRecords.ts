@@ -129,6 +129,8 @@ export const addData = async (db: ExpoSQLiteDatabase) => {
         { name: 'power snatch', imageUrl: null, exerciseTypeId: 2 },
         { name: 'tricep pulldown (rope)', imageUrl: null, exerciseTypeId: 2 },
         { name: 'calf press (machine)', imageUrl: null, exerciseTypeId: 2 },
+
+
     ])
 
     await db.insert(bodyArea).values([
@@ -483,6 +485,8 @@ export const addData = async (db: ExpoSQLiteDatabase) => {
         { exerciseId: 60, bodyareaId: 13, muscleIntensity: 3 }, //forearms
     ])
 
+    // ------------------------------------ ROUTINES --------------------------------------
+
     await db.insert(routine).values([
         { name: 'test routine 1' },
         { name: 'test routine 2' },
@@ -553,15 +557,16 @@ export const addData = async (db: ExpoSQLiteDatabase) => {
         { routineExerciseId: 12, exerciseSetTypeId: 1, reps: 5, weight: 55 },
     ])
 
-
+    // ------------------------------------ WORKOUTS --------------------------------------
 
     await db.insert(workout).values([
-        // gym progress 01
         { datetime: '2018-05-12T18:30:00.000Z', duration: 60 },
         { datetime: '2018-05-15T18:30:00.000Z', duration: 60 },
     ])
 
     await db.insert(workoutExercise).values([
+        //starting at bottom of txt file
+
         //second from top in txt file
         { positionIndex: 0, workoutId: 1, exerciseId: 9 },
         { positionIndex: 1, workoutId: 1, exerciseId: 28 },
@@ -573,7 +578,7 @@ export const addData = async (db: ExpoSQLiteDatabase) => {
         { positionIndex: 7, workoutId: 1, exerciseId: 46 },
         { positionIndex: 8, workoutId: 1, exerciseId: 59 },
         //first from top in txt file
-        { positionIndex: 0, workoutId: 2, exerciseId: 1 },
+        { positionIndex: 0, workoutId: -2, exerciseId: 1 },
         { positionIndex: 1, workoutId: 2, exerciseId: 5 },
         { positionIndex: 2, workoutId: 2, exerciseId: 19 },
         { positionIndex: 3, workoutId: 2, exerciseId: 40 },
@@ -582,6 +587,12 @@ export const addData = async (db: ExpoSQLiteDatabase) => {
     ])
 
     await db.insert(workoutExerciseSet).values([
+        //from bottom of txt file
+        //starting at bottom of txt file
+        // Gym progres 01_191130_161444.txt
+        { workoutExerciseId: 1, exerciseSetTypeId: 1, reps: 15 },
+        { workoutExerciseId: 1, exerciseSetTypeId: 1, reps: 3 },
+
         // second from top in txt file
         { workoutExerciseId: 1, exerciseSetTypeId: 1, reps: 16 },
         { workoutExerciseId: 1, exerciseSetTypeId: 1, reps: 10 },
