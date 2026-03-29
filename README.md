@@ -9,3 +9,7 @@ Create workouts or start a new one
 ## Statistics
 
 Display statistics about your workout history. View muscle groups trained the past week.
+
+
+## Testing App
+npm run android

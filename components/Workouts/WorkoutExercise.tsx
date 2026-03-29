@@ -1,5 +1,6 @@
-import { formatTime, getExerciseSetTypeId, toTitleCase } from '@/helperFiles/helperFunctions';
-import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewWorkoutExercise, NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
+import { getSetInfoText } from '@/helperFiles/exerciseFunctions';
+import { getExerciseSetTypeId, toTitleCase } from '@/helperFiles/helperFunctions';
+import { EXERCISESETTYPE, ExerciseSetTypes, NewWorkoutExercise, NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useContext, useRef, useState } from 'react';
@@ -112,7 +113,8 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
 
     const getSetTypeComponent = (exerciseSet: NewWorkoutExerciseSet, setIndex: number) => {
         const exerciseSetTypeInfo = ExerciseSetTypes[exerciseSet.exerciseSetTypeId]
-        let setText = getSetInfoText(exerciseSet)
+        let setText = getSetInfoText(exerciseSet, workoutExercise.exerciseInfo.exerciseTypeId)
+        // let setText = getSetInfoText(exerciseSet)
 
         switch (exerciseSetTypeInfo.type) {
             case EXERCISESETTYPE.NORMAL:
@@ -128,33 +130,33 @@ export default function WorkoutExercise({ workoutExercise, flatListRef, expanded
         }
     }
 
-    const getSetInfoText = (exerciseSet: NewWorkoutExerciseSet): string => {
-        let reps: string = '- reps';
-        let time: string = '0min';
+    // const getSetInfoText = (exerciseSet: NewWorkoutExerciseSet): string => {
+    //     let reps: string = '- reps';
+    //     let time: string = '0min';
 
-        if (exerciseSet.reps > 1) { reps = exerciseSet.reps + " reps" }
-        else if (exerciseSet.reps === 0) { reps = exerciseSet.reps + "rep" }
+    //     if (exerciseSet.reps >= 1) { reps = exerciseSet.reps + " reps" }
+    //     else if (exerciseSet.reps === 0) { reps = exerciseSet.reps + "rep" }
 
-        if (exerciseSet.time && exerciseSet.time > 0) { time = formatTime(exerciseSet.time) }
+    //     if (exerciseSet.time && exerciseSet.time > 0) { time = formatTime(exerciseSet.time) }
 
-        switch (ExerciseTypes[workoutExercise.exerciseInfo.exerciseTypeId]) {
-            case EXERCISETYPE.BODYWEIGHT:
-                return reps
-            case EXERCISETYPE.WEIGHT:
-                let weight: string = '';
-                if (exerciseSet.weight && exerciseSet.weight > 0) { weight = exerciseSet.weight + "kgs x" }
-                return weight + reps
-            case EXERCISETYPE.CARDIO:
-                let distance: string = '';
-                if (exerciseSet.distance && exerciseSet.distance >= 0) { distance = exerciseSet.distance + "km x" }
-                return distance + time
-            case EXERCISETYPE.STRETCH:
-                return time
+    //     switch (ExerciseTypes[workoutExercise.exerciseInfo.exerciseTypeId]) {
+    //         case EXERCISETYPE.BODYWEIGHT:
+    //             return reps
+    //         case EXERCISETYPE.WEIGHT:
+    //             let weight: string = '';
+    //             if (exerciseSet.weight && exerciseSet.weight > 0) { weight = exerciseSet.weight + "kgs x" }
+    //             return weight + reps
+    //         case EXERCISETYPE.CARDIO:
+    //             let distance: string = '';
+    //             if (exerciseSet.distance && exerciseSet.distance >= 0) { distance = exerciseSet.distance + "km x" }
+    //             return distance + time
+    //         case EXERCISETYPE.STRETCH:
+    //             return time
 
-            default:
-                return 'No set info to display'
-        }
-    }
+    //         default:
+    //             return 'No set info to display'
+    //     }
+    // }
 
     const getSetsCompletedText = () => {
         const completed = workoutExercise.workoutExerciseSets.filter(exerciseSet => exerciseSet.isCompleted).length
