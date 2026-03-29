@@ -1,6 +1,6 @@
-import { getSetInfoText } from '@/helperFiles/exerciseFunctions';
+import { getSetTypeComponent } from '@/helperFiles/exerciseFunctions';
 import { getExerciseSetTypeId, toTitleCase } from '@/helperFiles/helperFunctions';
-import { EXERCISESETTYPE, ExerciseSetTypes, NewRoutineExercise, NewRoutineExerciseSet } from '@/helperFiles/helperTypes';
+import { EXERCISESETTYPE, NewRoutineExercise, NewRoutineExerciseSet } from '@/helperFiles/helperTypes';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useContext, useEffect, useRef } from 'react';
@@ -92,57 +92,6 @@ export default function RoutineExercise({ routineExercise, flatListRef, expanded
         // setExerciseSets((prev) => prev.filter((exerciseSet, index) => index !== setIndex))
     }
 
-    const getSetTypeComponent = (exerciseSet: NewRoutineExerciseSet, setIndex: number) => {
-        const exerciseSetTypeInfo = ExerciseSetTypes[exerciseSet.exerciseSetTypeId]
-        let setText = getSetInfoText(exerciseSet, routineExercise.exerciseInfo.exerciseTypeId)
-
-        switch (exerciseSetTypeInfo.type) {
-            case EXERCISESETTYPE.NORMAL:
-                return <>
-                    <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{setIndex + 1}</Text>
-                    <Text style={[styles.setText, { color: exerciseSetTypeInfo.colorcode }]}>{setText}</Text>
-                </>
-            default:
-                return <>
-                    <Text style={[styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }]}>{exerciseSetTypeInfo.shortcode}</Text>
-                    <Text style={[styles.setText, { color: exerciseSetTypeInfo.colorcode }]}>{setText}</Text>
-                </>
-        }
-    }
-
-    // const getSetInfoText = (exerciseSet: NewRoutineExerciseSet): string => {
-    //     let reps: string = '- reps';
-    //     let time: string = '0min';
-
-    //     if (exerciseSet.reps > 1) { reps = exerciseSet.reps + " reps" }
-    //     else if (exerciseSet.reps === 0) { reps = exerciseSet.reps + "rep" }
-
-    //     if (exerciseSet.time && exerciseSet.time > 0) { time = formatTime(exerciseSet.time) }
-
-    //     switch (ExerciseTypes[routineExercise.exerciseInfo.exerciseTypeId]) {
-    //         case EXERCISETYPE.BODYWEIGHT:
-    //             return reps
-    //         case EXERCISETYPE.WEIGHT:
-    //             let weight: string = '';
-    //             if (exerciseSet.weight && exerciseSet.weight > 0) { weight = exerciseSet.weight + "kgs x" }
-    //             return weight + reps
-    //         case EXERCISETYPE.CARDIO:
-    //             let distance: string = '';
-    //             if (exerciseSet.distance && exerciseSet.distance >= 0) { distance = exerciseSet.distance + "km x" }
-    //             return distance + time
-    //         case EXERCISETYPE.STRETCH:
-    //             return time
-
-    //         default:
-    //             return 'No set info to display'
-    //     }
-    // }
-
-    // const handleLayout = (event: LayoutChangeEvent) => {
-    //     const { y } = event.nativeEvent.layout
-    //     console.log(y)
-    //     scrollToInput(y)
-    // }
 
     if (expandedId === routineExercise.positionIndex) { // Expanded View
         return (
@@ -227,7 +176,7 @@ export default function RoutineExercise({ routineExercise, flatListRef, expanded
                                     routineExercise.routineExerciseSets.map((exerciseSet, index) => (
                                         <View key={'re' + index.toString()} style={{ flexDirection: 'row' }}>
                                             {
-                                                getSetTypeComponent(exerciseSet, index)
+                                                getSetTypeComponent(exerciseSet, routineExercise.exerciseInfo.exerciseTypeId, index)
                                             }
                                         </View>
                                     ))

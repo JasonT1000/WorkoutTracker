@@ -1,5 +1,37 @@
+import React from 'react';
+import { StyleSheet, Text } from 'react-native';
 import { formatTime } from "./helperFunctions";
-import { EXERCISETYPE, ExerciseTypes, NewRoutineExerciseSet, NewWorkoutExerciseSet } from "./helperTypes";
+import { EXERCISESETTYPE, ExerciseSetTypes, EXERCISETYPE, ExerciseTypes, NewRoutineExerciseSet, NewWorkoutExerciseSet } from "./helperTypes";
+
+/**
+ * Creates a component for a Workout/Routine exercise that displays its set information. The component
+ * is styled differently depending on its type id. 
+ * @param exerciseSet Workout or Routine exercise set
+ * @param exerciseTypeId Type of the exercise eg 'Normal, Warmup, Left, Right' etc
+ * @param setIndex Index of set
+ * @returns 
+ */
+export const getSetTypeComponent = (exerciseSet: NewWorkoutExerciseSet | NewRoutineExerciseSet, exerciseTypeId: number, setIndex: number) => {
+    const exerciseSetTypeInfo = ExerciseSetTypes[exerciseSet.exerciseSetTypeId]
+    let setText = getSetInfoText(exerciseSet, exerciseTypeId)
+
+    switch (exerciseSetTypeInfo.type) {
+        case EXERCISESETTYPE.NORMAL:
+            return React.createElement(
+                React.Fragment,
+                null,
+                React.createElement(Text, { style: [styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }] }, setIndex + 1),
+                React.createElement(Text, { style: [styles.setText, { color: exerciseSetTypeInfo.colorcode }] }, setText)
+            )
+        default:
+            return React.createElement(
+                React.Fragment,
+                null,
+                React.createElement(Text, { style: [styles.shortCodeText, { color: exerciseSetTypeInfo.colorcode }] }, exerciseSetTypeInfo.shortcode),
+                React.createElement(Text, { style: [styles.setText, { color: exerciseSetTypeInfo.colorcode }] }, setText)
+            )
+    }
+}
 
 /**
  * Takes a New workout exercise or new routine exercise set and returns a string with the set information
@@ -12,8 +44,10 @@ export const getSetInfoText = (exerciseSet: NewWorkoutExerciseSet | NewRoutineEx
     let reps: string = '- reps';
     let time: string = '0min';
 
-    if (exerciseSet.reps >= 1) { reps = exerciseSet.reps + " reps" }
-    else if (exerciseSet.reps === 0) { reps = exerciseSet.reps + "rep" }
+    console.log("Exercise reps " + exerciseSet.reps)
+
+    if (exerciseSet.reps > 1) { reps = exerciseSet.reps + " reps" }
+    else if (exerciseSet.reps === 1) { reps = exerciseSet.reps + " rep" }
 
     if (exerciseSet.time && exerciseSet.time > 0) { time = formatTime(exerciseSet.time) }
 
@@ -35,3 +69,18 @@ export const getSetInfoText = (exerciseSet: NewWorkoutExerciseSet | NewRoutineEx
             return 'No set info to display'
     }
 }
+
+const styles = StyleSheet.create({
+    shortCodeText: {
+        fontSize: 16,
+        width: 25,
+        // height: 40,
+        // textAlign: 'center',
+        // verticalAlign: 'middle',
+        // borderWidth: 1,
+        // borderColor: 'green'
+    },
+    setText: {
+        fontSize: 16,
+    },
+})
