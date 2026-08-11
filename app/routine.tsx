@@ -167,7 +167,7 @@ export default function Routine() {
                   ref={flatListRef}
                   keyboardShouldPersistTaps='never'
                   data={state.routineExercises}
-                  keyExtractor={(item) => item.positionIndex.toString()}
+                  keyExtractor={(item) => item.positionIndex.toString() + item.routineExerciseSets.length.toString()}
                   renderItem={({ item }) => <RoutineExercise routineExercise={item} flatListRef={flatListRef} expandedId={expandedId} updateExpandedId={updateExpandedId} showRoutineExerciseMenu={showRoutineExerciseMenu} />}
                 />
                 {/* </KeyboardAvoidingView> */}

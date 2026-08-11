@@ -36,16 +36,12 @@ export const reducer = (state: State, action: Action): State => {
         case "SET_NEWROUTINE":
             return { routineId: action.payload.id, routineName: action.payload.name, routineExercises: [...action.payload.exercises] }
         case "REMOVE_NEWROUTINEEXERCISE":
-            // Add functionality
             return { ...state, routineExercises: deleteExercise(state, action.payload.routineExerciseIndex, action.payload.routineExerciseId) }
         case "ADD_NEWROUTINEEXERCISESET":
-            // Add functionality
             return { ...state, routineExercises: addExerciseSet(state, action.payload.newRoutineExerciseIndex, action.payload.newExerciseSet) }
         case "UPDATE_NEWROUTINEEXERCISESET":
-            // Add functionality
             return { ...state, routineExercises: updateExerciseSet(state, action.payload.newRoutineExerciseIndex, action.payload.setIndex, action.payload.field, action.payload.value) }
         case "REMOVE_NEWROUTINEEXERCISESET":
-            // Add functionality
             return { ...state, routineExercises: removeExerciseSet(state, action.payload.newRoutineExerciseIndex, action.payload.setIndex) }
         case "CLEAR_NEWROUTINEEXERCISES":
             return { ...state, routineExercises: [] }
