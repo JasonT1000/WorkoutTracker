@@ -19,10 +19,12 @@ const getRoutineExerciseSets = async (routineExerciseId: number): Promise<schema
 }
 
 /**
- * Gets last 6 exercises with passed in id from database. Can have same exercise added multiple times to a single workout.
- * Then returns all sets for exercise based on the count. So if exercise is pullups, we first find all exercises added to latest workout that are pullups.
- * Will return the pullups sets information based on the count so if its for the second set of pullups we take the count which would be 2
- * and return the sets info from the lastWorkoutExercises at the second index.
+ * Gets last 6 exercises with passed in id from database. Can have same exercise added
+ * multiple times to a single workout. Then returns all sets for exercise based on the count.
+ * So if exercise is pullups, we first find all exercises added to latest workout that are pullups.
+ * Will return the pullups sets information based on the count so if its for the second set of
+ * pullups we take the count which would be 2 and return the sets info from the lastWorkoutExercises
+ * at the second index.
  * @param exerciseId exercise id to search for
  * @param exerciseIdCount to find which exercise we want to get sets from when we have same exercise used multiple times in a single workout
  * @returns 

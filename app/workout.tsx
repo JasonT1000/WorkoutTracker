@@ -24,7 +24,7 @@ export default function Workout() {
   const [exerciseIdCount, setExerciseIdCount] = useState<Record<number, number>>({})
   //refs
   const flatListRef = useRef<FlatList>(null)
-  const latestDurationRef = useRef(0)
+  const latestDurationRef = useRef<number>(0)
   const isDiscardingWorkoutRef = useRef(false)
   const exerciseIdCountRef = useRef<Record<number, number>>({})
 
@@ -154,6 +154,7 @@ export default function Workout() {
   const saveNewWorkout = () => {
     console.log('state.workoutExercises')
     console.log(state.workoutExercises)
+    console.log("the timer value is currently =" + latestDurationRef.current)
     const { total, completed } = getSetsCompleted()
     let aErrorStrings = []
 
@@ -252,7 +253,7 @@ export default function Workout() {
 
           <View style={styles.body}>
 
-            <InfoContainer isDiscardingWorkoutRef={isDiscardingWorkoutRef}/>
+            <InfoContainer isDiscardingWorkoutRef={isDiscardingWorkoutRef} latestDurationRef={latestDurationRef}/>
 
             <View style={{ flex: 1 }}>
 

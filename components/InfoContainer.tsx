@@ -7,14 +7,15 @@ import { DispatchContext, StateContext } from '../state/workout/workoutExerciseC
 
 type InfoContainerProps = {
   isDiscardingWorkoutRef: React.RefObject<boolean>
+  latestDurationRef: React.RefObject<number>;
 }
-export default function InfoContainer({isDiscardingWorkoutRef} : InfoContainerProps) {
+export default function InfoContainer({isDiscardingWorkoutRef, latestDurationRef} : InfoContainerProps) {
   //context
   const state = useContext(StateContext)
   const dispatch = useContext(DispatchContext)
   //refs
   const appState = useRef<AppStateStatus>(AppState.currentState)
-  const latestDurationRef = useRef(0)
+  // const latestDurationRef = useRef<number>(0)
 
   //state
   const [duration, setDuration] = useState<number>(state.duration)
