@@ -5,11 +5,11 @@
  */
 const muscleMap: Record<string, string[]> = {
     traps: ['traps_f_left', 'traps_f_right', 'traps_b_left', 'traps_b_right'],
-    chestTop: ['chest_top_f_left', 'chest_top_f_right'],
-    chestMain: ['chest_main_f_left', 'chest_main_f_right'],
-    deltoidFront: ['deltoid_front_f_left', 'deltoid_front_f_right'],
-    deltoidSide: ['deltoid_side_f_left', 'deltoid_side_f_right'],
-    deltoidBack: ['chest_main_f_left', 'chest_main_f_right', 'deltoid_back_b_left', 'deltoid_back_b_right'],
+    chestTop: ['chest_f_top_left', 'chest_f_top_right'],
+    chestMain: ['chest_f_main_left', 'chest_f_main_right'],
+    deltoidFront: ['deltoid_f_front_left', 'deltoid_f_front_right'],
+    deltoidSide: ['deltoid_f_side_left', 'deltoid_f_side_right'],
+    deltoidBack: ['deltoid_b_left', 'deltoid_b_right'],
     teresmajor: ['teresmajor_b_left', 'teresmajor_b_right'],
     teresminor: ['teresminor_b_left', 'teresminor_b_right'],
     infraspinatus: ['infraspinatus_b_left', 'infraspinatus_b_right'],

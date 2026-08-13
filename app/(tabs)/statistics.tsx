@@ -52,7 +52,7 @@ export default function Statistics() {
           />
 
           <View style={styles.imageSvg}>
-            <SvgComponent />
+            <SvgComponent titleIds={['deltoid_f_side_left', 'deltoid_f_side_right', 'deltoid_b_left', 'deltoid_b_right']}/>
           </View>
 
           <Image
