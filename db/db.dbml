@@ -1,0 +1,142 @@
+Table profile{
+  id int [PK, increment, not null]
+  username text
+  theme varchar(5)
+  keepawake bool [default: false]
+  firstdayofweek varchar(4) [not null, default: 'mon']
+  timer_sound int [not null, default: 0]
+  timer_volume varchar(6) [not null, default: 'normal']
+  default_resttimer int [not null, default: 0]
+}
+
+Table measurements{
+  id int [PK, increment, not null]
+  datetime datetime [not null]
+  bodyweight numeric(5,2) [not null, default: 0]
+}
+
+Table program{
+  id int [PK, increment, not null]
+  name varchar(100) [not null]
+}
+
+Table routine{
+  id int [PK, increment, not null]
+  name varchar(100) [not null]
+  programId int [not null]
+  lastCompleted datetime [not null]
+}
+
+Table exercise{
+  id int [PK, increment, not null]
+  name varchar(100) [not null]
+  image_uri varchar(100) [null]
+  exercise_type_id int [not null]
+}
+
+Table bodyarea{
+  id int [PK, increment, not null]
+  name varchar(100) [not null]
+}
+
+Table routine_exercise{
+  id int [PK, not null]
+  position_index int [not null]
+  routine_id int [not null]
+  exercise_id int [not null]
+  rest_timer int [null]
+  notes varchar(200) [null]
+}
+
+Table exercise_bodyarea{
+  exercise_id int [PK, not null]
+  bodyarea_id int [pk, not null]
+  muscle_intensity numrange (1, 5) [not null, default: 1]
+  ismajorbodyarea boolean [not null, default: false]
+}
+
+Table exercise_set_type{
+  id int [PK, not null]
+  type varchar(20) [not null, unique]
+}
+
+Table routine_exercise_set{
+  id int [PK, not null]
+  routine_exercise_id int [not null]
+  exercise_set_type_id int [not null]
+  reps int [not null, default: 0]
+  weight numeric(5,2) [null]
+  distance numeric(5,2) [null]
+  time int [null]
+  cardio_program_id int [null]
+}
+
+Table workout{
+  id int [PK, not null]
+  routine_id int [null]
+  datetime date [not null]
+  duration int [not null]
+  notes varchar(200) [null]
+}
+
+Table workout_exercise{
+  id int [PK, not null]
+  position_index int [not null]
+  workout_id int [not null]
+  exercise_id int [not null]
+  rest_timer int [null]
+  notes varchar(200) [null]
+}
+
+Table cardio_program{
+  id int [PK, not null]
+  name varchar(40) [not null]
+}
+
+Table workout_exercise_set{
+  id int [PK, increment, not null]
+  workout_exercise_id int [not null]
+  exercise_set_type_id int [not null]
+  reps int [not null, default: 0]
+  weight numeric(5,2) [null]
+  distance numeric(5,2) [null]
+  time int [null]
+  average_heart_rate int [null]
+  max_heart_rate int [null]
+  cardio_program_id int [null]
+}
+
+Table exercise_type{
+  id int [PK, increment, not null]
+  type varchar(16) [not null]
+}
+
+Ref: "exercise"."id" < "exercise_bodyarea"."exercise_id"
+
+Ref: "bodyarea"."id" < "exercise_bodyarea"."bodyarea_id"
+
+Ref: "routine"."id" < "routine_exercise"."routine_id"
+
+Ref: "exercise"."id" < "routine_exercise"."exercise_id"
+
+Ref: "routine_exercise"."id" < "routine_exercise_set"."routine_exercise_id"
+
+Ref: "routine"."id" < "workout"."routine_id"
+
+Ref: "exercise"."exercise_type_id" > "exercise_type"."id"
+
+Ref: "workout"."id" < "workout_exercise"."workout_id"
+
+Ref: "exercise"."id" < "workout_exercise"."exercise_id"
+
+Ref: "workout_exercise"."id" < "workout_exercise_set"."workout_exercise_id"
+
+Ref: "cardio_program"."id" < "workout_exercise_set"."cardio_program_id"
+
+Ref: "exercise_set_type"."id" < "routine_exercise_set"."exercise_set_type_id"
+
+Ref: "exercise_set_type"."id" < "workout_exercise_set"."exercise_set_type_id"
+
+Ref: "cardio_program"."id" < "routine_exercise_set"."cardio_program_id"
+
+Ref: "program"."id" < "routine"."programId"

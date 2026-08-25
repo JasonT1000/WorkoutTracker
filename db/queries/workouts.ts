@@ -1,8 +1,8 @@
 import { db } from '@/db/dbConnection';
 import * as schema from '@/db/schema';
-import { routineExerciseSet, workoutExercise, workoutExerciseSet } from '@/db/schema';
-import { NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
-import { desc, eq, sql } from 'drizzle-orm';
+import { bodyArea, exerciseBodyArea, routineExerciseSet, workout, workoutExercise, workoutExerciseSet } from '@/db/schema';
+import { NewWorkoutExerciseSet, WeeklyExerciseData } from '@/helperFiles/helperTypes';
+import { desc, eq, gt, sql } from 'drizzle-orm';
 
 export const getRoutineExerciseSets = async (routineExerciseId: number): Promise<schema.RoutineExerciseSet[]> => {
     const routineExerciseSets = await db
@@ -67,4 +67,49 @@ const formatExerciseSetData = (setData: schema.WorkoutExerciseSet[]): NewWorkout
 
         return newExerciseSet
     })
+}
+
+export const getWeeklyMuscleAreaIntenity = async (): Promise<WeeklyExerciseData[]> => {
+    const workoutExercisesWithCount = await db
+        .select({exerciseId: workoutExercise.exerciseId, count: sql<number>`COUNT(*)`})
+        .from(workoutExercise)
+        .innerJoin(workout, gt(workout.datetime, sql`strftime('%Y-%m-%dT00:00:00Z', 'now', 'utc', 'weekday 1', '-7 days')`))
+        .where(eq(workout.id, workoutExercise.workoutId))
+        .groupBy(workoutExercise.exerciseId)
+
+    console.log('&&&&&&&&&&&&&&&&& Current week workout ids')
+    console.log(workoutExercisesWithCount)
+
+    const bodyareaData = await Promise.all(
+        workoutExercisesWithCount.map(async exercise => {
+            const bodyareas = await db
+                .select({
+                    exerciseId: exerciseBodyArea.exerciseId,
+                    bodyArea: bodyArea.name,
+                    muscleIntensity: exerciseBodyArea.muscleIntensity
+                })
+                .from(exerciseBodyArea)
+                .innerJoin(bodyArea, eq(exerciseBodyArea.bodyareaId, bodyArea.id))
+                .where(eq(exerciseBodyArea.exerciseId, exercise.exerciseId));
+
+            return bodyareas;
+        })
+    );
+    
+    console.log("Body area data = ")
+    console.log(bodyareaData)
+
+    const weeklyMuscleIntensity = bodyareaData.map((bodyareaData, index) => {
+        const match = workoutExercisesWithCount.find(c => c.exerciseId === bodyareaData[index].exerciseId);
+
+        bodyareaData[index].muscleIntensity = bodyareaData[index].muscleIntensity * (match?.count ?? 1);
+
+        return bodyareaData;
+    });
+
+    
+    console.log("weeklyMuscleIntensity")
+    console.log(weeklyMuscleIntensity)
+
+    return weeklyMuscleIntensity.flat();
 }

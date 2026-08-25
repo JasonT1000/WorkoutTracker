@@ -141,9 +141,13 @@ export const exerciseBodyArea = sqliteTable("exercise_bodyarea", {
 
 export type Routine = typeof routine.$inferSelect;
 export type Exercise = typeof exercise.$inferSelect;
+export type Workout = typeof workout.$inferSelect;
+export type WorkoutExercise = typeof workoutExercise.$inferSelect;
 export type RoutineExercise = typeof routineExercise.$inferSelect;
 export type RoutineExerciseSet = typeof routineExerciseSet.$inferSelect;
 export type WorkoutExerciseSet = typeof workoutExerciseSet.$inferSelect;
+export type ExerciseBodyarea = typeof exerciseBodyArea.$inferSelect;
+export type BodyArea = typeof bodyArea.$inferSelect;
 export type CardioProgram = typeof cardioProgram.$inferSelect;
 
 
@@ -169,6 +173,15 @@ export const workoutExerciseSetSummaryView = sqliteView("workout_exercise_set_su
         .innerJoin(exerciseType, eq(exercise.exerciseTypeId, exerciseType.id))
         .leftJoin(cardioProgram, eq(workoutExerciseSet.cardioProgramId, cardioProgram.id))
 );
+
+// export const currentWeekWorkouts = sqliteView("current_week_workouts").as((qb) =>
+//     qb.select({
+//         id: workout.id,
+//         datetime: workout.datetime
+//     })
+//     .from(workout)
+//     .where(gt(workout.datetime, sql`strftime('%Y-%m-%dT00:00:00Z', 'now', 'utc', 'weekday 1', '-7 days')`))
+// );
 
 // export const exerciseWithMainBodyAreaView = sqliteView("exerciseWithMainBodyArea", {
 //     id: int(),

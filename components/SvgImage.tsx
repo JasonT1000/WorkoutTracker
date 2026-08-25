@@ -1,12 +1,23 @@
+import { getMappedValues } from "@/helperFiles/maps";
 import { PATHS_BACK_DATA, PATHS_FRONT_DATA } from "@/helperFiles/svgPathMaps";
 import * as React from "react";
 import { G, Path, Svg } from "react-native-svg";
 /* SVGR has dropped some elements not supported by react-native-svg: title */
 interface SVGRProps {
     title?: string;
-    titleIds: string[];
+    titleIds?: string[];
+    heatmap: { bodyArea: string, intensity: number, color: string}[] | []
     color?: string;
 }
+
+function getFillColor(heatmap: { bodyArea: string, intensity: number, color: string}[] | [], pathId: string):string {
+    const isBodyMatch = heatmap.find(area =>
+        getMappedValues(area.bodyArea).includes(pathId)
+    );
+
+    return isBodyMatch?.color ?? "#999999";
+}
+
 /* SVGR has dropped some elements not supported by react-native-svg: title */
 const SvgComponent = (props: SVGRProps) => (
     <Svg
@@ -26,15 +37,13 @@ const SvgComponent = (props: SVGRProps) => (
             >
                 {
                     PATHS_BACK_DATA.map((path) => {
-                        const isMatched = props.titleIds.includes(path.id)
-
                         return (
                             <Path
                                 key={path.id}
                                 id={path.id}
                                 d={path.d}
                                 strokeWidth="0.264583"
-                                fill={isMatched ? "#e70707ff" : "#999999"} 
+                                fill={getFillColor(props.heatmap, path.id)} 
                             />
                         )
                     })
@@ -47,15 +56,13 @@ const SvgComponent = (props: SVGRProps) => (
             >
                 {
                     PATHS_FRONT_DATA.map((path) => {
-                        const isMatched = props.titleIds.includes(path.id)
-
                         return (
                             <Path
                                 key={path.id}
                                 id={path.id}
                                 d={path.d}
                                 strokeWidth="0.264583"
-                                fill={isMatched ? "#e70707ff" : "#999999"} 
+                                fill={getFillColor(props.heatmap, path.id)} 
                             />
                         )
                     })

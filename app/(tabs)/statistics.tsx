@@ -1,11 +1,35 @@
 import SvgComponent from '@/components/SvgImage';
+import { getWeeklyMuscleAreaIntenity } from '@/db/queries/workouts';
+import { computeHeatmapColors } from '@/helperFiles/helperFunctions';
+import { WeeklyExercisesWithColor } from '@/helperFiles/helperTypes';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Octicons from '@expo/vector-icons/Octicons';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Statistics() {
+
+  const [exerciseMuscleColors, setExerciseMuscleColors] = useState<WeeklyExercisesWithColor[]>([])
+
+  useEffect(() => {
+    const loadMuscleAreaData = async () => {
+      const muscleAreas = await getMuscleAreas()
+
+      if(muscleAreas){
+        setExerciseMuscleColors(muscleAreas)
+      }
+    }
+
+    loadMuscleAreaData()
+  }, [])
+
+  const getMuscleAreas = async (): Promise <{bodyArea:string, intensity:number, color:string}[]> => {
+    const weeklyMuscleIntensity = await getWeeklyMuscleAreaIntenity()
+
+    return computeHeatmapColors(weeklyMuscleIntensity);
+  }
+
   return (
     <SafeAreaView style={styles.main}>
       <View style={styles.topSectionContainer}>
@@ -52,7 +76,7 @@ export default function Statistics() {
           />
 
           <View style={styles.imageSvg}>
-            <SvgComponent titleIds={['deltoid_f_side_left', 'deltoid_f_side_right', 'deltoid_b_left', 'deltoid_b_right']}/>
+            <SvgComponent heatmap={exerciseMuscleColors}/>
           </View>
 
           <Image

@@ -158,3 +158,17 @@ export enum ROUTES {
     EXERCISESETMODAL = '/exerciseSetModal',
     NEWCARDIOPROGRAM = '/cardioProgramModal',
 }
+
+export type WeeklyExerciseData = {
+    exerciseId: number,
+    bodyArea: string,
+    muscleIntensity: number,
+}
+
+export type RGB = { r: number; g: number; b: number };
+
+export type WeeklyExercisesWithColor = {
+    bodyArea: string,
+    intensity: number,
+    color: string
+}

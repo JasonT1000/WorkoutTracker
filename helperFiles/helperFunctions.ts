@@ -1,4 +1,4 @@
-import { EXERCISESETTYPE, ExerciseSetTypes } from "./helperTypes";
+import { EXERCISESETTYPE, ExerciseSetTypes, RGB, WeeklyExerciseData } from "./helperTypes";
 
 /**
  * Converts a UTC datetime string to a formatted New Zealand (NZ) local datetime string.
@@ -152,4 +152,70 @@ export const formatTimerTime = (seconds: number): string => {
     }
 
     return `${hrs.toString()}hr ${mins.toString()}min ${secs.toString()}s`;
+}
+
+
+export const normalizeIntensity = (areas: WeeklyExerciseData[]): WeeklyExerciseData[] => {
+  const maxIntensity = Math.max(...areas.map(a => a.muscleIntensity));
+
+  return areas.map(a => ({
+    ...a,
+    muscleIntensity: maxIntensity === 0
+      ? 0
+      : a.muscleIntensity / maxIntensity
+  }));
+}
+
+export const lerp = (a: number, b: number, t: number): number => {
+  return a + (b - a) * t;
+}
+
+export const intensityToColor = (t: number): RGB => {
+  // Blue → Purple → Red
+  if (t < 0.5) {
+    // Blue → Purple
+    const ratio = t / 0.5;
+    return {
+      r: lerp(0, 128, ratio),
+      g: lerp(0, 0, ratio),
+      b: lerp(255, 255, ratio)
+    };
+  } else {
+    // Purple → Red
+    const ratio = (t - 0.5) / 0.5;
+    return {
+      r: lerp(128, 255, ratio),
+      g: lerp(0, 0, ratio),
+      b: lerp(255, 0, ratio)
+    };
+  }
+}
+
+export const intensityToRed = (t: number): RGB => {
+  // Clamp t between 0–1 just in case
+  const clamped = Math.max(0, Math.min(1, t));
+
+  const lightRed: RGB = { r: 255, g: 180, b: 180 };
+  const darkRed: RGB  = { r: 180, g: 0,   b: 0   };
+
+  return {
+    r: lerp(lightRed.r, darkRed.r, clamped),
+    g: lerp(lightRed.g, darkRed.g, clamped),
+    b: lerp(lightRed.b, darkRed.b, clamped)
+  };
+}
+
+export const rgbToCss = ({ r, g, b }: RGB): string => {
+  return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+}
+
+
+export const computeHeatmapColors = (areas: WeeklyExerciseData[]) => {
+  const normalized = normalizeIntensity(areas);
+
+  return normalized.map(a => ({
+    bodyArea: a.bodyArea,
+    intensity: a.muscleIntensity,
+    color: rgbToCss(intensityToRed(a.muscleIntensity))
+  }));
 }

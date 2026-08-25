@@ -1,0 +1,418 @@
+{
+  "version": "2.0.0",
+  "darkMode": true,
+  "gridEnabling": false,
+  "currentViewName": null,
+  "defaultView": {
+    "detailLevel": "All",
+    "tablePositions": [
+      {
+        "name": "profile",
+        "schemaName": "public",
+        "x": 364.70361328125,
+        "y": 12
+      },
+      {
+        "name": "measurements",
+        "schemaName": "public",
+        "x": 12,
+        "y": 12
+      },
+      {
+        "name": "program",
+        "schemaName": "public",
+        "x": 12,
+        "y": 670
+      },
+      {
+        "name": "routine",
+        "schemaName": "public",
+        "x": 550.841796875,
+        "y": 448
+      },
+      {
+        "name": "exercise",
+        "schemaName": "public",
+        "x": 550.841796875,
+        "y": 654
+      },
+      {
+        "name": "bodyarea",
+        "schemaName": "public",
+        "x": 12,
+        "y": 528
+      },
+      {
+        "name": "routine_exercise",
+        "schemaName": "public",
+        "x": 1081.28857421875,
+        "y": 633
+      },
+      {
+        "name": "exercise_bodyarea",
+        "schemaName": "public",
+        "x": 1081.28857421875,
+        "y": 445.87551837298645
+      },
+      {
+        "name": "exercise_set_type",
+        "schemaName": "public",
+        "x": 12,
+        "y": 386
+      },
+      {
+        "name": "routine_exercise_set",
+        "schemaName": "public",
+        "x": 1713.58251953125,
+        "y": 427
+      },
+      {
+        "name": "workout",
+        "schemaName": "public",
+        "x": 1081.28857421875,
+        "y": 904
+      },
+      {
+        "name": "workout_exercise",
+        "schemaName": "public",
+        "x": 1713.58251953125,
+        "y": 761
+      },
+      {
+        "name": "cardio_program",
+        "schemaName": "public",
+        "x": 12,
+        "y": 954
+      },
+      {
+        "name": "workout_exercise_set",
+        "schemaName": "public",
+        "x": 2242.11572265625,
+        "y": 386
+      },
+      {
+        "name": "exercise_type",
+        "schemaName": "public",
+        "x": 12,
+        "y": 812
+      }
+    ],
+    "tableGroupCollapseStates": [],
+    "stickyNoteLayouts": [],
+    "referencePaths": [
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "exercise",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "exercise_id"
+        ],
+        "secondTableName": "exercise_bodyarea",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 953.6421199354864,
+            "y": 702
+          },
+          {
+            "x": 953.6421199354864,
+            "y": 493.87551837298645
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "bodyarea",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "bodyarea_id"
+        ],
+        "secondTableName": "exercise_bodyarea",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 244.841796875,
+            "y": 632.6265551189592
+          },
+          {
+            "x": 903.165803988945,
+            "y": 632.6265551189592
+          },
+          {
+            "x": 903.165803988945,
+            "y": 525.8755183729864
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "routine",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "routine_id"
+        ],
+        "secondTableName": "routine_exercise",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "exercise",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "exercise_id"
+        ],
+        "secondTableName": "routine_exercise",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "routine_exercise",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "routine_exercise_id"
+        ],
+        "secondTableName": "routine_exercise_set",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "routine",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "routine_id"
+        ],
+        "secondTableName": "workout",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "exercise_type_id"
+        ],
+        "firstTableName": "exercise",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "id"
+        ],
+        "secondTableName": "exercise_type",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "workout",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "workout_id"
+        ],
+        "secondTableName": "workout_exercise",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "exercise",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "exercise_id"
+        ],
+        "secondTableName": "workout_exercise",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 887.5598455387614,
+            "y": 702
+          },
+          {
+            "x": 887.5598455387614,
+            "y": 892.4163210846756
+          },
+          {
+            "x": 1693.58251953125,
+            "y": 892.4163210846756
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "workout_exercise",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "workout_exercise_id"
+        ],
+        "secondTableName": "workout_exercise_set",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "cardio_program",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "cardio_program_id"
+        ],
+        "secondTableName": "workout_exercise_set",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 238.341796875,
+            "y": 1124.6908694244116
+          },
+          {
+            "x": 2134.6806818045575,
+            "y": 1124.6908694244116
+          },
+          {
+            "x": 2134.6806818045575,
+            "y": 722
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "exercise_set_type",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "exercise_set_type_id"
+        ],
+        "secondTableName": "routine_exercise_set",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 969.0389160156251,
+            "y": 434
+          },
+          {
+            "x": 969.0389160156251,
+            "y": 620.7939129496078
+          },
+          {
+            "x": 1693.58251953125,
+            "y": 620.7939129496078
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "exercise_set_type",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "exercise_set_type_id"
+        ],
+        "secondTableName": "workout_exercise_set",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 1499.13573466435,
+            "y": 434
+          },
+          {
+            "x": 1499.13573466435,
+            "y": 413.06016732156115
+          },
+          {
+            "x": 2222.11572265625,
+            "y": 413.06016732156115
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "cardio_program",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "cardio_program_id"
+        ],
+        "secondTableName": "routine_exercise_set",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": [
+          {
+            "x": 965.962158203125,
+            "y": 1002
+          },
+          {
+            "x": 965.962158203125,
+            "y": 864.1607857636312
+          },
+          {
+            "x": 1693.58251953125,
+            "y": 864.1607857636312
+          }
+        ]
+      },
+      {
+        "firstFieldNames": [
+          "id"
+        ],
+        "firstTableName": "program",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          "programId"
+        ],
+        "secondTableName": "routine",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      }
+    ]
+  },
+  "views": {}
+}
