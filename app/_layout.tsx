@@ -1,16 +1,20 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "expo-router/react-navigation";
 import { ActivityIndicator, useColorScheme } from "react-native";
 
 import { addData } from "@/db/addData";
 import { db } from "@/db/dbConnection";
-import migrations from '@/drizzle/migrations';
+import migrations from "@/drizzle/migrations";
 import { DATABASE_NAME } from "@/helperFiles/constants";
 import { convertNZDateTimetoUTC } from "@/helperFiles/helperFunctions";
 import { WorkoutExerciseProvider } from "@/state/workout/workoutExerciseContext";
-import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import { SQLiteProvider } from 'expo-sqlite';
-import { Suspense, useEffect } from 'react';
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { SQLiteProvider } from "expo-sqlite";
+import { Suspense, useEffect } from "react";
 import { RoutineExerciseProvider } from "../state/routine/routineExerciseContext";
 
 // export const DATABASE_NAME = 'db';
@@ -28,7 +32,7 @@ export default function RootLayout() {
       return;
     }
 
-    addData(db)
+    addData(db);
 
     const load = async () => {
       // let currentDatetime = new Date().toISOString()
@@ -39,31 +43,50 @@ export default function RootLayout() {
       // convert old record dates to UTC
 
       convertNZDateTimetoUTC("16/05/18");
-    }
+    };
 
     // load()
-
   }, [success]);
 
   return (
     <Suspense fallback={<ActivityIndicator size="large" />}>
       <SQLiteProvider databaseName={DATABASE_NAME}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
           <WorkoutExerciseProvider>
             <RoutineExerciseProvider>
               <Stack>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="workout" options={{ headerShown: false }} />
                 <Stack.Screen name="routine" options={{ headerShown: false }} />
-                <Stack.Screen name="exercises" options={{ headerShown: false }} />
-                <Stack.Screen name="cardioPrograms" options={{ headerShown: false }} />
-                <Stack.Screen name="exerciseSetModal" options={{ headerShown: false, presentation: "containedTransparentModal" }} />
-                <Stack.Screen name="cardioProgramModal" options={{ headerShown: false, presentation: "containedTransparentModal" }} />
+                <Stack.Screen
+                  name="exercises"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="cardioPrograms"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="exerciseSetModal"
+                  options={{
+                    headerShown: false,
+                    presentation: "containedTransparentModal",
+                  }}
+                />
+                <Stack.Screen
+                  name="cardioProgramModal"
+                  options={{
+                    headerShown: false,
+                    presentation: "containedTransparentModal",
+                  }}
+                />
               </Stack>
             </RoutineExerciseProvider>
           </WorkoutExerciseProvider>
         </ThemeProvider>
       </SQLiteProvider>
     </Suspense>
-  )
+  );
 }

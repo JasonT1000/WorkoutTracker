@@ -1,34 +1,44 @@
-import SvgComponent from '@/components/SvgImage';
-import { getWeeklyMuscleAreaIntenity } from '@/db/queries/workouts';
-import { computeHeatmapColors } from '@/helperFiles/helperFunctions';
-import { WeeklyExercisesWithColor } from '@/helperFiles/helperTypes';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Octicons from '@expo/vector-icons/Octicons';
-import React, { useEffect, useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import SvgComponent from "@/components/SvgImage";
+import { getWeeklyMuscleAreaIntenity } from "@/db/queries/workouts";
+import { computeHeatmapColors } from "@/helperFiles/helperFunctions";
+import { WeeklyExercisesWithColor } from "@/helperFiles/helperTypes";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Octicons from "@expo/vector-icons/Octicons";
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableNativeFeedback,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Statistics() {
-
-  const [exerciseMuscleColors, setExerciseMuscleColors] = useState<WeeklyExercisesWithColor[]>([])
+  const [exerciseMuscleColors, setExerciseMuscleColors] = useState<
+    WeeklyExercisesWithColor[]
+  >([]);
 
   useEffect(() => {
     const loadMuscleAreaData = async () => {
-      const muscleAreas = await getMuscleAreas()
+      const muscleAreas = await getMuscleAreas();
 
-      if(muscleAreas){
-        setExerciseMuscleColors(muscleAreas)
+      if (muscleAreas) {
+        setExerciseMuscleColors(muscleAreas);
       }
-    }
+    };
 
-    loadMuscleAreaData()
-  }, [])
+    loadMuscleAreaData();
+  }, []);
 
-  const getMuscleAreas = async (): Promise <{bodyArea:string, intensity:number, color:string}[]> => {
-    const weeklyMuscleIntensity = await getWeeklyMuscleAreaIntenity()
+  const getMuscleAreas = async (): Promise<
+    { bodyArea: string; intensity: number; color: string }[]
+  > => {
+    const weeklyMuscleIntensity = await getWeeklyMuscleAreaIntenity();
 
     return computeHeatmapColors(weeklyMuscleIntensity);
-  }
+  };
 
   return (
     <SafeAreaView style={styles.main}>
@@ -70,20 +80,17 @@ export default function Statistics() {
         <View style={styles.imagesContainer}>
           <Image
             style={styles.image}
-            width={250}
-            height={250}
-            source={require('../../assets/images/Musculature_FrontBack_Foreground.png')}
+
+            source={require("../../assets/images/Musculature_FrontBack_Foreground.png")}
           />
 
           <View style={styles.imageSvg}>
-            <SvgComponent heatmap={exerciseMuscleColors}/>
+            <SvgComponent heatmap={exerciseMuscleColors} />
           </View>
 
           <Image
             style={styles.image}
-            width={250}
-            height={250}
-            source={require('../../assets/images/Musculature_FrontBack_Background.png')}
+            source={require("../../assets/images/Musculature_FrontBack_Background.png")}
           />
         </View>
       </View>
@@ -91,19 +98,34 @@ export default function Statistics() {
         <Text style={styles.text}>Other Statistics</Text>
         <TouchableNativeFeedback>
           <View style={styles.statisticItemContainer}>
-            <Octicons style={{ flex: .2 }} name="graph" size={24} color="white" />
+            <Octicons
+              style={{ flex: 0.2 }}
+              name="graph"
+              size={24}
+              color="white"
+            />
             <View style={{ flex: 1 }}>
               <Text style={styles.text}>Set count</Text>
-              <Text style={styles.dayInfoText}>Number of sets logged for each muscle group</Text>
+              <Text style={styles.dayInfoText}>
+                Number of sets logged for each muscle group
+              </Text>
             </View>
             <AntDesign name="arrowright" size={20} color="white" />
           </View>
         </TouchableNativeFeedback>
         <TouchableNativeFeedback
-          onPress={() => { Alert.alert('Touchable pressed') }}
-          background={TouchableNativeFeedback.Ripple('#5c5b5bff', false)}>
+          onPress={() => {
+            Alert.alert("Touchable pressed");
+          }}
+          background={TouchableNativeFeedback.Ripple("#5c5b5bff", false)}
+        >
           <View style={styles.statisticItemContainer}>
-            <Octicons style={{ flex: .2 }} name="graph" size={24} color="white" />
+            <Octicons
+              style={{ flex: 0.2 }}
+              name="graph"
+              size={24}
+              color="white"
+            />
             <View style={{ flex: 1 }}>
               <Text style={styles.text}>Weight change</Text>
               <Text style={styles.dayInfoText}>Weight change per exercise</Text>
@@ -113,76 +135,76 @@ export default function Statistics() {
         </TouchableNativeFeedback>
       </View>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   main: {
-    flexDirection: 'column',
+    flexDirection: "column",
     flex: 1,
     margin: 15,
   },
   text: {
-    color: 'white',
+    color: "white",
     fontSize: 24,
   },
 
   topSectionContainer: {
     borderWidth: 1,
-    borderColor: 'yellow'
+    borderColor: "yellow",
   },
-  days: {
-
-  },
+  days: {},
   daysRowContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     columnGap: 7,
     marginTop: 10,
   },
   dayInfo: {
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 12,
     paddingHorizontal: 1,
     paddingVertical: 8,
-    justifyContent: 'space-between',
-    backgroundColor: '#5c5b5bff',
+    justifyContent: "space-between",
+    backgroundColor: "#5c5b5bff",
     flex: 1,
   },
   dayInfoText: {
-    color: 'white',
-    fontSize: 13
+    color: "white",
+    fontSize: 13,
   },
   dayNumber: {
     borderRadius: 100,
     padding: 8,
-    backgroundColor: '#2ca0ffff',
+    backgroundColor: "#2ca0ffff",
   },
   imagesContainer: {
     height: 250,
     borderWidth: 1,
-    borderColor: 'red'
+    borderColor: "red",
   },
   imageSvg: {
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   image: {
-    position: 'absolute',
-    alignSelf: 'center',
-    resizeMode: 'contain',
+    position: "absolute",
+    alignSelf: "center",
+    resizeMode: "contain",
+    width: 250,
+    height: 250,
   },
 
   bottomSectionContainer: {
     flex: 1,
     borderWidth: 1,
-    borderColor: 'green',
-    backgroundColor: '#999999',
+    borderColor: "green",
+    backgroundColor: "#999999",
     rowGap: 1,
   },
   statisticItemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 15,
-    backgroundColor: '#0c0c0cff'
-  }
+    backgroundColor: "#0c0c0cff",
+  },
 });
