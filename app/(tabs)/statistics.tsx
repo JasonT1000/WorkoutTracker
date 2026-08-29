@@ -2,8 +2,8 @@ import SvgComponent from "@/components/SvgImage";
 import { getWeeklyMuscleAreaIntenity } from "@/db/queries/workouts";
 import { computeHeatmapColors } from "@/helperFiles/helperFunctions";
 import { WeeklyExercisesWithColor } from "@/helperFiles/helperTypes";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Octicons from "@expo/vector-icons/Octicons";
+import AntDesign from "@react-native-vector-icons/ant-design";
+import Octicons from "@react-native-vector-icons/octicons";
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -110,7 +110,7 @@ export default function Statistics() {
                 Number of sets logged for each muscle group
               </Text>
             </View>
-            <AntDesign name="arrowright" size={20} color="white" />
+            <AntDesign name="arrow-right" size={20} color="white" />
           </View>
         </TouchableNativeFeedback>
         <TouchableNativeFeedback
@@ -130,7 +130,7 @@ export default function Statistics() {
               <Text style={styles.text}>Weight change</Text>
               <Text style={styles.dayInfoText}>Weight change per exercise</Text>
             </View>
-            <AntDesign name="arrowright" size={20} color="white" />
+            <AntDesign name="arrow-right" size={20} color="white" />
           </View>
         </TouchableNativeFeedback>
       </View>

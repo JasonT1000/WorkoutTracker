@@ -1,6 +1,6 @@
 import * as schema from '@/db/schema';
 import { CardioProgram, ROUTES } from '@/helperFiles/helperTypes';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import Ionicons from "@react-native-vector-icons/ionicons";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { router, useFocusEffect } from 'expo-router';
 import { useSQLiteContext } from "expo-sqlite";

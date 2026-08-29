@@ -1,5 +1,5 @@
 import { toTitleCase } from '@/helperFiles/helperFunctions';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import AntDesign from "@react-native-vector-icons/ant-design";
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 

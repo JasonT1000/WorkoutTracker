@@ -1,5 +1,5 @@
 import { dbInsertCardioProgram } from '@/db/inserts';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import FontAwesome5 from "@react-native-vector-icons/fontawesome5";
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';

@@ -1,6 +1,6 @@
 import * as schema from '@/db/schema';
 import { createTitleCaseString, toTitleCase } from '@/helperFiles/helperFunctions';
-import Entypo from '@expo/vector-icons/Entypo';
+import Entypo from "@react-native-vector-icons/entypo";
 import React from 'react';
 import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 

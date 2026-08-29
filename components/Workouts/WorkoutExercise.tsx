@@ -2,8 +2,8 @@
 import { getSetTypeComponent } from '@/helperFiles/exerciseFunctions';
 import { getExerciseSetTypeId, toTitleCase } from '@/helperFiles/helperFunctions';
 import { EXERCISESETTYPE, NewWorkoutExercise, NewWorkoutExerciseSet } from '@/helperFiles/helperTypes';
-import Entypo from '@expo/vector-icons/Entypo';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Entypo from "@react-native-vector-icons/entypo";
+import MaterialCommunityIcons from "@react-native-vector-icons/material-design-icons";
 import React, { useContext, useRef, useState } from 'react';
 import { Alert, FlatList, Image, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';

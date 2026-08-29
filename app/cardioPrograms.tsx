@@ -1,7 +1,7 @@
 import CardioProgramList from '@/components/CardioProgramList';
 import OptionsHeader from '@/components/OptionsHeader';
 import { NewWorkoutExerciseSetKey, ROUTES } from '@/helperFiles/helperTypes';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import AntDesign from "@react-native-vector-icons/ant-design";
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native';

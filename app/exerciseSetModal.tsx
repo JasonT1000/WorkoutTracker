@@ -1,6 +1,6 @@
 import { getExerciseSetTypeId, toTitleCase } from '@/helperFiles/helperFunctions';
 import { EXERCISESETTYPE, ExerciseSetTypes, NewRoutineExerciseSetKey, ROUTES } from '@/helperFiles/helperTypes';
-import Feather from '@expo/vector-icons/Feather';
+import Feather from "@react-native-vector-icons/feather";
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useContext } from 'react';
 import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
